@@ -1,0 +1,6 @@
+# emacs bakcup files
+*~
+
+# go compiled object files and libraries
+*.o
+*.a
