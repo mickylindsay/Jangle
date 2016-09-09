@@ -8,7 +8,8 @@ import (
 
 func main(){
      address := "localhost:9090"
-     num_connections := 0
+     read_data := make([]byte, 1024)
+     
      fmt.Println("JANGLE GO SERVER")
      fmt.Println("address - " + address)
 
@@ -23,9 +24,14 @@ func main(){
 	    log.Fatal(err)	
 	 }
 	 go func(c net.Conn){
-	    num_connections++
-	    fmt.Printf("%d\n", num_connections)
-	    c.Close()
+	     	read_len, err := c.Read(read_data)
+		if err != nil {
+		   log.Fatal(err)
+		}
+		read_string := string(read_data)
+		fmt.Printf("Read %d bytes\n", read_len);
+		fmt.Println(read_string)
+	 	c.Close()
 	 }(conn)
 
      }
