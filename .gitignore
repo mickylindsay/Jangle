@@ -4,3 +4,9 @@
 # go compiled object files and libraries
 *.o
 *.a
+
+# java compiled files
+*.class
+.project
+.classpath
+bin/
