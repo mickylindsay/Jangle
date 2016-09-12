@@ -11,4 +11,4 @@ server_rule: ./server/server.go
 
 clean:
 	@echo Removing compiled files
-	@rm goclient goserver *~
+	@rm goclient goserver *~ -rf
