@@ -1,6 +1,5 @@
 all: client_rule server_rule
 
-
 client_rule: ./client/client.go
 	@echo Compiling Client
 	@go build -o goclient ./client/client.go
