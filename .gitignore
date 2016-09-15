@@ -11,3 +11,5 @@
 .classpath
 bin/
 *.jar
+
+*.exe
