@@ -45,6 +45,7 @@ func main() {
 				read_string := string(read_data[:read_len])
 				fmt.Printf("\tRead %d bytes\n", read_len)
 				fmt.Println("\t",read_string)
+				write_to_clients(connections, read_string)
 			}
 			c.Close()
 		}(connections[num_connections])
@@ -53,7 +54,7 @@ func main() {
 func write_to_clients(connections []net.Conn, s string){
 	for _,c := range connections {
 		if(c != nil){
-			fmt.Fprintf(c, "SERVER: %s\n", s)
+			fmt.Fprintf(c, "\t%s", s)
 		}
 	}
 	
