@@ -1,4 +1,4 @@
-# emacs bakcup files
+# emacs backup files
 *~
 
 # go compiled object files and libraries
@@ -10,3 +10,6 @@
 .project
 .classpath
 bin/
+*.jar
+
+*.exe
