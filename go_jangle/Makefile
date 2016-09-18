@@ -1,16 +1,21 @@
+GC=go build
+BIN= bin
+_TEST = $(BIN)/_test
+SRC = src
 
-all: client_rule server_rule
+all: server
 
+client: $(SRC)/_test/client.go
+	@echo Compiling Go Test Client
+	@$(GC) -o $(BIN)/_test/$@ $<
 
-client_rule: ./client/client.go
-	@echo Compiling Client
-	@go build -o goclient ./client/*.go
-
-server_rule: ./server/server.go
+server: $(SRC)/server.go
 	@echo Compiling Server
-	@go build -o goserver ./server/*.go
+	@$(GC) -o $(BIN)/$@ $(SRC)/*.go
+
+.PHONY: clean
 
 clean:
 	@echo Removing compiled files
-	@rm goclient goserver *~ -rf
+	@rm  $(BIN) *~ -rf
 
