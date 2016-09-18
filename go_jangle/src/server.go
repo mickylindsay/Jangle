@@ -6,21 +6,25 @@ import (
 	"net"
 	"bufio"
 	"os"
+	"container/list"
 )
 func main() {
-	connections := make([]net.Conn, 6)
-	num_connections := 0
+	//Create new list to store every client connection
+	connections := list.New()
+	//Address to host server on
 	address := "localhost:9090"
+	//Array to store data read from client
 	read_data := make([]byte, 1024)
 
 	fmt.Println("JANGLE GO SERVER")
 	fmt.Println("address - " + address)
-
+	
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer listener.Close()
+	//Read server console input and write that input to every user
 	go func(){
 		for {
 			reader := bufio.NewReader(os.Stdin)
@@ -28,34 +32,45 @@ func main() {
 			write_to_clients(connections,text)
 		}	
 	}()
+	//Listen for new client connection
 	for {
-		connections[num_connections], err = listener.Accept()
-		fmt.Println("User Connected")
+		conn, err := listener.Accept()
+		defer conn.Close()
+		//Add new connection onto the end of connections list
+		elem := connections.PushBack(conn)
 		if err != nil {
 			log.Fatal(err)
 		}
-		go func(c net.Conn) {
-			num_connections++
+		fmt.Println("User Connected")
+		//Read from client and write data to every client
+		go func(conn net.Conn, e *list.Element) {
 			for {
-				read_len, err := c.Read(read_data)
+				//Read data from client
+				read_len, err := conn.Read(read_data)
+				//If server fails to read from client,
+				//the user has disconnected and can be
+				//removed from the lsit fo connections
 				if err != nil {
+					connections.Remove(e)
 					fmt.Println("User Disconnected")
 					break
 				}
+				//Cast read data into a string
 				read_string := string(read_data[:read_len])
 				fmt.Printf("\tRead %d bytes\n", read_len)
 				fmt.Println("\t",read_string)
+				//Write read_string to entire list fo connections
 				write_to_clients(connections, read_string)
 			}
-			c.Close()
-		}(connections[num_connections])
+		}(conn, elem)
 	}
 }
-func write_to_clients(connections []net.Conn, s string){
-	for _,c := range connections {
-		if(c != nil){
-			fmt.Fprintf(c, "\t%s", s)
-		}
+//Writes a string to every connection in the list of client connections
+func write_to_clients(connections *list.List, s string){
+	//Iterate over every client
+	for e := connections.Front(); e != nil; e = e.Next() {
+		//Write data to every connection
+		fmt.Fprintf(e.Value.(net.Conn), "%s", s)
 	}
 	
 }
