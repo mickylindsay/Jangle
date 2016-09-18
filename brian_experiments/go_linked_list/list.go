@@ -2,21 +2,15 @@ package main
 
 import(
 	"fmt"
+	"container/list"
 )
-type User_List struct{
-	head User_Node
-}
 
-type User_Node struct {
-	user User
-	next *User_Node
-}
-
-type User struct{
+type User struct {
 	name string
 }
 
 func main(){
+	
 	micky := &User{
 		name:"Micky",
 	}
@@ -24,11 +18,11 @@ func main(){
 	lindsay := &User{
 		name: "Lindsay",
 	}
-
-	head := new(User_Node)
-	head.next = &User_Node{
-		user: *micky,
+	l := list.New()
+	e := l.PushFront(micky)
+	l.InsertAfter(lindsay, e)
+	for element := l.Front(); element != nil; element = element.Next() {
+		fmt.Println(element.Value)
 	}
-	fmt.Println(head.next.user)
-	fmt.Println(lindsay.name)
+	
 }
