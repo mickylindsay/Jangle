@@ -8,6 +8,11 @@ import (
 	"os"
 	"container/list"
 )
+
+type User struct {
+	c *net.Conn
+}
+
 func main() {
 	//Create new list to store every client connection
 	connections := list.New()
@@ -36,17 +41,20 @@ func main() {
 	for {
 		conn, err := listener.Accept()
 		defer conn.Close()
+		user := &User{
+			c : &conn,
+		}
 		//Add new connection onto the end of connections list
-		elem := connections.PushBack(conn)
+		elem := connections.PushBack(user)
 		if err != nil {
 			log.Fatal(err)
 		}
 		fmt.Println("User Connected")
 		//Read from client and write data to every client
-		go func(conn net.Conn, e *list.Element) {
+		go func(user *User, e *list.Element) {
 			for {
 				//Read data from client
-				read_len, err := conn.Read(read_data)
+				read_len, err := (*user.c).Read(read_data)
 				//If server fails to read from client,
 				//the user has disconnected and can be
 				//removed from the lsit fo connections
@@ -57,12 +65,11 @@ func main() {
 				}
 				//Cast read data into a string
 				read_string := string(read_data[:read_len])
-				fmt.Printf("\tRead %d bytes\n", read_len)
 				fmt.Println("\t",read_string)
 				//Write read_string to entire list fo connections
 				write_to_clients(connections, read_string)
 			}
-		}(conn, elem)
+		}(user, elem)
 	}
 }
 //Writes a string to every connection in the list of client connections
@@ -70,7 +77,6 @@ func write_to_clients(connections *list.List, s string){
 	//Iterate over every client
 	for e := connections.Front(); e != nil; e = e.Next() {
 		//Write data to every connection
-		fmt.Fprintf(e.Value.(net.Conn), "%s", s)
+		fmt.Fprintf(*(e.Value.(*User).c), "%s", s)
 	}
-	
 }
