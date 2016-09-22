@@ -41,7 +41,7 @@ func main() {
 			c : &conn,
 		}
 		fmt.Fprintf(*user.c, "Please enter a username:\n")
-		read_len, err := (*user.c).Read(read_data)
+		read_len, err := (*user).Read(read_data)
 		user.name = string(read_data[:read_len - 1])
 		user.id = connections.Len()
 		//Add new connection onto the end of connections list
@@ -54,7 +54,7 @@ func main() {
 		go func(user *User, e *list.Element) {
 			for {
 				//Read data from client
-				read_len, err := (*user.c).Read(read_data)
+				read_len, err := (*user).Read(read_data)
 				//If server fails to read from client,
 				//the user has disconnected and can be
 				//removed from the lsit fo connections
