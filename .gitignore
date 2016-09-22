@@ -11,3 +11,11 @@
 .classpath
 bin/
 *.jar
+
+*.exe
+
+#go binary directory
+go_jangle/bin/
+
+#Database Login Information
+.databasedsn
