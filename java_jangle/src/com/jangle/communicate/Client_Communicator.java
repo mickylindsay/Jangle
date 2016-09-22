@@ -15,7 +15,7 @@ public class Client_Communicator {
 	/**
 	 * Object used to write to the socket
 	 */
-	PrintWriter Write;
+	OutputStream Write;
 
 	/**
 	 * Object used to read form the socket
@@ -28,7 +28,7 @@ public class Client_Communicator {
 
 		// Initialize PrintWriter to write to the output stream
 
-		Write = new PrintWriter(Java_Socket.getOutputStream(), true);
+		Write = Java_Socket.getOutputStream();
 
 		// Initialize buffer reader to read from the input stream
 		Reader = new BufferedReader(new InputStreamReader(Java_Socket.getInputStream()));
@@ -40,10 +40,15 @@ public class Client_Communicator {
 	 * 
 	 * @param Message
 	 *            The message to send to the server
+	 * @throws IOException 
 	 */
-	public void sendToServer(byte[] Message) {
+	public void sendToServer(byte[] Message) throws IOException {
 
-		Write.println(Message);
+		String s = String.valueOf(Message);
+		
+		Write.write(Message);
+		
+		System.out.println(Message);
 
 	}
 
