@@ -48,6 +48,10 @@ public class Text_UI extends Application {
         primaryStage.setScene(new Scene(createContent()));
         primaryStage.show();
     }
+
+    public void addMessage(String message){
+        chatArea.appendText(message);
+    }
 }
 	//Simple text UI. Needs to get implemented for demos / testing
 
