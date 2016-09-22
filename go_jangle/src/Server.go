@@ -40,10 +40,6 @@ func main() {
 		user := &User{
 			c : &conn,
 		}
-		fmt.Fprintf(*user.c, "Please enter a username:\n")
-		read_len, err := (*user).Read(read_data)
-		user.name = string(read_data[:read_len - 1])
-		user.id = connections.Len()
 		//Add new connection onto the end of connections list
 		elem := connections.PushBack(user)
 		if err != nil {
