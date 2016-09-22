@@ -5,11 +5,11 @@ SRC = src
 
 all: server
 
-client: $(SRC)/_test/client.go
+client: $(SRC)/_test/Client.go
 	@echo Compiling Go Test Client
 	@$(GC) -o $(BIN)/_test/$@ $<
 
-server: $(SRC)/server.go
+server: $(SRC)/Server.go
 	@echo Compiling Server
 	@$(GC) -o $(BIN)/$@ $(SRC)/*.go
 
