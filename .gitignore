@@ -16,3 +16,6 @@ bin/
 
 #go binary directory
 go_jangle/bin/
+
+#Database Login Information
+.databasedsn
