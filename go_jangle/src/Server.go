@@ -10,12 +10,15 @@ import (
 )
 
 func main() {
+
+
+	//users_map := make(map[int]*User)
+
+
 	//Create new list to store every client connection
-	connections := list.New()
+	users := list.New()
 	//Address to host server on
 	address := "localhost:9090"
-	//Array to store data read from client
-	read_data := make([]byte, 1024)
 
 	fmt.Println("JANGLE GO SERVER")
 	fmt.Println("address - " + address)
@@ -26,13 +29,7 @@ func main() {
 	}
 	defer listener.Close()
 	//Read server console input and write that input to every user
-	go func(){
-		for {
-			reader := bufio.NewReader(os.Stdin)
-			text, _ := reader.ReadString('\n')
-			write_to_clients(connections,text)
-		}	
-	}()
+	go write_stdio_to_clients(users)
 	//Listen for new client connection
 	for {
 		conn, err := listener.Accept()
@@ -41,32 +38,44 @@ func main() {
 			c : &conn,
 		}
 		//Add new connection onto the end of connections list
-		elem := connections.PushBack(user)
+		elem := users.PushBack(user)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("User Connected: ", user.name)
 		//Read from client and write data to every client
-		go func(user *User, e *list.Element) {
-			for {
-				//Read data from client
-				read_len, err := (*user).Read(read_data)
-				//If server fails to read from client,
-				//the user has disconnected and can be
-				//removed from the lsit fo connections
-				if err != nil {
-					connections.Remove(e)
-					fmt.Println("User Disconnected")
-					break
-				}
-				//Cast read data into a string
-				read_string := string(read_data[:read_len])
-				fmt.Println("\t",read_string)
-				//Write read_string to entire list fo connections
-				write_to_clients(connections, read_string)
-			}
-		}(user, elem)
+		go listen_to_clients(users, user, elem)
 	}
+}
+
+func listen_to_clients(users *list.List, user *User, e *list.Element){
+	//Array to store data read from client
+	read_data := make([]byte, 1024)
+
+	for {
+		//Read data from client
+		read_len, err := (*user).Read(read_data)
+		//If server fails to read from client,
+		//the user has disconnected and can be
+		//removed from the lsit fo connections
+		if err != nil {
+			users.Remove(e)
+			fmt.Println("User Disconnected")
+			break
+		}
+		//Cast read data into a string
+		read_string := string(read_data[:read_len])
+		fmt.Println("\t",read_string)
+		//Write read_string to entire list fo connections
+		write_to_clients(users, read_string)
+	}
+}
+
+func write_stdio_to_clients(connections *list.List){
+	for {
+		reader := bufio.NewReader(os.Stdin)
+		text, _ := reader.ReadString('\n')
+		write_to_clients(connections,text)
+	}	
 }
 
 //Writes a string to every connection in the list of client connections
