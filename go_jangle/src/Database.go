@@ -28,7 +28,7 @@ func Connect_Database() (*sql.DB, error){
 	//Finds executables current directory and read the data in .databasedsn
 	var dsn string
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0])) 
-	dat, err := ioutil.ReadFile(dir + "/.databasedsn")
+	dat, err := ioutil.ReadFile(dir + "/../.databasedsn")
 	//If such file does not exist prompt the user to enter a DSN
 	if err != nil{
 		fmt.Println("Please enter mysql database DSN:")
@@ -41,3 +41,17 @@ func Connect_Database() (*sql.DB, error){
 	//Attempts to open a conncetion to the mysql database
 	return sql.Open("mysql", dsn)
 }
+
+func User_Login(u []byte, p []byte) {
+	var row string;
+	user := string(u)
+	err := jangle.db.QueryRow("SELECT * FROM users WHERE username =?",user).Scan(&row);
+	if(err == sql.ErrNoRows){
+		fmt.Println("No Row Exists");
+	}else if(err != nil){
+		Check_Error(err)
+	}else{
+		fmt.Println(row);
+	}
+}
+

@@ -7,74 +7,89 @@ import (
 	"bufio"
 	"os"
 	"container/list"
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-func main() {
+type Jangle struct {
+	userlist *list.List
+	db *sql.DB
+}
 
+var jangle Jangle;
 
-	//users_map := make(map[int]*User)
-
-
-	//Create new list to store every client connection
-	users := list.New()
-	//Address to host server on
-	address := "localhost:9090"
-
-	fmt.Println("JANGLE GO SERVER")
-	fmt.Println("address - " + address)
-	
-	listener, err := net.Listen("tcp", address)
-	if err != nil {
-		log.Fatal(err)
+func Check_Error(e error){
+	if(e != nil){
+		log.Fatal(e);
 	}
-	defer listener.Close()
+}
+
+func main() {
+	//Create new list to store every client connection
+	jangle.userlist = list.New();
+
+	//Make connection to Database
+	fmt.Println("Connecting to MySQL Database.")
+	var e error;
+	jangle.db, e = Connect_Database();
+	Check_Error(e);
+	fmt.Println("Database Connection Successful.")
+	
+	//Address to host server on
+	address := "localhost:9090";
+
+	fmt.Println("JANGLE GO SERVER");
+	fmt.Println("listening on - " + address);
+	
+	listener, e := net.Listen("tcp", address);
+	Check_Error(e);
+	defer listener.Close();
 	//Read server console input and write that input to every user
-	go write_stdio_to_clients(users)
+	go write_stdio_to_clients(jangle.userlist);
 	//Listen for new client connection
 	for {
-		conn, err := listener.Accept()
-		defer conn.Close()
+		conn, err := listener.Accept();
+		defer conn.Close();
+		fmt.Println("User Connected... Waiting for login message.");
 		user := &User{
 			c : &conn,
-		}
+		};
 		//Add new connection onto the end of connections list
-		elem := users.PushBack(user)
-		if err != nil {
-			log.Fatal(err)
-		}
+		elem := jangle.userlist.PushBack(user);
+		Check_Error(err);
 		//Read from client and write data to every client
-		go listen_to_clients(users, user, elem)
+		go listen_to_clients(jangle.userlist, user, elem);
 	}
 }
 
 func listen_to_clients(users *list.List, user *User, e *list.Element){
 	//Array to store data read from client
-	read_data := make([]byte, 1024)
+	read_data := make([]byte, 1024);
 
 	for {
 		//Read data from client
-		read_len, err := (*user).Read(read_data)
+		read_len, err := (*user).Read(read_data);
 		//If server fails to read from client,
 		//the user has disconnected and can be
 		//removed from the lsit fo connections
 		if err != nil {
-			users.Remove(e)
-			fmt.Println("User Disconnected")
-			break
+			users.Remove(e);
+			fmt.Println("User Disconnected");
+			break;
 		}
 		//Cast read data into a string
-		read_string := string(read_data[:read_len])
-		fmt.Println("\t",read_string)
+		read_string := string(read_data[:read_len]);
+		fmt.Println("\t",read_string);
 		//Write read_string to entire list fo connections
-		write_to_clients(users, read_string)
+		write_to_clients(users, read_string);
 	}
 }
 
 func write_stdio_to_clients(connections *list.List){
 	for {
-		reader := bufio.NewReader(os.Stdin)
-		text, _ := reader.ReadString('\n')
-		write_to_clients(connections,text)
+		reader := bufio.NewReader(os.Stdin);
+		text, _ := reader.ReadString('\n');
+		write_to_clients(connections,text);
 	}	
 }
 
@@ -84,7 +99,5 @@ func write_to_clients(connections *list.List, s string){
 	for e := connections.Front(); e != nil; e = e.Next() {
 		//Write data to every connection
 		e.Value.(*User).Printf("%s", s)
-
-		//fmt.Fprintf(*(e.Value.(*User).c), "%s", s)
 	}
 }

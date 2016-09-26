@@ -3,7 +3,6 @@ package main
 import (
 	"net"
 	"fmt"
-	"container/list"
 )
 
 type User struct {
@@ -38,16 +37,18 @@ func (u *User) Scanf(format string, a ...interface{}) (int, error){
 	return fmt.Fscanf(*(*u).c, format, a...)
 }
 
-func Send_Message(users *list.List, id int, message Message){
-	for e := users.Front(); e != nil; e = e.Next() {
-		if e.Value.(*User).id == id {
+func Send_Message(userid int, message Message) int{
+	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
+		if e.Value.(*User).id == userid {
 			e.Value.(*User).Write(message.Build_message())
+			return e.Value.(*User).id;
 		}
-	}			
+	}
+	return -1;
 }
 
-func Sent_Broadcast(users *list.List, id int, message Message){
-	for e := users.Front(); e != nil; e = e.Next() {
+func Send_Broadcast(message Message){
+	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
 		e.Value.(*User).Write(message.Build_message())
 	}			
 }
