@@ -3,7 +3,7 @@ package com.jangle.communicate;
 import java.io.*;
 import java.net.*;
 
-public class Client_Communicator {
+public class Client_Communicator implements Runnable{
 
 	/**
 	 * Creates a communication for the module, which can write to the write
@@ -21,6 +21,8 @@ public class Client_Communicator {
 	 * Object used to read form the socket
 	 */
 	BufferedReader Reader;
+	
+	private boolean haveMessage;
 
 	public Client_Communicator(String Host, int port) throws UnknownHostException, IOException {
 
@@ -32,6 +34,11 @@ public class Client_Communicator {
 
 		// Initialize buffer reader to read from the input stream
 		Reader = new BufferedReader(new InputStreamReader(Java_Socket.getInputStream()));
+		Thread t = new Thread(this);
+		t.start();
+		
+		haveMessage = false;
+		
 
 	}
 
@@ -51,6 +58,10 @@ public class Client_Communicator {
 		System.out.println(Message);
 
 	}
+	
+	public boolean haveMessage(){
+		return haveMessage;
+	}
 
 	/**
 	 * Reads data from the server. This is a blocking call if there is nothing
@@ -59,8 +70,37 @@ public class Client_Communicator {
 	 * @return The data read from the server
 	 * @throws IOException 
 	 */
-	public String readFromServer() throws IOException {
+	private String readFromServer() throws IOException {
 		 return Reader.readLine();
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+		while (true){
+			
+			try {
+				if (readFromServer() == null){
+					haveMessage = false;
+				}
+				else{
+					haveMessage = true;
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 }
