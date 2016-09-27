@@ -3,7 +3,7 @@ package com.jangle.communicate;
 import java.io.*;
 import java.net.*;
 
-public class Client_Communicator implements Runnable{
+public class Client_Communicator implements Runnable, IComm{
 
 	/**
 	 * Creates a communication for the module, which can write to the write
@@ -22,25 +22,47 @@ public class Client_Communicator implements Runnable{
 	 */
 	BufferedReader Reader;
 	
-	private boolean haveMessage;
+	Client_ParseData parser;
+	
+	//JavaUI UI;
 
 	public Client_Communicator(String Host, int port) throws UnknownHostException, IOException {
 
 		Java_Socket = new Socket(Host, port);
+		Java_Socket.setSendBufferSize(1024);
+		Java_Socket.setReceiveBufferSize(1024);
 
 		// Initialize PrintWriter to write to the output stream
 
 		Write = Java_Socket.getOutputStream();
+		
+		//create parser object
+		parser = new Client_ParseData();
 
 		// Initialize buffer reader to read from the input stream
 		Reader = new BufferedReader(new InputStreamReader(Java_Socket.getInputStream()));
 		Thread t = new Thread(this);
 		t.start();
 		
-		haveMessage = false;
+		
+		//UI = givenUI;
 		
 
 	}
+	
+
+
+	public void sendMessage(String Message, byte[] ServerID, byte[] RoomID) {
+		// TODO Auto-generated method stub
+		
+		//make sure message is the proper size
+		//format among 2 or more if not the proper size
+			//recursive send the data.
+		//call parser to add the needed info
+		//send to the server
+		
+	}
+	
 
 	/**
 	 * Writes a string of data to the server
@@ -49,7 +71,7 @@ public class Client_Communicator implements Runnable{
 	 *            The message to send to the server
 	 * @throws IOException 
 	 */
-	public void sendToServer(byte[] Message) throws IOException {
+	private void sendToServer(byte[] Message) throws IOException {
 
 		String s = String.valueOf(Message);
 		
@@ -57,10 +79,6 @@ public class Client_Communicator implements Runnable{
 		
 		System.out.println(Message);
 
-	}
-	
-	public boolean haveMessage(){
-		return haveMessage;
 	}
 
 	/**
@@ -82,10 +100,10 @@ public class Client_Communicator implements Runnable{
 			
 			try {
 				if (readFromServer() == null){
-					haveMessage = false;
+					
 				}
 				else{
-					haveMessage = true;
+					//UI.sendMessage()
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -102,5 +120,7 @@ public class Client_Communicator implements Runnable{
 		}
 		
 	}
+
+
 
 }
