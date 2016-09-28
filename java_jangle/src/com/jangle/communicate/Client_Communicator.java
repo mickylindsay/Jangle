@@ -2,6 +2,8 @@ package com.jangle.communicate;
 
 import java.io.*;
 import java.net.*;
+import com.jangle.communicate.Comm_CONSTANTS;
+//add import for message 
 
 public class Client_Communicator implements Runnable, IComm{
 
@@ -50,18 +52,14 @@ public class Client_Communicator implements Runnable, IComm{
 
 	}
 	
-
-
-	public void sendMessage(String Message, byte[] ServerID, byte[] RoomID) {
+	public void sendMessage(Message mess, int serverID, int channedID) {
 		// TODO Auto-generated method stub
 		
-		//make sure message is the proper size
-		//format among 2 or more if not the proper size
-			//recursive send the data.
-		//call parser to add the needed info
-		//send to the server
-		
 	}
+	
+
+
+
 	
 
 	/**
@@ -118,6 +116,17 @@ public class Client_Communicator implements Runnable, IComm{
 				e.printStackTrace();
 			}
 		}
+		
+	}
+
+
+
+
+
+
+	@Override
+	public void sendMessage(Message mess, int serverID, int channedID) {
+		// TODO Auto-generated method stub
 		
 	}
 
