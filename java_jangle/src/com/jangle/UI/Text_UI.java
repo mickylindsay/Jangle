@@ -58,7 +58,7 @@ public class Text_UI extends Application {
 			if (comms != null) {
 				try {
 					System.out.println(message);
-					comms.sendToServer(message.getBytes("UTF-8"));
+					comms.sendToServer(message.getBytes("UTF-8"), {0000}, {0000});
 				} catch (Exception e) {
 					chatArea.appendText("Failed to send message! Error code: " + e + "\n");
 				}
