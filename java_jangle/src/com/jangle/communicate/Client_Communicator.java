@@ -5,7 +5,7 @@ import java.net.*;
 import com.jangle.communicate.Comm_CONSTANTS;
 //add import for message 
 
-public class Client_Communicator implements Runnable, IComm{
+public class Client_Communicator implements Runnable{
 
 	/**
 	 * Creates a communication for the module, which can write to the write
