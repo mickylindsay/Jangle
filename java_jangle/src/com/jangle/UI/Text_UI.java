@@ -1,5 +1,6 @@
 package com.jangle.UI;
 
+import com.jangle.client.Client;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,12 +20,15 @@ public class Text_UI extends Application {
 
 	private TextArea chatArea = new TextArea();
 
+	private Client mClient;
+
 	private Parent createContent() {
 		// Setting pref height of UI on .show() call
 		chatArea.setPrefHeight(550);
 
 		// Making a network connection that connects to the server
-		
+		mClient = new Client();
+
 		try {
 			mClientCommunicator = new Client_Communicator("localhost", 9090);
 		} catch (IOException e1) {
