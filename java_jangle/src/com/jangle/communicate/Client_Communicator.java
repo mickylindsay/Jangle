@@ -5,7 +5,7 @@ import java.net.*;
 import com.jangle.communicate.Comm_CONSTANTS;
 //add import for message 
 
-public class Client_Communicator implements Runnable{
+public class Client_Communicator implements Runnable {
 
 	/**
 	 * Creates a communication for the module, which can write to the write
@@ -22,60 +22,53 @@ public class Client_Communicator implements Runnable{
 	/**
 	 * Object used to read form the socket
 	 */
-	BufferedReader Reader;
-	
-	Client_ParseData parser;
-	
-	//JavaUI UI;
+	InputStream Reader;
 
-	public Client_Communicator(String Host, int port) throws UnknownHostException, IOException {
+	/**
+	 * Parser object this Client_Communicator calls on to parse data
+	 */
+	Client_ParseData Parser;
+
+	/**
+	 * 
+	 * @param gParser
+	 *            The parser the Clien_Communicator calls on to parse data
+	 * @param Host
+	 *            The IP address of the server
+	 * @param port
+	 *            port to communicate though with the server
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
+	public Client_Communicator(Client_ParseData gParser, String Host, int port)
+			throws UnknownHostException, IOException {
 
 		Java_Socket = new Socket(Host, port);
-		Java_Socket.setSendBufferSize(1024);
-		Java_Socket.setReceiveBufferSize(1024);
+		//Java_Socket.setSendBufferSize(1024);
+		//Java_Socket.setReceiveBufferSize(1024);
+
+		Parser = gParser;
 
 		// Initialize PrintWriter to write to the output stream
 
 		Write = Java_Socket.getOutputStream();
-		
-		//create parser object
-		parser = new Client_ParseData();
 
 		// Initialize buffer reader to read from the input stream
-		Reader = new BufferedReader(new InputStreamReader(Java_Socket.getInputStream()));
+		Reader = Java_Socket.getInputStream();
+		// Java_Socket.setSoTimeout(5);
 		Thread t = new Thread(this);
 		t.start();
-		
-		
-		//UI = givenUI;
-		
-
 	}
-	
-	public void sendMessage(Message mess, int serverID, int channedID) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-
-
-
-	
 
 	/**
 	 * Writes a string of data to the server
 	 * 
-	 * @param Message
-	 *            The message to send to the server
-	 * @throws IOException 
+	 * @param Data
+	 *            the data to send to the server
+	 * @throws IOException
 	 */
-	private void sendToServer(byte[] Message) throws IOException {
-
-		String s = String.valueOf(Message);
-		
-		Write.write(Message);
-		
-		System.out.println(Message);
+	public void sendToServer(byte[] Data) throws IOException {
+		Write.write(Data);
 
 	}
 
@@ -84,52 +77,50 @@ public class Client_Communicator implements Runnable{
 	 * to read from the server
 	 * 
 	 * @return The data read from the server
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	private String readFromServer() throws IOException {
-		 return Reader.readLine();
+	private byte[] readFromServer() throws IOException {
+		byte[] tmp = new byte[1024];
+		int bytes;
+		try {
+			bytes = Reader.read(tmp);
+			if (bytes < 3){
+				return null;
+			}
+			return tmp;
+
+		} catch (SocketTimeoutException ste) {
+			System.out.println("no");
+		}
+		return tmp;
 	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		
-		while (true){
-			
+
+		while (true) {
+			byte[] tmp = new byte[1024];
 			try {
-				if (readFromServer() == null){
-					
+				tmp = readFromServer();
+				if (tmp != null) {
+					Parser.parseData(new String(tmp));
 				}
-				else{
-					//UI.sendMessage()
-				}
+
+				tmp = null;
+
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
-			
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			// try {
+			// Thread.sleep(0);
+			// } catch (InterruptedException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
 		}
-		
+
 	}
-
-
-
-
-
-
-	@Override
-	public void sendMessage(Message mess, int serverID, int channedID) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
 }
