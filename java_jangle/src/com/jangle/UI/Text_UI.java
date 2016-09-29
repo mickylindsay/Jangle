@@ -1,5 +1,8 @@
 package com.jangle.UI;
 
+import com.jangle.client.Client;
+import com.jangle.client.Message;
+import com.jangle.communicate.Client_ParseData;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,13 +12,17 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.jangle.communicate.Client_Communicator;
 
 
 public class Text_UI extends Application {
-	
-	private Client_Communicator mClientCommunicator;
+
+	private Client_ParseData mClientParseData;
+
+	private Client mClient;
 
 	private TextArea chatArea = new TextArea();
 
@@ -24,12 +31,13 @@ public class Text_UI extends Application {
 		chatArea.setPrefHeight(550);
 
 		// Making a network connection that connects to the server
-		
+
+		mClient = new Client();
+
 		try {
-			mClientCommunicator = new Client_Communicator("localhost", 9090);
-		} catch (IOException e1) {
-			System.out.println("FAILED TO CONNECT TO SERVER");
-			e1.printStackTrace();
+			mClientParseData = new Client_ParseData(mClient, "localhost", 9090);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		TextField messageStage = new TextField();
@@ -37,19 +45,17 @@ public class Text_UI extends Application {
 		// On event listener for submitting entered text in text box
 		messageStage.setOnAction(event -> {
 			String message = "";
-			message += "stuff" + messageStage.getText();
+			message = messageStage.getText();
 			chatArea.appendText(message + "\n");
 
 			// Send the string to the server
-			if (mClientCommunicator != null) {
-				try {
-					System.out.println(message);
-					mClientCommunicator.sendToServer(message.getBytes("UTF-8"), {0000}, {0000});
-				} catch (Exception e) {
-					chatArea.appendText("Failed to send message! Error code: " + e + "\n");
-				}
-				messageStage.clear();
+			try {
+				mClientParseData.sendMessage(new Message(0, message, new SimpleDateFormat("dd-MM-yyyy").format(new Date()), 0, 0));
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+
+
 		});
 
 		VBox root = new VBox(20, chatArea, messageStage);
