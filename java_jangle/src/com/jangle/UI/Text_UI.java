@@ -26,7 +26,7 @@ public class Text_UI extends Application {
 
 	private messageThread messageThread;
 
-	private TextArea chatArea = new TextArea();
+	public TextArea chatArea = new TextArea();
 
 	private Parent createContent() {
 		// Setting pref height of UI on .show() call
@@ -64,7 +64,7 @@ public class Text_UI extends Application {
 
 		VBox root = new VBox(20, chatArea, messageStage);
 		root.setPrefSize(600, 600);
-		messageThread = new messageThread(mClient, chatArea);
+		messageThread = new messageThread(mClient, this);
 		return root;
 	}
 

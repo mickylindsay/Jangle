@@ -1,6 +1,7 @@
 package com.jangle.UI;
 
 import com.jangle.client.Client;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.scene.control.TextArea;
 
 /**
@@ -9,11 +10,11 @@ import javafx.scene.control.TextArea;
 public class messageThread implements Runnable {
 
     private Client mClient;
-    private TextArea mChatArea;
+    private Text_UI ui;
 
-    public messageThread(Client client, TextArea chatArea){
-        this.mChatArea = chatArea;
+    public messageThread(Client client, Text_UI ui){
         this.mClient = client;
+        this.ui = ui;
 
         Thread t = new Thread(this);
         t.start();
@@ -36,7 +37,7 @@ public class messageThread implements Runnable {
                 int difference = mClient.getMessages().size() - size;
                 for (int i = 0; i < difference; i++) {
                     String message = mClient.getMessages().get(mClient.getMessages().size() - 1 - difference + i).getMessageContent();
-                    mChatArea.appendText("server: " + message + "\n");
+                    ui.chatArea.appendText("Server: " + message + "\n");
                 }
             }
 
