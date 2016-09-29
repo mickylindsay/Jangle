@@ -46,9 +46,8 @@ public class Text_UI extends Application {
 
 		// On event listener for submitting entered text in text box
 		messageStage.setOnAction(event -> {
-			String message = "";
-			message = messageStage.getText();
-			chatArea.appendText("me:" + message + "\n");
+			String message = messageStage.getText();
+			chatArea.appendText("me: " + message + "\n");
 
 			// Send the string to the server
 			try {
