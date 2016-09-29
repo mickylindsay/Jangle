@@ -24,6 +24,8 @@ public class Text_UI extends Application {
 
 	private Client mClient;
 
+	private messageThread messageThread;
+
 	private TextArea chatArea = new TextArea();
 
 	private Parent createContent() {
@@ -46,7 +48,7 @@ public class Text_UI extends Application {
 		messageStage.setOnAction(event -> {
 			String message = "";
 			message = messageStage.getText();
-			chatArea.appendText(message + "\n");
+			chatArea.appendText("me:" + message + "\n");
 
 			// Send the string to the server
 			try {
@@ -55,11 +57,14 @@ public class Text_UI extends Application {
 				e.printStackTrace();
 			}
 
+			messageStage.clear();
 
 		});
 
+
 		VBox root = new VBox(20, chatArea, messageStage);
 		root.setPrefSize(600, 600);
+		messageThread = new messageThread(mClient, chatArea);
 		return root;
 	}
 
@@ -76,5 +81,6 @@ public class Text_UI extends Application {
 	public void addMessage(String message) {
 		chatArea.appendText(message);
 	}
+
 }
 // Simple text UI. Needs to get implemented for demos / testing
