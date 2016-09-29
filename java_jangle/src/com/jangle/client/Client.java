@@ -40,6 +40,24 @@ public class Client {
         channelID = 0;
     }
 
+    public void addMessage(Message message) {
+        mMessages.add(message);
+    }
+
+    public void addUser(User user) {
+        mUsers.add(user);
+    }
+
+    public void removeUser(User user) {
+        if (mUsers.contains(user))
+            mUsers.remove(user);
+    }
+
+    public void removeMessage(Message message) {
+        if (mMessages.contains(message))
+            mMessages.remove(message);
+    }
+
     public List<User> getUsers() {
         return mUsers;
     }
