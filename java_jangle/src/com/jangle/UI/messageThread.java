@@ -36,9 +36,10 @@ public class messageThread implements Runnable {
             else if (size < mClient.getMessages().size()){
                 int difference = mClient.getMessages().size() - size;
                 for (int i = 0; i < difference; i++) {
-                    String message = mClient.getMessages().get(mClient.getMessages().size() - 1 - difference + i).getMessageContent();
+                    String message = mClient.getMessages().get(mClient.getMessages().size() - difference + i).getMessageContent();
                     ui.chatArea.appendText("Server: " + message + "\n");
                 }
+                size =mClient.getMessages().size();
             }
 
         }
