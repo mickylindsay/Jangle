@@ -294,10 +294,10 @@ func Parse_data (user User, data []byte) {
 			username: data[1:20],
 			password: data[21:]}
 
-		test := User_Create(m.username, m.password)
-		if(test == 1) {
+		err := User_Create(m.username, m.password)
+		if(err == nil) {
 			data[0] = login_success
-		} else if(test == -1) {
+		} else {
 			data[0] = create_user_fail
 		}
 		Parse_data(user, data)
@@ -314,10 +314,11 @@ func Parse_data (user User, data []byte) {
 			username: data[1:20],
 			password: data[21:]}
 
-		test := User_Login(m.username, m.password)
-		if(test == 1) {
+		id, err := User_Login(m.username, m.password)
+		if(err == nil) {
 			data[0] = login_success
-		} else if(test == -1) {
+			copy(data[1:4], Int_Converter(id))
+		} else {
 			data[0] = login_fail
 		}
 		Parse_data(user, data)
@@ -333,7 +334,7 @@ func Parse_data (user User, data []byte) {
 			code: data[0],
 			userid: data[1:4]}
 
-		u := Btye_Converter(m.userid)
+		u := Byte_Converter(m.userid)
 		Send_Message(u, m.Build_message())
 	
 	} else if(data[0] == message_client_send) {
@@ -369,7 +370,7 @@ func Parse_data (user User, data []byte) {
 
 		num := Btye_Converter(m.num_message)
 		for i := 1; i <= num; i++ {
-			
+			//waiting...
 		}
 	
 	} else if(data[0] == request_all_userid) {
