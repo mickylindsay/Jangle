@@ -23,6 +23,7 @@ import (
 		log.Fatal(err)
 	}
 }*/
+
 //Returns a connection to the mysql database at the location either prompted or found in the file .databasedsn in the directory of the executable
 func Connect_Database() (*sql.DB, error){
 	//Finds executables current directory and read the data in .databasedsn
@@ -39,13 +40,23 @@ func Connect_Database() (*sql.DB, error){
 		dsn = string(dat)
 	}
 	//Attempts to open a conncetion to the mysql database
-	return sql.Open("mysql", dsn)
+	db , err := sql.Open("mysql", dsn);
+	//_, err = jangle.db.Exec("DROP TABLE messages");
+	//_, err = jangle.db.Exec("CREATE TABLE messages (userid INT UNSIGNED, time INT UNSIGNED, messageid INT UNSIGNED, messagetext VARCHAR(2147483647), serverid INT UNISIGNED, roomid INT UNSIGNED  PRIMARY KEY (messageid),	FOREIGN KEY (userid) REFERENCES users (userid), FOREIGN KEY (serverid) REFERENCES servers (serverid), FOREIGN KEY (roomid) REFERENCES rooms (roomid));");
+
+	return db, err
 }
 
-func User_Login(u []byte, p []byte) (int, error) {
-	var userid int;
+func User_Login(u []byte, p []byte) (uint, error) {
+	var userid uint;
 	err := jangle.db.QueryRow("SELECT userid FROM users WHERE username =? AND passwordhash=?",string(u), string(p)).Scan(&userid);
 	return userid, err;
+}
+
+func Next_Userid() uint{
+	var temp uint;
+	_ = jangle.db.QueryRow("SELECT MAX(userid) AS userid FROM users").Scan(&temp);
+	return temp;
 }
 
 func User_Create(u []byte, p []byte) error{
@@ -53,8 +64,7 @@ func User_Create(u []byte, p []byte) error{
 	return err;
 }
 
-func Next_Userid() int{
-	var temp int;
-	_ = jangle.db.QueryRow("SELECT MAX(userid) AS userid FROM users").Scan(&temp);
-	return temp;
-}
+/*func Write_Message() error{
+	_, err := jangle.db.Exec("INSERT INTO messages ()")
+}*/
+

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"bufio"
-	"os"
+	//"bufio"
+	//"os"
 	"container/list"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
@@ -45,7 +45,7 @@ func main() {
 	Check_Error(e);
 	defer listener.Close();
 	//Read server console input and write that input to every user
-	go write_stdio_to_clients(jangle.userlist);
+//	go write_stdio_to_clients(jangle.userlist);
 	//Listen for new client connection
 	for {
 		conn, err := listener.Accept();
@@ -58,40 +58,41 @@ func main() {
 		elem := jangle.userlist.PushBack(user);
 		Check_Error(err);
 		//Read from client and write data to every client
-		go listen_to_clients(jangle.userlist, user, elem);
+		go listen_to_clients(user, elem);
 	}
 }
 
-func listen_to_clients(users *list.List, user *User, e *list.Element){
+func listen_to_clients(user *User, e *list.Element){
 	//Array to store data read from client
 	read_data := make([]byte, 1024);
 
 	for {
 		//Read data from client
-		read_len, err := (*user).Read(read_data);
+		_, err := (*user).Read(read_data);
 		//If server fails to read from client,
 		//the user has disconnected and can be
 		//removed from the lsit fo connections
 		if err != nil {
-			users.Remove(e);
+			jangle.userlist.Remove(e);
 			fmt.Println("User Disconnected");
 			break;
 		}
+		Parse_data(read_data);
 		//Cast read data into a string
-		read_string := string(read_data[:read_len]);
-		fmt.Println("\t",read_string);
+		//read_string := string(read_data[:read_len]);
+		//fmt.Println("\t",read_string);
 		//Write read_string to entire list fo connections
-		write_to_clients(users, read_string);
+		//write_to_clients(users, read_string);
 	}
 }
 
-func write_stdio_to_clients(connections *list.List){
+/*func write_stdio_to_clients(connections *list.List){
 	for {
 		reader := bufio.NewReader(os.Stdin);
 		text, _ := reader.ReadString('\n');
 		write_to_clients(connections,text);
 	}	
-}
+}*/
 
 //Writes a string to every connection in the list of client connections
 func write_to_clients(connections *list.List, s string){
