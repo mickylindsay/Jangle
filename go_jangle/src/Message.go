@@ -294,7 +294,7 @@ func Parse_data (user User, data []byte) {
 			username: data[1:20],
 			password: data[21:]}
 
-		err := User_Create(m.username, m.password)
+		err := User_Create(data[1:20], data[21:])
 		if(err == nil) {
 			data[0] = login_success
 		} else {
@@ -314,7 +314,7 @@ func Parse_data (user User, data []byte) {
 			username: data[1:20],
 			password: data[21:]}
 
-		id, err := User_Login(m.username, m.password)
+		id, err := User_Login(data[1:20], data[21:])
 		if(err == nil) {
 			data[0] = login_success
 			copy(data[1:4], Int_Converter(id))
@@ -334,7 +334,7 @@ func Parse_data (user User, data []byte) {
 			code: data[0],
 			userid: data[1:4]}
 
-		u := Byte_Converter(m.userid)
+		u := Byte_Converter(data[1:4])
 		Send_Message(u, m.Build_message())
 	
 	} else if(data[0] == message_client_send) {
@@ -368,7 +368,7 @@ func Parse_data (user User, data []byte) {
 			userid: data[9:12],
 			num_message: data[13]}
 
-		num := Btye_Converter(m.num_message)
+		num := Btye_Converter(data[13])
 		for i := 1; i <= num; i++ {
 			//waiting...
 		}
@@ -382,9 +382,8 @@ func Parse_data (user User, data []byte) {
 	} else if(data[0] == request_display_name) {
 		m = Double_userid{
 			code: data[0],
-			serverid: data[1:4],
-			userid: data[5:8],
-			requested_userid: data[9:12]}
+			userid: data[1:4],
+			requested_userid: data[5:8]}
 
 	} else if(data[0] == request_all_serverid) {
 		m = Double_userid{
@@ -473,8 +472,5 @@ func Parse_data (user User, data []byte) {
 			roomid: data[5:8],
 			userid: data[9:12],
 			new_room_display_name: data[13:]}
-	
-	} else {
-		return nil
 	}
 }
