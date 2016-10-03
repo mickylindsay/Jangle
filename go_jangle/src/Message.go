@@ -335,7 +335,7 @@ func Parse_data (user User, data []byte) {
 			userid: data[1:4]}
 
 		u := Byte_Converter(data[1:4])
-		Send_Message(u, m.Build_message())
+		Send_Message(u, m)
 	
 	} else if(data[0] == message_client_send) {
 		m = Message_send{
@@ -358,7 +358,7 @@ func Parse_data (user User, data []byte) {
 			time: data[13:16],
 			text: data[17:]}
 
-		Send_Broadcast(m.Build_message())
+		Send_Broadcast(m)
 	
 	} else if(data[0] == request_n_messages) {
 		m = Multi_message{
