@@ -19,9 +19,11 @@ public class Message {
 	public Message(int userID, String messageContent, String timeStamp, int serverID, int channelID) {
 		this.channelID = channelID;
 		this.userID = userID;
-		this.messageContent = messageContent;
+		this.messageContent = messageContent.trim();
 		this.timeStamp = timeStamp;
 		this.serverID = serverID;
+		
+		
 	}
 
 	public Message() {
@@ -80,7 +82,7 @@ public class Message {
 	}
 
 	public void setMessageContent(String messageContent) {
-		this.messageContent = messageContent;
+		this.messageContent = messageContent.trim();
 	}
 
 	public String getTimeStamp() {

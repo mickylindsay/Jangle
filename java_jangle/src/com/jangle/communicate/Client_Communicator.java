@@ -78,23 +78,20 @@ public class Client_Communicator implements Runnable {
 	 */
 	private byte[] readFromServer() throws IOException {
 		byte[] tmp = new byte[1024];
-		int bytes;
+		int amount;
 		try {
-			bytes = Reader.read(tmp);
-			if (bytes < 3){
-				return null;
-			}
+			amount = Reader.read(tmp);
+			System.out.println(amount);
 			return tmp;
 
 		} catch (SocketTimeoutException ste) {
 			System.out.println("no");
 		}
-		return tmp;
+		return null;
 	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 
 		while (true) {
 			byte[] tmp = new byte[1024];
@@ -110,13 +107,6 @@ public class Client_Communicator implements Runnable {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-
-			// try {
-			// Thread.sleep(0);
-			// } catch (InterruptedException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// }
 		}
 
 	}
