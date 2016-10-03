@@ -1,15 +1,25 @@
 package main
+
 import (
 	"net"
 	"fmt"
-
 )
 
 type User struct {
 	c *net.Conn
-	name string
+	display_name string
 	id int
+	logged_in bool
 }
+
+/*func NewUser(conn *new.Conn, userid int) *User{
+	user := &User{
+		c: conn,
+		id: userid,
+		logged_in: false,
+	}
+	return user
+}*/
 
 func (u *User) Read(read_data []byte) (int, error){
 	return (*(*u).c).Read(read_data)
@@ -27,6 +37,18 @@ func (u *User) Scanf(format string, a ...interface{}) (int, error){
 	return fmt.Fscanf(*(*u).c, format, a...)
 }
 
-func (u *User) Message(message string) {
-	u.Printf("%s: %s", u.name, message)
+func Send_Message(userid int, message Message) int{
+	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
+		if e.Value.(*User).id == userid {
+			e.Value.(*User).Write(message.Build_message())
+			return e.Value.(*User).id;
+		}
+	}
+	return -1;
+}
+
+func Send_Broadcast(message Message){
+	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
+		e.Value.(*User).Write(message.Build_message())
+	}			
 }
