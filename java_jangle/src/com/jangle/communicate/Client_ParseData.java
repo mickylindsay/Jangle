@@ -111,7 +111,7 @@ public class Client_ParseData implements IPARSER {
 		 * 
 		 * }
 		 */
-		Cl.addMessage(new Message(0, tmp, "PlaceHolder", 0, 0));
+		Cl.addMessage(new Message(0, tmp, System.currentTimeMillis(), 0, 0));
 		// System.out.println("Unknown opcode " + opcode);
 	}
 
