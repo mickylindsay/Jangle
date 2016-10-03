@@ -257,7 +257,7 @@ func(m New_room_display_name) Build_message() []byte {
 	return message
 }
 
-func Parse_data (data []byte) Message {
+func Parse_data (user User, data []byte) {
 	var create_user byte = 0
 	var create_user_fail byte = 1
 	var login byte = 2
@@ -288,28 +288,53 @@ func Parse_data (data []byte) Message {
 
 	var m Message
 
-	if (data[0] == create_user) {
+	if(data[0] == create_user) {
 		m = Username_password{
+			code: data[0],
 			username: data[1:20],
 			password: data[21:]}
+
+		test := User_Create(m.username, m.password)
+		if(test == 1) {
+			data[0] = login_success
+		} else if(test == -1) {
+			data[0] = create_user_fail
+		}
+		Parse_data(user, data)
 	
 	} else if(data[0] == create_user_fail) {
 		m = Base{
 			code: data[0]}
+
+		user.Write(m.Build_message())
 	
 	} else if(data[0] == login) {
 		m = Username_password{
+			code: data[0],
 			username: data[1:20],
 			password: data[21:]}
+
+		test := User_Login(m.username, m.password)
+		if(test == 1) {
+			data[0] = login_success
+		} else if(test == -1) {
+			data[0] = login_fail
+		}
+		Parse_data(user, data)
 	
 	} else if(data[0] == login_fail) {
 		m = Base{
 			code: data[0]}
+
+		user.Write(m.Build_message())
 	
 	} else if(data[0] == login_success) {
 		m = Userid{
 			code: data[0],
 			userid: data[1:4]}
+
+		u := Btye_Converter(m.userid)
+		Send_Message(u, m.Build_message())
 	
 	} else if(data[0] == message_client_send) {
 		m = Message_send{
@@ -318,6 +343,10 @@ func Parse_data (data []byte) Message {
 			roomid: data[5:8],
 			userid: data[9:12],
 			text: data[13:]}
+
+		data[0] = message_client_recieve
+		data = Time_Stamp(data)
+		Parse_data(user, data)
 	
 	} else if(data[0] == message_client_recieve) {
 		m = Message_recieve{
@@ -327,6 +356,8 @@ func Parse_data (data []byte) Message {
 			userid: data[9:12],
 			time: data[13:16],
 			text: data[17:]}
+
+		Send_Broadcast(m.Build_message())
 	
 	} else if(data[0] == request_n_messages) {
 		m = Multi_message{
@@ -335,6 +366,11 @@ func Parse_data (data []byte) Message {
 			roomid: data[5:8],
 			userid: data[9:12],
 			num_message: data[13]}
+
+		num := Btye_Converter(m.num_message)
+		for i := 1; i <= num; i++ {
+			
+		}
 	
 	} else if(data[0] == request_all_userid) {
 		m = Serverid{
@@ -345,9 +381,10 @@ func Parse_data (data []byte) Message {
 	} else if(data[0] == request_display_name) {
 		m = Double_userid{
 			code: data[0],
-			userid: data[1:4],
-			requested_userid: data[5:8]}
-	
+			serverid: data[1:4],
+			userid: data[5:8],
+			requested_userid: data[9:12]}
+
 	} else if(data[0] == request_all_serverid) {
 		m = Double_userid{
 			code: data[0],
@@ -439,6 +476,4 @@ func Parse_data (data []byte) Message {
 	} else {
 		return nil
 	}
-
-	return m
 }
