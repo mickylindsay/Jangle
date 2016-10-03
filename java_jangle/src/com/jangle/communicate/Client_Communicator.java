@@ -101,7 +101,7 @@ public class Client_Communicator implements Runnable {
 			try {
 				tmp = readFromServer();
 				if (tmp != null) {
-					Parser.parseData(new String(tmp));
+					Parser.parseData(tmp);
 				}
 
 				tmp = null;
