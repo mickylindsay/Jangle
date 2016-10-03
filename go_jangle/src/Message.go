@@ -368,8 +368,9 @@ func Parse_data (user User, data []byte) {
 			userid: data[9:12],
 			num_message: data[13]}
 
-		num := Byte_Converter(data[13])
-		for i := 1; i <= num; i++ {
+		num := uint(data[13])
+		var i uint
+		for i = 1; i <= num; i++ {
 			//waiting...
 		}
 	
