@@ -12,15 +12,6 @@ type User struct {
 	logged_in bool
 }
 
-/*func NewUser(conn *new.Conn, userid int) *User{
-	user := &User{
-		c: conn,
-		id: userid,
-		logged_in: false,
-	}
-	return user
-}*/
-
 func (u *User) Read(read_data []byte) (int, error){
 	return (*(*u).c).Read(read_data)
 }

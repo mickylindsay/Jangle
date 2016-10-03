@@ -301,7 +301,7 @@ func Parse_data (data []byte) Message {
 		m = Username_password{
 			username: data[1:20],
 			password: data[21:]}
-	
+		
 	} else if(data[0] == login_fail) {
 		m = Base{
 			code: data[0]}

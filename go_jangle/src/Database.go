@@ -42,16 +42,19 @@ func Connect_Database() (*sql.DB, error){
 	return sql.Open("mysql", dsn)
 }
 
-func User_Login(u []byte, p []byte) {
-	var row string;
-	user := string(u)
-	err := jangle.db.QueryRow("SELECT * FROM users WHERE username =?",user).Scan(&row);
-	if(err == sql.ErrNoRows){
-		fmt.Println("No Row Exists");
-	}else if(err != nil){
-		Check_Error(err)
-	}else{
-		fmt.Println(row);
-	}
+func User_Login(u []byte, p []byte) (int, error) {
+	var userid int;
+	err := jangle.db.QueryRow("SELECT userid FROM users WHERE username =? AND passwordhash=?",string(u), string(p)).Scan(&userid);
+	return userid, err;
 }
 
+func User_Create(u []byte, p []byte) error{
+	_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);",Next_Userid()+1, string(u), string(u), "TEMPPATH", string(p), "0000");
+	return err;
+}
+
+func Next_Userid() int{
+	var temp int;
+	_ = jangle.db.QueryRow("SELECT MAX(userid) AS userid FROM users").Scan(&temp);
+	return temp;
+}
