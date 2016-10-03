@@ -313,6 +313,7 @@ func Parse_data (user User, data []byte) {
 			code: data[0],
 			username: data[1:20],
 			password: data[21:]}
+<<<<<<< HEAD
 
 		test := User_Login(m.username, m.password)
 		if(test == 1) {
@@ -322,6 +323,9 @@ func Parse_data (user User, data []byte) {
 		}
 		Parse_data(user, data)
 	
+=======
+		
+>>>>>>> 94325abf7cc0693865fcd6be208051e2b7ae7f4c
 	} else if(data[0] == login_fail) {
 		m = Base{
 			code: data[0]}
@@ -476,4 +480,10 @@ func Parse_data (user User, data []byte) {
 	} else {
 		return nil
 	}
+<<<<<<< HEAD
 }
+=======
+
+	return m
+}
+>>>>>>> 94325abf7cc0693865fcd6be208051e2b7ae7f4c
