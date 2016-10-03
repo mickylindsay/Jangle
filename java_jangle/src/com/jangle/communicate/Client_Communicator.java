@@ -44,9 +44,6 @@ public class Client_Communicator implements Runnable {
 			throws UnknownHostException, IOException {
 
 		Java_Socket = new Socket(Host, port);
-		//Java_Socket.setSendBufferSize(1024);
-		//Java_Socket.setReceiveBufferSize(1024);
-
 		Parser = gParser;
 
 		// Initialize PrintWriter to write to the output stream

@@ -1,6 +1,7 @@
 package com.jangle.Main;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.jangle.*;
 import com.jangle.client.Client;
@@ -20,57 +21,15 @@ public class jangle_Main {
 		 */
 
 		
-		byte T = (byte)10;
-		System.out.println(T);
+		Message test = new Message(0, "test", "1234", 0, 0);
 		
-		Client test = new Client();
-		Client_ParseData Parse = null;
-		try {
-			Parse = new Client_ParseData(test, "localhost", 9090);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			System.out.println("No server for you");
-			e1.printStackTrace();
-		}
-
-		Message mess = new Message();
-		mess.setServerID(10);
-		mess.setMessageContent("test");
-
-		try {
-			Parse.sendMessage(mess);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println(test.getMessages().size());
+		byte[] s = test.getByteArray();
 		
-		Message mess2 = new Message();
-		mess2.setMessageContent("test2");
-
-		try {
-			Parse.sendMessage(mess2);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for (int i = 0; i < s.length; i++){
+			System.out.print(s[i] + " ");
 		}
 		
-		System.out.println(test.getMessages().size());
 		
-		System.out.println("END");
+		
 	}
 }
