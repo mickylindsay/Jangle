@@ -25,16 +25,16 @@ public class Text_UI extends Application {
 	private Client mClient;
 
 	private messageThread messageThread;
-	private userThread userThread;
 
 	public TextArea chatArea = new TextArea();
 
 	private Parent createContent() {
 		// Setting pref height of UI on .show() call
 		chatArea.setPrefHeight(550);
-		chatArea.setEditable(false);
+
+		// Making a network connection that connects to the server
+
 		mClient = new Client();
-		TextField messageStage = new TextField();
 
 		try {
 			mClientParseData = new Client_ParseData(mClient, "localhost", 9090);
@@ -42,22 +42,28 @@ public class Text_UI extends Application {
 			e.printStackTrace();
 		}
 
+		TextField messageStage = new TextField();
+
 		// On event listener for submitting entered text in text box
 		messageStage.setOnAction(event -> {
 			String message = messageStage.getText();
+			chatArea.appendText("me: " + message + "\n");
+
 			// Send the string to the server
 			try {
-				mClientParseData.sendMessage(new Message(0, message, System.currentTimeMillis(), 0, 0));
+				mClientParseData.sendMessage(new Message(0, message, new SimpleDateFormat("dd-MM-yyyy").format(new Date()), 0, 0));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+
 			messageStage.clear();
+
 		});
+
 
 		VBox root = new VBox(20, chatArea, messageStage);
 		root.setPrefSize(600, 600);
 		messageThread = new messageThread(mClient, this);
-		userThread = new userThread(mClient, this);
 		return root;
 	}
 

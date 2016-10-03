@@ -7,11 +7,11 @@ public class Message {
 
     private int userID;
     private String messageContent;
-    private long timeStamp;
+    private String timeStamp;
     private int serverID;
     private int channelID;
 
-    public Message(int userID, String messageContent, long timeStamp, int serverID, int channelID) {
+    public Message(int userID, String messageContent, String timeStamp, int serverID, int channelID) {
         this.channelID = channelID;
         this.userID = userID;
         this.messageContent = messageContent;
@@ -23,7 +23,7 @@ public class Message {
         this.channelID = 0;
         this.userID = 0;
         this.messageContent = null;
-        this.timeStamp = 0;
+        this.timeStamp = null;
         this.serverID = 0;
     }
 
@@ -43,11 +43,11 @@ public class Message {
         this.messageContent = messageContent;
     }
 
-    public long getTimeStamp() {
+    public String getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(long timeStamp) {
+    public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
 
