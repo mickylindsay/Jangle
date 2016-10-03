@@ -77,7 +77,7 @@ func listen_to_clients(user *User, e *list.Element){
 			fmt.Println("User Disconnected");
 			break;
 		}
-		Parse_data(read_data);
+		Parse_data(user, read_data);
 		//Cast read data into a string
 		//read_string := string(read_data[:read_len]);
 		//fmt.Println("\t",read_string);
