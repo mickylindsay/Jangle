@@ -257,7 +257,7 @@ func(m New_room_display_name) Build_message() []byte {
 	return message
 }
 
-func Parse_data (user User, data []byte) {
+func Parse_data (user *User, data []byte) {
 	var create_user byte = 0
 	var create_user_fail byte = 1
 	var login byte = 2
@@ -321,6 +321,7 @@ func Parse_data (user User, data []byte) {
 		} else {
 			data[0] = login_fail
 		}
+		user.id = id
 		Parse_data(user, data)
 	
 	} else if(data[0] == login_fail) {
