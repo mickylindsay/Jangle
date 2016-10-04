@@ -1,6 +1,8 @@
 package com.jangle.UI;
 
 import com.jangle.client.Client;
+import com.jangle.client.Message;
+import com.jangle.communicate.Client_ParseData;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -10,54 +12,55 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.jangle.communicate.Client_Communicator;
 
 
 public class Text_UI extends Application {
-	
-	private Client_Communicator mClientCommunicator;
 
-	private TextArea chatArea = new TextArea();
+	private Client_ParseData mClientParseData;
+
+	private messageThread messageThread;
+	private userThread userThread;
+
+	public TextArea chatArea = new TextArea();
 
 	private Client mClient;
 
 	private Parent createContent() {
 		// Setting pref height of UI on .show() call
 		chatArea.setPrefHeight(550);
+		chatArea.setEditable(false);
+		mClient = new Client();
+		TextField messageStage = new TextField();
 
 		// Making a network connection that connects to the server
 		mClient = new Client();
 
 		try {
-			mClientCommunicator = new Client_Communicator("localhost", 9090);
-		} catch (IOException e1) {
-			System.out.println("FAILED TO CONNECT TO SERVER");
-			e1.printStackTrace();
+			mClientParseData = new Client_ParseData(mClient, "localhost", 9090);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
-		TextField messageStage = new TextField();
 
 		// On event listener for submitting entered text in text box
 		messageStage.setOnAction(event -> {
-			String message = "";
-			message += "stuff" + messageStage.getText();
-			chatArea.appendText(message + "\n");
-
+			String message = messageStage.getText();
 			// Send the string to the server
-			if (mClientCommunicator != null) {
-				try {
-					System.out.println(message);
-					mClientCommunicator.sendToServer(message.getBytes("UTF-8"), {0000}, {0000});
-				} catch (Exception e) {
-					chatArea.appendText("Failed to send message! Error code: " + e + "\n");
-				}
-				messageStage.clear();
+			try {
+				mClientParseData.sendMessage(new Message(0, message, System.currentTimeMillis(), 0, 0));
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+			messageStage.clear();
 		});
 
 		VBox root = new VBox(20, chatArea, messageStage);
 		root.setPrefSize(600, 600);
+		messageThread = new messageThread(mClient, this);
+		userThread = new userThread(mClient, this);
 		return root;
 	}
 
@@ -74,5 +77,6 @@ public class Text_UI extends Application {
 	public void addMessage(String message) {
 		chatArea.appendText(message);
 	}
+
 }
 // Simple text UI. Needs to get implemented for demos / testing
