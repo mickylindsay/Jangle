@@ -408,9 +408,9 @@ func Parse_data (user *User, data []byte) {
 			offset: data[13]}
 
 		num := uint(data[13])
-		var i uint
-		for i = 1; i <= num; i++ {
-			//waiting...
+		messages := Request_Offset_Messages(num)
+		for i := 0; i < len(messages); i++ {
+			Parse_data(user, messages[i].Build_message())
 		}
 	
 	} else if(data[0] == request_all_userid) {
