@@ -76,6 +76,23 @@ func(m Serverid) Build_message() []byte {
 }
 
 //[code:1,serverid:4,roomid:4,userid:4]
+type Serverid_userid struct {
+	code byte
+	serverid []byte
+	userid []byte
+	requested_userid []byte
+}
+
+func(m Serverid_userid) Build_message() []byte {
+	message := make([]byte, 13)
+	message[0] = m.code
+	copy(message[1:4], m.serverid[:])
+	copy(message[5:8], m.userid[:])
+	copy(message[9:12], m.requested_userid[:])
+	return message
+}
+
+//[code:1,serverid:4,roomid:4,userid:4]
 type Roomid struct {
 	code byte
 	serverid []byte
@@ -403,10 +420,11 @@ func Parse_data (user *User, data []byte) {
 			userid: data[5:8]}
 	
 	} else if(data[0] == request_display_name) {
-		m = Double_userid{
+		m = Serverid_userid{
 			code: data[0],
-			userid: data[1:4],
-			requested_userid: data[5:8]}
+			serverid: data[1:4],
+			userid: data[5:8],
+			requested_userid: data[9:12]}
 
 	} else if(data[0] == request_all_serverid) {
 		m = Double_userid{
