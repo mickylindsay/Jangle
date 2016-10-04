@@ -21,12 +21,17 @@ func Int_Converter (num uint) []byte {
 	return data
 }
 
+// Returns Current Millisecond time as unsigned int
+func Milli_Time() uint{
+	return uint(time.Now().UnixNano() / 1000000);
+}
+
 func Time_Stamp (data []byte) []byte {
 	new_data := make([]byte, len(data) + 4)
 	copy(new_data[0:12], data[0:12])
 	for i := 13; i < len(data); i++ {
 		new_data[i + 4] = data[i]
 	}
-	copy(new_data[13:16], Int_Converter(uint(time.Now().UnixNano() / (1000000))))
+	copy(new_data[13:16], Int_Converter(Milli_Time()))
 	return new_data
 }
