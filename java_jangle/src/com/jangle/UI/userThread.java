@@ -10,9 +10,9 @@ import javafx.scene.control.TextArea;
 public class userThread implements Runnable {
 
     private Client mClient;
-    private Text_UI ui;
+    private FXMLController ui;
 
-    public userThread(Client client, Text_UI ui){
+    public userThread(Client client, FXMLController ui){
         this.mClient = client;
         this.ui = ui;
 
