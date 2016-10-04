@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -42,12 +45,24 @@
                                             <items>
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="482.0" prefWidth="665.0">
                                                    <children>
-                                                      <TextArea fx:id="messageArea" prefHeight="474.0" prefWidth="667.0" />
+                                                      <ImageView id="chatBackground" fitHeight="474.0" fitWidth="665.0" pickOnBounds="true">
+                                                         <image>
+                                                            <Image url="@../img/testBackground.jpg" />
+                                                         </image>
+                                                         <effect>
+                                                            <MotionBlur>
+                                                               <input>
+                                                                  <GaussianBlur />
+                                                               </input>
+                                                            </MotionBlur>
+                                                         </effect>
+                                                      </ImageView>
+                                                      <ListView fx:id="messageArea" prefHeight="474.0" prefWidth="667.0" stylesheets="@../css/messageArea.css" />
                                                    </children>
                                                 </AnchorPane>
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                                    <children>
-                                                      <TextField fx:id="messageStage" prefHeight="38.0" prefWidth="665.0" promptText="Enter your message here" onAction="#handleSendMessage" />
+                                                      <TextField fx:id="messageStage" onAction="#handleSendMessage" prefHeight="38.0" prefWidth="665.0" promptText="Enter your message here" />
                                                    </children>
                                                 </AnchorPane>
                                             </items>

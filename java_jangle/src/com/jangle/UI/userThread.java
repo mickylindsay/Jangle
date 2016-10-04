@@ -2,6 +2,8 @@ package com.jangle.UI;
 
 import com.jangle.client.Client;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TextArea;
 
 /**
@@ -11,10 +13,12 @@ public class userThread implements Runnable {
 
     private Client mClient;
     private FXMLController ui;
+    private ObservableList<String> users;
 
     public userThread(Client client, FXMLController ui){
         this.mClient = client;
         this.ui = ui;
+        this.users = FXCollections.observableArrayList();
 
         Thread t = new Thread(this);
         t.start();

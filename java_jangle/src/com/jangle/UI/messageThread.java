@@ -2,6 +2,8 @@ package com.jangle.UI;
 
 import com.jangle.client.Client;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 
@@ -12,11 +14,13 @@ public class messageThread implements Runnable {
 
     private Client mClient;
     private FXMLController ui;
+    private ObservableList<String> messages;
 
 
     public messageThread(Client client, FXMLController ui){
         this.mClient = client;
         this.ui = ui;
+        this.messages = FXCollections.observableArrayList();
 
         Thread t = new Thread(this);
         t.start();
@@ -39,7 +43,8 @@ public class messageThread implements Runnable {
                 int difference = mClient.getMessages().size() - size;
                 for (int i = 0; i < difference; i++) {
                     //String message = mClient.getMessages().get(mClient.getMessages().size() - difference + i).getMessageContent();
-                    ui.addMessage(mClient.getMessages().get(mClient.getMessages().size() - difference + i));
+                    messages.add(mClient.getMessages().get(mClient.getMessages().size() - difference + i).getMessageContent());
+                    ui.updateMessages(messages);
                 }
                 size = mClient.getMessages().size();
             }

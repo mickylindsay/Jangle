@@ -67,6 +67,10 @@ public class Message {
         this.channelID = channelID;
     }
 
+    public String toString(){
+        return userID + "\n" + messageContent + "    " + timeStamp;
+    }
+
 
 
 }

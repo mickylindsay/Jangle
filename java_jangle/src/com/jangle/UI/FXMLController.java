@@ -2,7 +2,10 @@ package com.jangle.UI;
 
 import com.jangle.client.Client;
 import com.jangle.client.Message;
+import com.jangle.client.User;
 import com.jangle.communicate.Client_ParseData;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
@@ -23,13 +26,14 @@ public class FXMLController implements Initializable {
     private Client mClient;
     private messageThread messageThread;
     private userThread userThread;
+    private ObservableList<Message> testlist;
 
     @FXML
-    public TextArea messageArea;
+    public ListView<Message> messageArea;
     @FXML
     private TextField messageStage;
     @FXML
-    private ListView users;
+    private ListView<User> users;
 
     @FXML
     private void handleSendMessage(ActionEvent actionEvent) {
@@ -40,7 +44,6 @@ public class FXMLController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        messageArea.appendText(message);
         messageStage.clear();
     }
 
@@ -48,6 +51,7 @@ public class FXMLController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         mClient = new Client();
+        testlist = FXCollections.observableArrayList();
 
         try {
             mClientParseData = new Client_ParseData(mClient, "localhost", 9090);
@@ -60,7 +64,7 @@ public class FXMLController implements Initializable {
 
     }
 
-    public void addMessage(Message message) {
-        messageArea.appendText(message.getMessageContent() + " " + message.getTimeStamp());
+    public void updateMessages(ObservableList messages) {
+        messageArea.setItems(messages);
     }
 }
