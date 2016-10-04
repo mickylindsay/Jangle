@@ -1,5 +1,6 @@
 package main
 
+//Constructs generic Message type
 type Message interface {
 	Build_message() []byte
 }
@@ -9,6 +10,7 @@ type Base struct {
 	code byte
 }
 
+//Builds Message type 
 func(m Base) Build_message() []byte {
 	message := make([]byte, 1)
 	message[0] = m.code
@@ -136,7 +138,7 @@ type Multi_message struct {
 	serverid []byte
 	roomid []byte
 	userid []byte
-	num_message byte
+	offset byte
 }
 
 func(m Multi_message) Build_message() []byte {
@@ -145,7 +147,7 @@ func(m Multi_message) Build_message() []byte {
 	copy(message[1:4], m.serverid[:])
 	copy(message[5:8], m.roomid[:])
 	copy(message[9:12], m.userid[:])
-	message[13] = m.num_message
+	message[13] = m.offset
 	return message
 }
 
@@ -257,16 +259,24 @@ func(m New_room_display_name) Build_message() []byte {
 	return message
 }
 
+//Parse function: takes in type User from User.go and byte array recieved from client
+//Identifies what type of message is being recieved and decides what type of message to send
 func Parse_data (user *User, data []byte) {
+
+	//Initializes all code cases
+
+	//Login type codes
 	var create_user byte = 0
 	var create_user_fail byte = 1
 	var login byte = 2
 	var login_fail byte = 3
 	var login_success byte = 4
 
+	//Message type codes
 	var message_client_send byte = 16
 	var message_client_recieve byte = 17
 
+	//Request from client type codes
 	var request_n_messages byte = 32
 	var request_all_userid byte = 33
 	var request_display_name byte = 34
@@ -275,6 +285,7 @@ func Parse_data (user *User, data []byte) {
 	var request_all_roomid byte = 37
 	var request_room_display_name byte = 38
 
+	//Client recieve type codes
 	var recieve_userid byte = 48
 	var recieve_display_name byte = 49
 	var recieve_serverid byte = 50
@@ -282,18 +293,22 @@ func Parse_data (user *User, data []byte) {
 	var recieve_roomid byte = 52
 	var recieve_room_display_name byte = 53
 
+	//Client send type codes
 	var send_new_display_name byte = 64
 	var send_new_server_display_name byte = 65
 	var send_new_room_display_name byte = 66
 
+	//Initializes Message type codes
 	var m Message
 
+	//Compares first byte of data byte array to all code cases
 	if(data[0] == create_user) {
 		m = Username_password{
 			code: data[0],
 			username: data[1:20],
 			password: data[21:]}
 
+		//Calls User_Create to check if success or fail
 		err := User_Create(data[1:20], data[21:])
 		if(err == nil) {
 			data[0] = login_success
@@ -306,6 +321,7 @@ func Parse_data (user *User, data []byte) {
 		m = Base{
 			code: data[0]}
 
+		//Calls Write to send message to a user that does not have a userid
 		user.Write(m.Build_message())
 	
 	} else if(data[0] == login) {
@@ -314,6 +330,7 @@ func Parse_data (user *User, data []byte) {
 			username: data[1:20],
 			password: data[21:]}
 
+		//Calls User_Login to check if success or fail
 		id, err := User_Login(data[1:20], data[21:])
 		if(err == nil) {
 			data[0] = login_success
@@ -328,6 +345,7 @@ func Parse_data (user *User, data []byte) {
 		m = Base{
 			code: data[0]}
 
+		//Calls Write to send message to a user that does not have a userid
 		user.Write(m.Build_message())
 	
 	} else if(data[0] == login_success) {
@@ -335,6 +353,7 @@ func Parse_data (user *User, data []byte) {
 			code: data[0],
 			userid: data[1:4]}
 
+		//Calls Byte_Converter to recieve userid as an unsigned int
 		u := Byte_Converter(data[1:4])
 		Send_Message(u, m)
 	
@@ -346,6 +365,7 @@ func Parse_data (user *User, data []byte) {
 			userid: data[9:12],
 			text: data[13:]}
 
+		//Calls Time_Stamp to convert message to code type 17 or message_client_recieve
 		data[0] = message_client_recieve
 		data = Time_Stamp(data)
 		Parse_data(user, data)
@@ -359,6 +379,7 @@ func Parse_data (user *User, data []byte) {
 			time: data[13:16],
 			text: data[17:]}
 
+		//Calls Send_Broadcast because code type 17 messages will be sent to all users
 		Send_Broadcast(m)
 	
 	} else if(data[0] == request_n_messages) {
@@ -367,7 +388,7 @@ func Parse_data (user *User, data []byte) {
 			serverid: data[1:4],
 			roomid: data[5:8],
 			userid: data[9:12],
-			num_message: data[13]}
+			offset: data[13]}
 
 		num := uint(data[13])
 		var i uint
