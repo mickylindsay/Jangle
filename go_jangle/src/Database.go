@@ -68,7 +68,8 @@ func Message_Create(userid uint, messagetext []byte) error{
 
 //TODO
 //Request chunks of 50 messages offset by (offset*50) and returns them as array of message objects
-func Request_n_Messages(offset uint) []Message{
+func Request_Offset_Messages(offset uint) ([]Message, error){
 	messages := make([]Message,50);
-	return messages;
+	_, err := jangle.db.Query("SELECT * FROM messages ORDER BY messageid DESC LIMIT 50 OFFSET  ?", offset*50)
+	return messages, err;
 }
