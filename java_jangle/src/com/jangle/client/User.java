@@ -45,4 +45,8 @@ public class User {
         this.status = status;
     }
 
+    public String toString(){
+        return displayName;
+    }
+
 }
