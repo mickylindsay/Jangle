@@ -69,7 +69,8 @@ func User_Create(u []byte, p []byte) error{
 //Inserts a new Message into the database
 //TODO implement roomid and serverid
 func Message_Create(userid uint, messagetext []byte) error{
-	_, err := jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", userid, Milli_Time(), Next_Messageid() + 1, string(messagetext), 0, 0);
+	_, err := jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", userid, Milli_Time(), Next_Messageid() + 1, string(messagetext), 1, 1);
+	Check_Error(err);
 	return err;
 }
 
@@ -84,6 +85,7 @@ func Request_Offset_Messages(offset uint) ([]Message, error){
 	)
 	//Query 50 rows of messages
 	rows, err := jangle.db.Query("SELECT userid, time, messagetext FROM messages ORDER BY messageid DESC LIMIT 50 OFFSET  ?", offset*50)
+	Check_Error(err);
 	defer rows.Close();
 	//Iterate through the rows
 	for rows.Next() {

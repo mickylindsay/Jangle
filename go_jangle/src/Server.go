@@ -28,7 +28,7 @@ func main() {
 	jangle.db, e = Connect_Database();
 	Check_Error(e);
 	fmt.Println("Database Connection Successful.")
-	
+	User_Create([]byte("micky"), []byte("micky"))
 	//Address to host server on	
 	var address string
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0])) 

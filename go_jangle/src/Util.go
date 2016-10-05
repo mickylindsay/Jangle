@@ -28,7 +28,7 @@ func Int_Converter (num uint) []byte {
 
 //Returns Current Millisecond time as unsigned int
 func Milli_Time() uint {
-	return uint(time.Now().UnixNano() / 1000000)
+	return uint(time.Now().UnixNano() / 1000000000)
 }
 
 //Used for time stamping code type 16 messages

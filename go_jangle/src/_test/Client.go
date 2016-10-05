@@ -26,9 +26,9 @@ func main(){
 		text, _ := reader.ReadString('\n')
 		write_data := make([]byte, len(text) + 12)
 		write_data[0] = 16;
-		copy(write_data[1:4], Int_Converter(0)); 
-		copy(write_data[5:8], Int_Converter(0)); 
-		copy(write_data[9:12], Int_Converter(0)); 
+		copy(write_data[1:4], Int_Converter(1)); 
+		copy(write_data[5:8], Int_Converter(1)); 
+		copy(write_data[9:12], Int_Converter(1)); 
 		copy(write_data[13:], []byte(text)); 
 		fmt.Println("OUT: ",write_data)
 		conn.Write(write_data)
