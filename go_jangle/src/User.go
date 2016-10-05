@@ -28,13 +28,9 @@ func (u *User) Scanf(format string, a ...interface{}) (int, error){
 	return fmt.Fscanf(*(*u).c, format, a...)
 }
 
-func Send_Message(userid uint, message Message) uint{
-	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
-		if e.Value.(*User).id == userid {
-			e.Value.(*User).Write(message.Build_message())
-			return e.Value.(*User).id;
-		}
-	}
+func Send_Message(user *User, message Message) uint{
+	user.Write(message.Build_message())
+	
 	return 0;
 }
 
