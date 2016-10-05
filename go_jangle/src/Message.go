@@ -383,7 +383,7 @@ func Parse_data (user *User, data []byte) {
 
 		//Sends message to database
 		id := Byte_Converter(data[9:12])
-		err := Message_Create(id, data[13:])
+		err := Message_Create(user, data[13:])
 		Check_Error(err)
 
 		//Calls Time_Stamp to convert message to code type 17 or message_client_recieve
