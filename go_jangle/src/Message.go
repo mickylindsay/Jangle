@@ -45,6 +45,21 @@ func(m Userid) Build_message() []byte {
 	return message
 }
 
+//[code:1,userid:4,status:1]
+type Status struct {
+	code byte
+	userid []byte
+	status byte
+}
+
+func(m Status) Build_message() []byte {
+	message := make([]byte, 6)
+	message[0] = m.code
+	copy(message[1:4], m.userid[:])
+	message[5] = m.status
+	return message
+}
+
 //[code:1,userid:4,requested_userid:4]
 type Double_userid struct {
 	code byte
@@ -288,6 +303,8 @@ func Parse_data (user *User, data []byte) {
 	var login byte = 2
 	var login_fail byte = 3
 	var login_success byte = 4
+	var status_change byte = 5
+	var status_broadcast byte = 6
 
 	//Message type codes
 	var message_client_send byte = 16
@@ -315,7 +332,7 @@ func Parse_data (user *User, data []byte) {
 	var send_new_server_display_name byte = 65
 	var send_new_room_display_name byte = 66
 
-	//Initializes Message type codes
+	//Initializes Message type
 	var m Message
 
 	//Compares first byte of data byte array to all code cases
@@ -372,6 +389,18 @@ func Parse_data (user *User, data []byte) {
 
 		//Sends login success to user
 		Send_Message(user, m)
+
+	} else if(data[0] == status_change) {
+		m = Status{
+			code: data[0],
+			userid: data[1:4],
+			status: data[5]}
+		
+	} else if(data[0] == status_broadcast) {
+		m = Status{
+			code: data[0],
+			userid: data[1:4],
+			status: data[5]}
 	
 	} else if(data[0] == message_client_send) {
 		m = Message_send{
@@ -474,9 +503,10 @@ func Parse_data (user *User, data []byte) {
 	} else if(data[0] == recieve_display_name) {
 		m = Display_name{
 			code: data[0],
-			userid: data[1:4],
-			requested_userid: data[5:8],
-			display_name: data[9:]}
+			serverid: data[1:4],
+			userid: data[5:8],
+			requested_userid: data[9:12],
+			display_name: data[13:]}
 
 		//Sends user the requested display name
 		Send_Message(user, m)
