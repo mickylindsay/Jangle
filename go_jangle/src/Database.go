@@ -49,28 +49,32 @@ func Request_Display_Name(id uint) []byte{
 func Next_Userid() uint{
 	var temp uint;
 	_ = jangle.db.QueryRow("SELECT MAX(userid) AS userid FROM users").Scan(&temp);
-	return temp;
+	return temp + 1;
 }
 
 //Returns the next valid messageid
 func Next_Messageid() uint{
 	var temp uint;
 	_ = jangle.db.QueryRow("SELECT MAX(messageid) AS messageid FROM messages").Scan(&temp);
-	return temp;
+	return temp + 1;
 }
 
 //Inserts a new user into the database
 //TODO implement Image Path and Password hashing
 func User_Create(u []byte, p []byte) error{
-	_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);",Next_Userid()+1, string(u), string(u), "TEMPPATH", string(p), "0000");
+	_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);",Next_Userid(), string(u), string(u), "TEMPPATH", string(p), "0000");
 	return err;
 }
 
 //Inserts a new Message into the database
 //TODO implement roomid and serverid
-func Message_Create(userid uint, messagetext []byte) error{
-	_, err := jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", userid, Milli_Time(), Next_Messageid() + 1, string(messagetext), 1, 1);
-	Check_Error(err);
+func Message_Create(user *User, messagetext []byte) error{
+	var err error
+	if(user.id == 0){
+		_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", 1, Milli_Time(), Next_Messageid(), string(messagetext), 1, 1);
+	}else{
+	_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", user.id, Milli_Time(), Next_Messageid(), string(messagetext), 1, 1);
+	}
 	return err;
 }
 
@@ -91,6 +95,7 @@ func Request_Offset_Messages(offset uint) ([]Message, error){
 	for rows.Next() {
 		//Scan the columns into variables
 		err := rows.Scan(&userid_read, &time_read, &text_read);
+		fmt.Println(text_read);
 		Check_Error(err);
 		//Create a "17" message to send back to user
 		m := Message_recieve{

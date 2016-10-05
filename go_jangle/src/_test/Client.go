@@ -17,8 +17,12 @@ func main(){
 	go func(){
 		for {
 			read_len, _ := conn.Read(read_data)
-			fmt.Printf("%s\n", string(read_data[17:read_len]))
-			fmt.Println("IN: ", read_data[:read_len])
+			if(read_len < 18){
+			
+			}else{
+				fmt.Printf("%s\n", string(read_data[17:read_len]))
+				fmt.Println("IN: ", read_data[:read_len])
+			}
 		}
 	}()
 	for {
@@ -29,7 +33,13 @@ func main(){
 		copy(write_data[1:4], Int_Converter(1)); 
 		copy(write_data[5:8], Int_Converter(1)); 
 		copy(write_data[9:12], Int_Converter(1)); 
-		copy(write_data[13:], []byte(text)); 
+		copy(write_data[13:], []byte(text));
+		/*write_data := make([]byte, len(text) + 12)
+		write_data[0] = 32;
+		copy(write_data[1:4], Int_Converter(1)); 
+		copy(write_data[5:8], Int_Converter(1)); 
+		copy(write_data[9:12], Int_Converter(1)); 
+		write_data[13] = 0;*/
 		fmt.Println("OUT: ",write_data)
 		conn.Write(write_data)
 		//send_message(conn,text)
