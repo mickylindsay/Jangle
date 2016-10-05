@@ -68,6 +68,7 @@ public class Client_Communicator implements Runnable {
 		Write.write(Data);
 
 	}
+	
 
 	/**
 	 * Reads data from the server. This is a blocking call if there is nothing
@@ -81,7 +82,6 @@ public class Client_Communicator implements Runnable {
 		int amount;
 		try {
 			amount = Reader.read(tmp);
-			System.out.println(amount);
 			return tmp;
 
 		} catch (SocketTimeoutException ste) {

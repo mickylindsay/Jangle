@@ -63,10 +63,28 @@ public class Client_ParseData implements IPARSER {
 			Cl.addMessage(new Message (data));
 		}
 	}
+	
+//	
+//	
+//	/**
+//	 * Submit username and password for log in.
+//	 * @param username the username to log in with
+//	 * @param Password password to log in with
+//	 * @return true if able to log in, false if not able to
+//	 */
+//	public int submitLogIn(String username, String Password){
+//		return false;
+//	}
+//	
+//	/**
+//	 * Submit request to create a new user
+//	 * @param Username username of the new user
+//	 * @param Password password for the new user
+//	 * @return true if 
+//	 */
+//	public int createUser(String Username, String Password){
+//		return false;
+//	}
 
-	/*
-	 * Parse the data from the communicator, see what is, and move the data on
-	 * its way to the UI. Buffer size is 1024 Bytes
-	 */
 
 }
