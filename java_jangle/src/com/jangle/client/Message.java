@@ -19,6 +19,14 @@ public class Message {
         this.serverID = serverID;
     }
 
+    public Message(int userID, String messageContent, int serverID, int channelID){
+        this.userID = userID;
+        this.messageContent = messageContent;
+        this.serverID = serverID;
+        this.channelID = channelID;
+        this.timeStamp = 0;
+    }
+
     public Message() {
         this.channelID = 0;
         this.userID = 0;

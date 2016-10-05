@@ -40,7 +40,7 @@ public class FXMLController implements Initializable {
         String message = messageStage.getText();
         // Send the string to the server
         try {
-            mClientParseData.sendMessage(new Message(0, message, System.currentTimeMillis(), 0, 0));
+            mClientParseData.sendMessage(new Message(0, message, 0, 0));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,7 +54,7 @@ public class FXMLController implements Initializable {
         testlist = FXCollections.observableArrayList();
 
         try {
-            mClientParseData = new Client_ParseData(mClient, "localhost", 9090);
+            mClientParseData = new Client_ParseData(mClient, "10.25.70.96", 9090);
         } catch (IOException e) {
             e.printStackTrace();
         }
