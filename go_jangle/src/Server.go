@@ -77,22 +77,12 @@ func listen_to_clients(user *User, e *list.Element){
 			fmt.Println("User Disconnected");
 			break;
 		}
+		//Send read array to Message file for parsing and processing
 		Parse_data(user, read_data);
-		//Cast read data into a string
-		//read_string := string(read_data[:read_len]);
-		//fmt.Println("\t",read_string);
-		//Write read_string to entire list fo connections
-		//write_to_clients(users, read_string);
+		
+		
 	}
 }
-
-/*func write_stdio_to_clients(connections *list.List){
-	for {
-		reader := bufio.NewReader(os.Stdin);
-		text, _ := reader.ReadString('\n');
-		write_to_clients(connections,text);
-	}	
-}*/
 
 //Writes a string to every connection in the list of client connections
 func write_to_clients(connections *list.List, s string){

@@ -66,10 +66,35 @@ func Message_Create(userid uint, messagetext []byte) error{
 	return err;
 }
 
-//TODO
 //Request chunks of 50 messages offset by (offset*50) and returns them as array of message objects
 func Request_Offset_Messages(offset uint) ([]Message, error){
+	i := 0;
 	messages := make([]Message,50);
-	_, err := jangle.db.Query("SELECT * FROM messages ORDER BY messageid DESC LIMIT 50 OFFSET  ?", offset*50)
+	var(
+		time_read uint
+		text_read string
+		userid_read uint
+	)
+	//Query 50 rows of messages
+	rows, err := jangle.db.Query("SELECT userid, time, messagetext FROM messages ORDER BY messageid DESC LIMIT 50 OFFSET  ?", offset*50)
+	defer rows.Close();
+	//Iterate through the rows
+	for rows.Next() {
+		//Scan the columns into variables
+		err := rows.Scan(&userid_read, &time_read, &text_read);
+		Check_Error(err);
+		//Create a "17" message to send back to user
+		m := Message_recieve{
+			code: 17,
+			serverid: Int_Converter(0),
+			roomid: Int_Converter(0),
+			userid: Int_Converter(userid_read),
+			time: Int_Converter(time_read),
+			text: []byte(text_read)};
+		//Add that message to the array which will be returned
+		messages[i] = m;
+		i++;
+	}
+	//Return array of messages
 	return messages, err;
 }
