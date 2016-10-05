@@ -10,6 +10,7 @@ import static com.jangle.communicate.Comm_CONSTANTS.*;
  */
 public class Message {
 
+
 	private int userID;
 	private String messageContent;
 	private String timeStamp;
@@ -155,5 +156,6 @@ public class Message {
 		return ret;
 
 	}
+
 
 }

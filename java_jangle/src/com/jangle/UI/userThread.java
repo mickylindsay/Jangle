@@ -4,23 +4,21 @@ import com.jangle.client.Client;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 
 /**
  * Created by sable_000 on 9/29/2016.
  */
-public class messageThread implements Runnable {
+public class userThread implements Runnable {
 
     private Client mClient;
     private FXMLController ui;
-    private ObservableList<String> messages;
+    private ObservableList<String> users;
 
-
-    public messageThread(Client client, FXMLController ui){
+    public userThread(Client client, FXMLController ui){
         this.mClient = client;
         this.ui = ui;
-        this.messages = FXCollections.observableArrayList();
+        this.users = FXCollections.observableArrayList();
 
         Thread t = new Thread(this);
         t.start();
@@ -31,7 +29,7 @@ public class messageThread implements Runnable {
         int size = 0;
         while(true) {
 
-            if (size == mClient.getMessages().size()){
+            if (size == mClient.getUsers().size()){
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
@@ -39,14 +37,14 @@ public class messageThread implements Runnable {
                 }
             }
 
-            else if (size < mClient.getMessages().size()){
-                int difference = mClient.getMessages().size() - size;
+            else if (size < mClient.getUsers().size()){
+                int difference = mClient.getUsers().size() - size;
                 for (int i = 0; i < difference; i++) {
-                    //String message = mClient.getMessages().get(mClient.getMessages().size() - difference + i).getMessageContent();
-                    messages.add(mClient.getMessages().get(mClient.getMessages().size() - difference + i).getMessageContent());
-                    ui.updateMessages(messages);
+                    String message = mClient.getUsers().get(mClient.getUsers().size() - difference + i).getDisplayName();
+                    //TODO: Add user to user list here
+                    //ui.chatArea.appendText("Server: " + message + "\n");
                 }
-                size = mClient.getMessages().size();
+                size = mClient.getUsers().size();
             }
 
         }
