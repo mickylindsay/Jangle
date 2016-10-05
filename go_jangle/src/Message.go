@@ -370,9 +370,8 @@ func Parse_data (user *User, data []byte) {
 			code: data[0],
 			userid: data[1:4]}
 
-		//Calls Byte_Converter to recieve userid as an unsigned int
-		id := Byte_Converter(data[1:4])
-		Send_Message(id, m)
+		//Sends login success to user
+		Send_Message(user, m)
 	
 	} else if(data[0] == message_client_send) {
 		m = Message_send{
@@ -383,7 +382,7 @@ func Parse_data (user *User, data []byte) {
 			text: data[13:]}
 
 		//Sends message to database
-		id := Byte_Converter(userid)
+		id := Byte_Converter(data[9:12])
 		err := Message_Create(id, data[13:])
 		Check_Error(err)
 
