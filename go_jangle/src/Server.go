@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net"
-	//"bufio"
-	//"os"
+	"os"	
+	"io/ioutil"
+	"path/filepath"
 	"container/list"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
@@ -29,17 +29,15 @@ func main() {
 	Check_Error(e);
 	fmt.Println("Database Connection Successful.")
 	
-	//Address to host server on
-	address := "localhost:9090";
-	
+	//Address to host server on	
 	var address string
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0])) 
 	dat, err := ioutil.ReadFile(dir + "/../.address")
 	//If such file does not exist prompt the user to enter a DSN
 	if err != nil{
-		dsn = "localhost:9090"
+		address = "localhost:9090"
 	}else{
-		dsn = string(dat)
+		address = string(dat)
 	}
 
 	fmt.Println("JANGLE GO SERVER");
