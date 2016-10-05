@@ -1,7 +1,9 @@
 package main
 
-import "time"
-
+import (
+	"time"
+	"log"
+)
 //Converts byte array to unsigned int 
 func Byte_Converter (data []byte) uint {
 	var i uint
