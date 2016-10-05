@@ -17,13 +17,22 @@ func main(){
 	go func(){
 		for {
 			read_len, _ := conn.Read(read_data)
-			fmt.Printf("%s", string(read_data[:read_len]))
+			fmt.Printf("%s\n", string(read_data[17:read_len]))
+			fmt.Println("IN: ", read_data[:read_len])
 		}
 	}()
 	for {
 		reader := bufio.NewReader(os.Stdin)
 		text, _ := reader.ReadString('\n')
-		send_message(conn,text)
+		write_data := make([]byte, len(text) + 12)
+		write_data[0] = 16;
+		copy(write_data[1:4], Int_Converter(0)); 
+		copy(write_data[5:8], Int_Converter(0)); 
+		copy(write_data[9:12], Int_Converter(0)); 
+		copy(write_data[13:], []byte(text)); 
+		fmt.Println("OUT: ",write_data)
+		conn.Write(write_data)
+		//send_message(conn,text)
 	}
 }
 
@@ -31,3 +40,13 @@ func send_message(conn net.Conn, text string){
 	fmt.Fprintf(conn, "%s", text)
 }
 
+//Converts unsigned int to byte array
+func Int_Converter (num uint) []byte {
+	data := make([]byte, 4)
+	for i := 0; i < 4; i++ {
+		mod := num % 256
+		data[i] = byte(mod)
+		num /= 256
+	}
+	return data
+}

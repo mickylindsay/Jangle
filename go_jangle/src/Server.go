@@ -70,7 +70,7 @@ func listen_to_clients(user *User, e *list.Element){
 
 	for {
 		//Read data from client
-		_, err := (*user).Read(read_data);
+		len, err := (*user).Read(read_data);
 		//If server fails to read from client,
 		//the user has disconnected and can be
 		//removed from the lsit fo connections
@@ -80,7 +80,7 @@ func listen_to_clients(user *User, e *list.Element){
 			break;
 		}
 		//Send read array to Message file for parsing and processing
-		Parse_data(user, read_data);
+		Parse_data(user, read_data[:len]);
 		
 		
 	}
