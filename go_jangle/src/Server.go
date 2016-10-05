@@ -2,70 +2,87 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net"
-	"bufio"
-	"os"
+	"os"	
+	"io/ioutil"
+	"path/filepath"
 	"container/list"
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 )
+
+type Jangle struct {
+	userlist *list.List
+	db *sql.DB
+}
+
+var jangle Jangle;
 
 func main() {
 	//Create new list to store every client connection
-	connections := list.New()
-	//Address to host server on
-	address := "localhost:9090"
-	//Array to store data read from client
-	read_data := make([]byte, 1024)
+	jangle.userlist = list.New();
 
-	fmt.Println("JANGLE GO SERVER")
-	fmt.Println("address - " + address)
-	
-	listener, err := net.Listen("tcp", address)
-	if err != nil {
-		log.Fatal(err)
+	//Make connection to Database
+	fmt.Println("Connecting to MySQL Database.")
+	var e error;
+	jangle.db, e = Connect_Database();
+	Check_Error(e);
+	fmt.Println("Database Connection Successful.")
+	User_Create([]byte("micky"), []byte("micky"))
+	//Address to host server on	
+	var address string
+	dir, _ := filepath.Abs(filepath.Dir(os.Args[0])) 
+	dat, err := ioutil.ReadFile(dir + "/../.address")
+	//If such file does not exist prompt the user to enter a DSN
+	if err != nil{
+		address = "localhost:9090"
+	}else{
+		address = string(dat)
 	}
-	defer listener.Close()
+
+	fmt.Println("JANGLE GO SERVER");
+	fmt.Println("listening on - " + address);
+	
+	listener, e := net.Listen("tcp", address);
+	Check_Error(e);
+	defer listener.Close();
 	//Read server console input and write that input to every user
-	go func(){
-		for {
-			reader := bufio.NewReader(os.Stdin)
-			text, _ := reader.ReadString('\n')
-			write_to_clients(connections,text)
-		}	
-	}()
+//	go write_stdio_to_clients(jangle.userlist);
 	//Listen for new client connection
 	for {
-		conn, err := listener.Accept()
-		defer conn.Close()
+		conn, err := listener.Accept();
+		defer conn.Close();
+		fmt.Println("User Connected... Waiting for login message.");
 		user := &User{
 			c : &conn,
-		}
+		};
 		//Add new connection onto the end of connections list
-		elem := connections.PushBack(user)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println("User Connected: ", user.name)
+		elem := jangle.userlist.PushBack(user);
+		Check_Error(err);
 		//Read from client and write data to every client
-		go func(user *User, e *list.Element) {
-			for {
-				//Read data from client
-				read_len, err := (*user).Read(read_data)
-				//If server fails to read from client,
-				//the user has disconnected and can be
-				//removed from the lsit fo connections
-				if err != nil {
-					connections.Remove(e)
-					fmt.Println("User Disconnected")
-					break
-				}
-				//Cast read data into a string
-				read_string := string(read_data[:read_len])
-				fmt.Println("\t",read_string)
-				//Write read_string to entire list fo connections
-				write_to_clients(connections, read_string)
-			}
-		}(user, elem)
+		go listen_to_clients(user, elem);
+	}
+}
+
+func listen_to_clients(user *User, e *list.Element){
+	//Array to store data read from client
+	read_data := make([]byte, 1024);
+
+	for {
+		//Read data from client
+		len, err := (*user).Read(read_data);
+		//If server fails to read from client,
+		//the user has disconnected and can be
+		//removed from the lsit fo connections
+		if err != nil {
+			jangle.userlist.Remove(e);
+			fmt.Println("User Disconnected");
+			break;
+		}
+		//Send read array to Message file for parsing and processing
+		Parse_data(user, read_data[:len]);
+		
+		
 	}
 }
 
@@ -75,7 +92,5 @@ func write_to_clients(connections *list.List, s string){
 	for e := connections.Front(); e != nil; e = e.Next() {
 		//Write data to every connection
 		e.Value.(*User).Printf("%s", s)
-
-		//fmt.Fprintf(*(e.Value.(*User).c), "%s", s)
 	}
 }
