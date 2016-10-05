@@ -37,7 +37,9 @@ func Send_Message(user *User, message Message) uint{
 }
 
 func Send_Broadcast(message Message){
+	m:=message.Build_message();
+	fmt.Println("OUT: ", m)
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
-		e.Value.(*User).Write(message.Build_message())
-	}			
+		e.Value.(*User).Write(m)
+	}
 }

@@ -79,6 +79,8 @@ func listen_to_clients(user *User, e *list.Element){
 			fmt.Println("User Disconnected");
 			break;
 		}
+
+		fmt.Println("IN: ", read_data[:len]);
 		//Send read array to Message file for parsing and processing
 		Parse_data(user, read_data[:len]);
 		
