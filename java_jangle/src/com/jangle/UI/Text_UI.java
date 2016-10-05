@@ -38,6 +38,7 @@ public class Text_UI extends Application {
 		//chatArea.setPrefHeight(550);
 		//chatArea.setEditable(false);
 
+
 		//Loading FXML main UI
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/mainUI.fxml"));
 		VBox root = loader.load();
@@ -81,9 +82,4 @@ public class Text_UI extends Application {
 		primaryStage.show();
 	}
 
-	public void addMessage(String message) {
-		chatArea.appendText(message);
-	}
-
 }
-// Simple text UI. Needs to get implemented for demos / testing
