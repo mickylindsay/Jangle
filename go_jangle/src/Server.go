@@ -31,6 +31,16 @@ func main() {
 	
 	//Address to host server on
 	address := "localhost:9090";
+	
+	var address string
+	dir, _ := filepath.Abs(filepath.Dir(os.Args[0])) 
+	dat, err := ioutil.ReadFile(dir + "/../.address")
+	//If such file does not exist prompt the user to enter a DSN
+	if err != nil{
+		dsn = "localhost:9090"
+	}else{
+		dsn = string(dat)
+	}
 
 	fmt.Println("JANGLE GO SERVER");
 	fmt.Println("listening on - " + address);
