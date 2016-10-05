@@ -9,8 +9,13 @@ import static com.jangle.communicate.Comm_CONSTANTS.*;
 
 public class Client_ParseData implements IPARSER {
 
-	Client Cl;
-	Client_Communicator Comm;
+	private Client Cl;
+	private Client_Communicator Comm;
+	
+	private int loginResult;
+	
+	
+	
 
 	/**
 	 * Create a parser object with no Client_Commmunicator attached to it.
@@ -64,27 +69,33 @@ public class Client_ParseData implements IPARSER {
 		}
 	}
 	
-//	
-//	
-//	/**
-//	 * Submit username and password for log in.
-//	 * @param username the username to log in with
-//	 * @param Password password to log in with
-//	 * @return true if able to log in, false if not able to
-//	 */
-//	public int submitLogIn(String username, String Password){
-//		return false;
-//	}
-//	
-//	/**
-//	 * Submit request to create a new user
-//	 * @param Username username of the new user
-//	 * @param Password password for the new user
-//	 * @return true if 
-//	 */
-//	public int createUser(String Username, String Password){
-//		return false;
-//	}
+	
+	
+	/**
+	 * Submit username and password for log in.
+	 * @param username the username to log in with
+	 * @param Password password to log in with
+	 * @return 0 if login failed. 1 if success. -1 if there was a time out
+	 */
+	public int submitLogIn(String username, String Password){
+		
+		loginResult = -1;
+		
+		
+		return 0;
+		
+		
+	}
+	
+	/**
+	 * Submit request to create a new user
+	 * @param Username username of the new user
+	 * @param Password password for the new user
+	 * @return 0 if login failed. 1 if success. -1 if there was a time out
+	 */
+	public int createUser(String Username, String Password){
+		return 0;
+	}
 
 
 }

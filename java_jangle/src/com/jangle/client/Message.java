@@ -1,8 +1,6 @@
 package com.jangle.client;
 
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import static com.jangle.communicate.Comm_CONSTANTS.*;
 
 /**
@@ -10,32 +8,29 @@ import static com.jangle.communicate.Comm_CONSTANTS.*;
  */
 public class Message {
 
+    private int userID;
+    private String messageContent;
+    private long timeStamp;
+    private int serverID;
+    private int channelID;
 
-	private int userID;
-	private String messageContent;
-	private String timeStamp;
-	private int serverID;
-	private int channelID;
+    public Message(int userID, String messageContent, long timeStamp, int serverID, int channelID) {
+        this.channelID = channelID;
+        this.userID = userID;
+        this.messageContent = messageContent;
+        this.timeStamp = timeStamp;
+        this.serverID = serverID;
+    }
 
-	public Message(int userID, String messageContent, String timeStamp, int serverID, int channelID) {
-		this.channelID = channelID;
-		this.userID = userID;
-		this.messageContent = messageContent.trim();
-		this.timeStamp = timeStamp;
-		this.serverID = serverID;
-		
-		
-	}
-
-	public Message() {
-		this.channelID = 0;
-		this.userID = 0;
-		this.messageContent = null;
-		this.timeStamp = null;
-		this.serverID = 0;
-	}
-
-	/**
+    public Message(int userID, String messageContent, int serverID, int channelID){
+        this.userID = userID;
+        this.messageContent = messageContent;
+        this.serverID = serverID;
+        this.channelID = channelID;
+        this.timeStamp = 0;
+    }
+    
+    /**
 	 * Generate a Message object from a byte array received from the server. This message is received in the form of a 17 opcode
 	 * 
 	 * @param data
@@ -55,60 +50,59 @@ public class Message {
 			user[i] = data[i + 9];
 			time[i] = data[i + 12];
 		}
-
-		for (int i = 0; i < content.length; i++){
-			content[i] = data[17 + i];
-		}
-		
-		this.channelID = (int) chan[0] + (int) chan[1] * 256 + ((int) chan[2] * 256 * 256)
-				+ ((int) chan[3] * 256 * 256 * 256);
-		this.serverID = (int) server[0] + (int) server[1] * 256 + ((int) server[2] * 256 * 256)
-				+ ((int) server[3] * 256 * 256 * 256);
-		this.userID = (int) user[0] + (int) user[1] * 256 + ((int) user[2] * 256 * 256)
-				+ ((int) user[3] * 256 * 256 * 256);
-		this.timeStamp = new String(time);
-		this.messageContent = new String(content);
 	}
 
-	public int getUserID() {
-		return userID;
-	}
+    public Message() {
+        this.channelID = 0;
+        this.userID = 0;
+        this.messageContent = null;
+        this.timeStamp = 0;
+        this.serverID = 0;
+    }
 
-	public void setUserID(int userID) {
-		this.userID = userID;
-	}
+    public int getUserID() {
+        return userID;
+    }
 
-	public String getMessageContent() {
-		return messageContent;
-	}
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
 
-	public void setMessageContent(String messageContent) {
-		this.messageContent = messageContent.trim();
-	}
+    public String getMessageContent() {
+        return messageContent;
+    }
 
-	public String getTimeStamp() {
-		return timeStamp;
-	}
+    public void setMessageContent(String messageContent) {
+        this.messageContent = messageContent;
+    }
 
-	public void setTimeStamp(String timeStamp) {
-		this.timeStamp = timeStamp;
-	}
+    public long getTimeStamp() {
+        return timeStamp;
+    }
 
-	public int getServerID() {
-		return serverID;
-	}
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 
-	public void setServerID(int serverID) {
-		this.serverID = serverID;
-	}
+    public int getServerID() {
+        return serverID;
+    }
 
-	public int getChannelID() {
-		return channelID;
-	}
+    public void setServerID(int serverID) {
+        this.serverID = serverID;
+    }
 
-	public void setChannelID(int channelID) {
-		this.channelID = channelID;
-	}
+    public int getChannelID() {
+        return channelID;
+    }
+
+    public void setChannelID(int channelID) {
+        this.channelID = channelID;
+    }
+
+    public String toString(){
+        return userID + "\n" + messageContent + "    " + timeStamp;
+    }
 
 	/**
 	 * Creates a byte array of this message, in the format required to send the
@@ -156,6 +150,7 @@ public class Message {
 		return ret;
 
 	}
+
 
 
 }
