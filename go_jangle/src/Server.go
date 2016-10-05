@@ -18,12 +18,6 @@ type Jangle struct {
 
 var jangle Jangle;
 
-func Check_Error(e error){
-	if(e != nil){
-		log.Fatal(e);
-	}
-}
-
 func main() {
 	//Create new list to store every client connection
 	jangle.userlist = list.New();

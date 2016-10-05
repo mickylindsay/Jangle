@@ -41,3 +41,12 @@ func Time_Stamp (data []byte) []byte {
 	copy(new_data[13:16], Int_Converter(Milli_Time()))
 	return new_data
 }
+
+//Checks if error has occured and ends program after logging. 
+//Only use for Fatal errors
+func Check_Error(e error){
+	if(e != nil){
+		log.Fatal(e);
+	}
+}
+
