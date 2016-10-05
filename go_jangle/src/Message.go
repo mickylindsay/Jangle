@@ -1,5 +1,6 @@
 package main
 
+//Constructs generic Message type
 type Message interface {
 	Build_message() []byte
 }
@@ -9,6 +10,7 @@ type Base struct {
 	code byte
 }
 
+//Builds Message type 
 func(m Base) Build_message() []byte {
 	message := make([]byte, 1)
 	message[0] = m.code
@@ -70,6 +72,23 @@ func(m Serverid) Build_message() []byte {
 	message[0] = m.code
 	copy(message[1:4], m.serverid[:])
 	copy(message[5:8], m.userid[:])
+	return message
+}
+
+//[code:1,serverid:4,roomid:4,userid:4]
+type Serverid_userid struct {
+	code byte
+	serverid []byte
+	userid []byte
+	requested_userid []byte
+}
+
+func(m Serverid_userid) Build_message() []byte {
+	message := make([]byte, 13)
+	message[0] = m.code
+	copy(message[1:4], m.serverid[:])
+	copy(message[5:8], m.userid[:])
+	copy(message[9:12], m.requested_userid[:])
 	return message
 }
 
@@ -136,7 +155,7 @@ type Multi_message struct {
 	serverid []byte
 	roomid []byte
 	userid []byte
-	num_message byte
+	offset byte
 }
 
 func(m Multi_message) Build_message() []byte {
@@ -145,7 +164,7 @@ func(m Multi_message) Build_message() []byte {
 	copy(message[1:4], m.serverid[:])
 	copy(message[5:8], m.roomid[:])
 	copy(message[9:12], m.userid[:])
-	message[13] = m.num_message
+	message[13] = m.offset
 	return message
 }
 
@@ -257,16 +276,24 @@ func(m New_room_display_name) Build_message() []byte {
 	return message
 }
 
-func Parse_data (data []byte) Message {
+//Parse function: takes in type User from User.go and byte array recieved from client
+//Identifies what type of message is being recieved and decides what type of message to send
+func Parse_data (user *User, data []byte) {
+
+	//Initializes all code cases
+
+	//Login type codes
 	var create_user byte = 0
 	var create_user_fail byte = 1
 	var login byte = 2
 	var login_fail byte = 3
 	var login_success byte = 4
 
+	//Message type codes
 	var message_client_send byte = 16
 	var message_client_recieve byte = 17
 
+	//Request from client type codes
 	var request_n_messages byte = 32
 	var request_all_userid byte = 33
 	var request_display_name byte = 34
@@ -275,6 +302,7 @@ func Parse_data (data []byte) Message {
 	var request_all_roomid byte = 37
 	var request_room_display_name byte = 38
 
+	//Client recieve type codes
 	var recieve_userid byte = 48
 	var recieve_display_name byte = 49
 	var recieve_serverid byte = 50
@@ -282,34 +310,69 @@ func Parse_data (data []byte) Message {
 	var recieve_roomid byte = 52
 	var recieve_room_display_name byte = 53
 
+	//Client send type codes
 	var send_new_display_name byte = 64
 	var send_new_server_display_name byte = 65
 	var send_new_room_display_name byte = 66
 
+	//Initializes Message type codes
 	var m Message
 
-	if (data[0] == create_user) {
+	//Compares first byte of data byte array to all code cases
+	if(data[0] == create_user) {
 		m = Username_password{
+			code: data[0],
 			username: data[1:20],
 			password: data[21:]}
+
+		//Calls User_Create to check if success or fail
+		err := User_Create(data[1:20], data[21:])
+		if(err == nil) {
+			data[0] = login_success
+		} else {
+			data[0] = create_user_fail
+		}
+		Parse_data(user, data)
 	
 	} else if(data[0] == create_user_fail) {
 		m = Base{
 			code: data[0]}
+
+		//Calls Write to send message to a user that does not have a userid
+		user.Write(m.Build_message())
 	
 	} else if(data[0] == login) {
 		m = Username_password{
+			code: data[0],
 			username: data[1:20],
 			password: data[21:]}
+
+		//Calls User_Login to check if success or fail
+		id, err := User_Login(data[1:20], data[21:])
+		if(err == nil) {
+			data[0] = login_success
+			copy(data[1:4], Int_Converter(id))
+		} else {
+			data[0] = login_fail
+		}
+		user.id = id
+		Parse_data(user, data)
 	
 	} else if(data[0] == login_fail) {
 		m = Base{
 			code: data[0]}
+
+		//Calls Write to send message to a user that does not have a userid
+		user.Write(m.Build_message())
 	
 	} else if(data[0] == login_success) {
 		m = Userid{
 			code: data[0],
 			userid: data[1:4]}
+
+		//Calls Byte_Converter to recieve userid as an unsigned int
+		id := Byte_Converter(data[1:4])
+		Send_Message(id, m)
 	
 	} else if(data[0] == message_client_send) {
 		m = Message_send{
@@ -318,6 +381,16 @@ func Parse_data (data []byte) Message {
 			roomid: data[5:8],
 			userid: data[9:12],
 			text: data[13:]}
+
+		//Sends message to database
+		id := Byte_Converter(userid)
+		err := Message_Create(id, data[13:])
+		Check_Error(err)
+
+		//Calls Time_Stamp to convert message to code type 17 or message_client_recieve
+		data[0] = message_client_recieve
+		data = Time_Stamp(data)
+		Parse_data(user, data)
 	
 	} else if(data[0] == message_client_recieve) {
 		m = Message_recieve{
@@ -327,6 +400,9 @@ func Parse_data (data []byte) Message {
 			userid: data[9:12],
 			time: data[13:16],
 			text: data[17:]}
+
+		//Calls Send_Broadcast because code type 17 messages will be sent to all users
+		Send_Broadcast(m)
 	
 	} else if(data[0] == request_n_messages) {
 		m = Multi_message{
@@ -334,7 +410,15 @@ func Parse_data (data []byte) Message {
 			serverid: data[1:4],
 			roomid: data[5:8],
 			userid: data[9:12],
-			num_message: data[13]}
+			offset: data[13]}
+
+		//Send user multiple code type 17 messages depending on the offset value
+		num := uint(data[13])
+		messages,err := Request_Offset_Messages(num)
+		Check_Error(err)
+		for i := 0; i < len(messages); i++ {
+			Send_Message(user, messages[i])
+		}
 	
 	} else if(data[0] == request_all_userid) {
 		m = Serverid{
@@ -343,11 +427,21 @@ func Parse_data (data []byte) Message {
 			userid: data[5:8]}
 	
 	} else if(data[0] == request_display_name) {
-		m = Double_userid{
+		m = Serverid_userid{
 			code: data[0],
-			userid: data[1:4],
-			requested_userid: data[5:8]}
-	
+			serverid: data[1:4],
+			userid: data[5:8],
+			requested_userid: data[9:12]}
+
+		//Calls Request_Display_Name given a userid to reference database and builds code type 49 message
+		id := Byte_Converter(data[5:8])
+		display_name := Request_Display_Name(id)
+		new_data := make([]byte, len(display_name) + 13)
+		new_data[0] = recieve_display_name
+		copy(new_data[1:12], data[1:12])
+		copy(new_data[13:], display_name[:])
+		Parse_data(user, new_data)
+
 	} else if(data[0] == request_all_serverid) {
 		m = Double_userid{
 			code: data[0],
@@ -385,6 +479,9 @@ func Parse_data (data []byte) Message {
 			userid: data[1:4],
 			requested_userid: data[5:8],
 			display_name: data[9:]}
+
+		//Sends user the requested display name
+		Send_Message(user, m)
 	
 	} else if(data[0] == recieve_serverid) {
 		m = Serverid{
@@ -435,10 +532,5 @@ func Parse_data (data []byte) Message {
 			roomid: data[5:8],
 			userid: data[9:12],
 			new_room_display_name: data[13:]}
-	
-	} else {
-		return nil
 	}
-
-	return m
 }
