@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net"
-	//"bufio"
-	//"os"
+	"os"	
+	"io/ioutil"
+	"path/filepath"
 	"container/list"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
@@ -18,12 +18,6 @@ type Jangle struct {
 
 var jangle Jangle;
 
-func Check_Error(e error){
-	if(e != nil){
-		log.Fatal(e);
-	}
-}
-
 func main() {
 	//Create new list to store every client connection
 	jangle.userlist = list.New();
@@ -34,9 +28,17 @@ func main() {
 	jangle.db, e = Connect_Database();
 	Check_Error(e);
 	fmt.Println("Database Connection Successful.")
-	
-	//Address to host server on
-	address := "localhost:9090";
+	User_Create([]byte("micky"), []byte("micky"))
+	//Address to host server on	
+	var address string
+	dir, _ := filepath.Abs(filepath.Dir(os.Args[0])) 
+	dat, err := ioutil.ReadFile(dir + "/../.address")
+	//If such file does not exist prompt the user to enter a DSN
+	if err != nil{
+		address = "localhost:9090"
+	}else{
+		address = string(dat)
+	}
 
 	fmt.Println("JANGLE GO SERVER");
 	fmt.Println("listening on - " + address);
@@ -68,7 +70,7 @@ func listen_to_clients(user *User, e *list.Element){
 
 	for {
 		//Read data from client
-		_, err := (*user).Read(read_data);
+		len, err := (*user).Read(read_data);
 		//If server fails to read from client,
 		//the user has disconnected and can be
 		//removed from the lsit fo connections
@@ -77,22 +79,12 @@ func listen_to_clients(user *User, e *list.Element){
 			fmt.Println("User Disconnected");
 			break;
 		}
-		Parse_data(user, read_data);
-		//Cast read data into a string
-		//read_string := string(read_data[:read_len]);
-		//fmt.Println("\t",read_string);
-		//Write read_string to entire list fo connections
-		//write_to_clients(users, read_string);
+		//Send read array to Message file for parsing and processing
+		Parse_data(user, read_data[:len]);
+		
+		
 	}
 }
-
-/*func write_stdio_to_clients(connections *list.List){
-	for {
-		reader := bufio.NewReader(os.Stdin);
-		text, _ := reader.ReadString('\n');
-		write_to_clients(connections,text);
-	}	
-}*/
 
 //Writes a string to every connection in the list of client connections
 func write_to_clients(connections *list.List, s string){
