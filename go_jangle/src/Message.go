@@ -382,7 +382,6 @@ func Parse_data (user *User, data []byte) {
 			text: data[13:]}
 
 		//Sends message to database
-		id := Byte_Converter(data[9:12])
 		err := Message_Create(user, data[13:])
 		Check_Error(err)
 
