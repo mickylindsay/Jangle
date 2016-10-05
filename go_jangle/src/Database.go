@@ -39,8 +39,8 @@ func User_Login(u []byte, p []byte) (uint, error) {
 }
 
 //Returnst the next valid userid
-func Request_Display_Name(uint id) []byte{
-	var temp uint;
+func Request_Display_Name(id uint) []byte{
+	var temp []byte;
 	_ = jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", id).Scan(&temp);
 	return temp;
 }
