@@ -408,7 +408,8 @@ func Parse_data (user *User, data []byte) {
 			offset: data[13]}
 
 		num := uint(data[13])
-		messages := Request_Offset_Messages(num)
+		messages,err := Request_Offset_Messages(num)
+		Check_Error(err)
 		for i := 0; i < len(messages); i++ {
 			Parse_data(user, messages[i].Build_message())
 		}
