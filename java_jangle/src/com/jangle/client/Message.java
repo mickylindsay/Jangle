@@ -1,6 +1,8 @@
 package com.jangle.client;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+
 import static com.jangle.communicate.Comm_CONSTANTS.*;
 
 /**
@@ -46,11 +48,13 @@ public class Message {
 		byte[] content = new byte[data.length - 17];
 
 		for (int i = 0; i < 4; i++) {
-			server[i] = data[i + 1];
-			chan[i] = data[i + 4];
-			user[i] = data[i + 9];
-			time[i] = data[i + 12];
+			server[3 - i] = data[i + 1];
+			chan[3 - i] = data[i + 5];
+			user[3 - i] = data[i + 9];
+			time[3 - i] = data[i + 13];
 		}
+		
+		content = Arrays.copyOfRange(data, 17, data.length);
 
 		this.userID = byteToInt(user);
 		this.channelID = byteToInt(chan);
@@ -161,8 +165,15 @@ public class Message {
 	}
 	
 	private int byteToInt(byte[] data){
-		return ((int) data[3] * 1) + ((int) data[2] * 256) + ((int) data[1] * 65536)
-				+ ((int) data[0] * 16777216);
+		
+		return (unsignByte(data[3]) * 1) + (unsignByte(data[2]) * 256) + (unsignByte(data[1]) * 256 * 256)
+				+ (unsignByte(data[0]) * 256 * 256 * 256);
+	}
+	
+	
+	
+	private int unsignByte(byte data){
+		return data & 0xFF;
 	}
 
 }
