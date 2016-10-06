@@ -2,7 +2,7 @@ package main
 
 //Constructs generic Message type
 type Message interface {
-	Build_message() []byte
+	Build_Message() []byte
 }
 
 //[code:1]
@@ -11,20 +11,20 @@ type Base struct {
 }
 
 //Builds Message type 
-func(m Base) Build_message() []byte {
+func(m Base) Build_Message() []byte {
 	message := make([]byte, 1)
 	message[0] = m.code
 	return message[:]
 }
 
 //[code:1,username:20,password:]
-type Username_password struct {
+type Username_Password struct {
 	code byte
 	username []byte
 	password []byte
 }
 
-func(m Username_password) Build_message() []byte {
+func(m Username_Password) Build_Message() []byte {
 	message := make([]byte, 21 + len(m.password))
 	message[0] = m.code
 	copy(message[1:20], m.username[:])
@@ -38,51 +38,60 @@ type Userid struct {
 	userid []byte
 }
 
-func(m Userid) Build_message() []byte {
+func(m Userid) Build_Message() []byte {
 	message := make([]byte, 5)
 	message[0] = m.code
 	copy(message[1:4], m.userid[:])
 	return message
 }
 
-//[code:1,userid:4,status:1]
-type Status struct {
+//[code:1,requested_userid:4]
+type Requested_Userid struct {
 	code byte
-	userid []byte
-	status byte
-}
-
-func(m Status) Build_message() []byte {
-	message := make([]byte, 6)
-	message[0] = m.code
-	copy(message[1:4], m.userid[:])
-	message[5] = m.status
-	return message
-}
-
-//[code:1,userid:4,requested_userid:4]
-type Double_userid struct {
-	code byte
-	userid []byte
 	requested_userid []byte
 }
 
-func(m Double_userid) Build_message() []byte {
-	message := make([]byte, 9)
+func(m Requested_Userid) Build_Message() []byte {
+	message := make([]byte, 5)
 	message[0] = m.code
-	copy(message[1:4], m.userid[:])
-	copy(message[5:8], m.requested_userid[:])
+	copy(message[1:4], m.requested_userid[:])
+	return message
+}
+
+//[code:1,serverid:4]
+type Serverid struct {
+	code byte
+	serverid []byte
+}
+
+func(m Serverid) Build_Message() []byte {
+	message := make([]byte, 5)
+	message[0] = m.code
+	copy(message[1:4], m.serverid[:])
+	return message
+}
+
+//[code:1,requested_serverid:4]
+type Requested_Serverid struct {
+	code byte
+	requested_serverid []byte
+}
+
+func(m Requested_Serverid) Build_Message() []byte {
+	message := make([]byte, 5)
+	message[0] = m.code
+	copy(message[1:4], m.requested_serverid[:])
 	return message
 }
 
 //[code:1,serverid:4,userid:4]
-type Serverid struct {
+type Serverid_Userid struct {
 	code byte
 	serverid []byte
 	userid []byte
 }
 
-func(m Serverid) Build_message() []byte {
+func(m Serverid_Userid) Build_Message() []byte {
 	message := make([]byte, 9)
 	message[0] = m.code
 	copy(message[1:4], m.serverid[:])
@@ -90,42 +99,66 @@ func(m Serverid) Build_message() []byte {
 	return message
 }
 
-//[code:1,serverid:4,roomid:4,userid:4]
-type Serverid_userid struct {
+//[code:1,requested_serverid:4,requested_userid:4]
+type Requested_Serverid_Userid struct {
 	code byte
-	serverid []byte
-	userid []byte
+	requested_serverid []byte
 	requested_userid []byte
 }
 
-func(m Serverid_userid) Build_message() []byte {
-	message := make([]byte, 13)
+func(m Requested_Serverid_Userid) Build_Message() []byte {
+	message := make([]byte, 9)
 	message[0] = m.code
-	copy(message[1:4], m.serverid[:])
-	copy(message[5:8], m.userid[:])
-	copy(message[9:12], m.requested_userid[:])
+	copy(message[1:4], m.requested_serverid[:])
+	copy(message[5:8], m.requested_userid[:])
 	return message
 }
 
-//[code:1,serverid:4,roomid:4,userid:4]
+//[code:1,roomid:4]
 type Roomid struct {
 	code byte
-	serverid []byte
+	roomid []byte
+}
+
+func(m Roomid) Build_Message() []byte {
+	message := make([]byte, 5)
+	message[0] = m.code
+	copy(message[1:4], m.roomid[:])
+	return message
+}
+
+//[code:1,roomid:4,userid:4]
+type Roomid_Userid struct {
+	code byte
 	roomid []byte
 	userid []byte
 }
 
-func(m Roomid) Build_message() []byte {
-	message := make([]byte, 13)
+func(m Roomid_Userid) Build_Message() []byte {
+	message := make([]byte, 9)
 	message[0] = m.code
-	copy(message[1:4], m.serverid[:])
-	copy(message[5:8], m.roomid[:])
-	copy(message[9:12], m.userid[:])
+	copy(message[1:4], m.roomid[:])
+	copy(message[5:8], m.userid[:])
+	return message
+}
+
+//[code:1,requested_serverid:4,requested_roomid:4]
+type Requested_Serverid_Roomid struct {
+	code byte
+	requested_serverid []byte
+	requested_roomid []byte
+}
+
+func(m Requested_Serverid_Roomid) Build_Message() []byte {
+	message := make([]byte, 9)
+	message[0] = m.code
+	copy(message[1:4], m.requested_serverid[:])
+	copy(message[5:8], m.requested_roomid[:])
 	return message
 }
 
 //[code:1,serverid:4,roomid:4,userid:4,text:]
-type Message_send struct {
+type Message_Send struct {
 	code byte
 	serverid []byte
 	roomid []byte
@@ -133,7 +166,7 @@ type Message_send struct {
 	text []byte
 }
 
-func(m Message_send) Build_message() []byte {
+func(m Message_Send) Build_Message() []byte {
 	message := make([]byte, 13 + len(m.text))
 	message[0] = m.code
 	copy(message[1:4], m.serverid[:])
@@ -144,7 +177,7 @@ func(m Message_send) Build_message() []byte {
 }
 
 //[code:1,serverid:4.roomid:4,userid:4,time:4,text:]
-type Message_recieve struct {
+type Message_Recieve struct {
 	code byte
 	serverid []byte
 	roomid []byte
@@ -153,7 +186,7 @@ type Message_recieve struct {
 	text []byte
 }
 
-func(m Message_recieve) Build_message() []byte {
+func(m Message_Recieve) Build_Message() []byte {
 	message := make([]byte, 17 + len(m.text))
 	message[0] = m.code
 	copy(message[1:4], m.serverid[:])
@@ -164,136 +197,155 @@ func(m Message_recieve) Build_message() []byte {
 	return message
 }
 
-//[code:1,serverid:4,roomid:4,userid:4,num_message:1]
-type Multi_message struct {
+//[code:1,offset:1]
+type Multi_Message struct {
 	code byte
-	serverid []byte
-	roomid []byte
-	userid []byte
 	offset byte
 }
 
-func(m Multi_message) Build_message() []byte {
-	message := make([]byte, 14)
+func(m Multi_Message) Build_Message() []byte {
+	message := make([]byte, 2)
 	message[0] = m.code
-	copy(message[1:4], m.serverid[:])
-	copy(message[5:8], m.roomid[:])
-	copy(message[9:12], m.userid[:])
-	message[13] = m.offset
+	message[1] = m.offset
 	return message
 }
 
-//[code:1,serverid:4,userid:4,requested_userid:4,display_name:]
-type Display_name struct {
+//[code:1,requested_userid:4,display_name:]
+type Display_Name struct {
 	code byte
-	serverid []byte
-	userid []byte
 	requested_userid []byte
 	display_name []byte
 }
 
-func(m Display_name) Build_message() []byte {
-	message := make([]byte, 13 + len(m.display_name))
+func(m Display_Name) Build_Message() []byte {
+	message := make([]byte, 5 + len(m.display_name))
 	message[0] = m.code
-	copy(message[1:4], m.serverid[:])
-	copy(message[5:8], m.userid[:])
-	copy(message[9:12], m.requested_userid[:])
-	copy(message[13:], m.display_name[:])
+	copy(message[1:4], m.requested_userid[:])
+	copy(message[5:], m.display_name[:])
 	return message
 }
 
-//[code:1,serverid:4,userid:4,server_display_name:]
-type Server_display_name struct {
+//[code:1,requested_serverid:4,server_display_name:]
+type Server_Display_Name struct {
 	code byte
-	serverid []byte
-	userid []byte
+	requested_serverid []byte
 	server_display_name []byte
 }
 
-func(m Server_display_name) Build_message() []byte {
-	message := make([]byte, 9 + len(m.server_display_name))
+func(m Server_Display_Name) Build_Message() []byte {
+	message := make([]byte, 5 + len(m.server_display_name))
 	message[0] = m.code
-	copy(message[1:4], m.serverid[:])
-	copy(message[5:8], m.userid[:])
-	copy(message[9:], m.server_display_name[:])
+	copy(message[1:4], m.requested_serverid[:])
+	copy(message[5:], m.server_display_name[:])
 	return message
 }
 
-//[code:1,roomid:4,userid:4,room_display_name:]
-type Room_display_name struct {
+//[code:1,requested_serverid:4,requested_roomid:4,room_display_name:]
+type Room_Display_Name struct {
 	code byte
-	serverid []byte
-	roomid []byte
-	userid []byte
+	requested_serverid []byte
+	requested_roomid []byte
 	room_display_name []byte
 }
 
-func(m Room_display_name) Build_message() []byte {
-	message := make([]byte, 13 + len(m.room_display_name))
+func(m Room_Display_Name) Build_Message() []byte {
+	message := make([]byte, 9 + len(m.room_display_name))
 	message[0] = m.code
-	copy(message[1:4], m.serverid[:])
-	copy(message[5:8], m.roomid[:])
-	copy(message[9:12], m.userid[:])
-	copy(message[13:], m.room_display_name[:])
+	copy(message[1:4], m.requested_serverid[:])
+	copy(message[5:8], m.requested_roomid[:])
+	copy(message[9:], m.room_display_name[:])
 	return message
 }
 
-//[code:1,serverid:4,userid:4,new_display_name:]
-type New_display_name struct {
+//[code:1,new_display_name:]
+type New_Display_Name struct {
 	code byte
-	serverid []byte
-	userid []byte
 	new_display_name []byte
 }
 
-func(m New_display_name) Build_message() []byte {
-	message := make([]byte, 9 + len(m.new_display_name))
+func(m New_Display_Name) Build_Message() []byte {
+	message := make([]byte, 1 + len(m.new_display_name))
 	message[0] = m.code
-	copy(message[1:4], m.serverid[:])
-	copy(message[5:8], m.userid[:])
-	copy(message[9:], m.new_display_name[:])
+	copy(message[1:], m.new_display_name[:])
 	return message
 }
 
-//[code:1,serverid:4,userid:4,new_server_display_name:]
-type New_server_display_name struct {
+//[code:1,serverid:4,new_server_display_name:]
+type New_Server_Display_Name struct {
 	code byte
 	serverid []byte
-	userid []byte
 	new_server_display_name []byte
 }
 
-func(m New_server_display_name) Build_message() []byte {
-	message := make([]byte, 9 + len(m.new_server_display_name))
+func(m New_Server_Display_Name) Build_Message() []byte {
+	message := make([]byte, 5 + len(m.new_server_display_name))
 	message[0] = m.code
 	copy(message[1:4], m.serverid[:])
-	copy(message[5:8], m.userid[:])
-	copy(message[9:], m.new_server_display_name[:])
+	copy(message[5:], m.new_server_display_name[:])
 	return message
 }
 
-//[code:1,serverid:4,roomid:4,userid:4,new_room_display_name:]
-type New_room_display_name struct {
+//[code:1,serverid:4,roomid:4,new_room_display_name:]
+type New_Room_Display_Name struct {
 	code byte
 	serverid []byte
 	roomid []byte
-	userid []byte
 	new_room_display_name []byte
 }
 
-func(m New_room_display_name) Build_message() []byte {
-	message := make([]byte, 13 + len(m.new_room_display_name))
+func(m New_Room_Display_Name) Build_Message() []byte {
+	message := make([]byte, 9 + len(m.new_room_display_name))
 	message[0] = m.code
 	copy(message[1:4], m.serverid[:])
 	copy(message[5:8], m.roomid[:])
-	copy(message[9:12], m.userid[:])
-	copy(message[13:], m.new_room_display_name[:])
+	copy(message[9:], m.new_room_display_name[:])
+	return message
+}
+
+//[code:1,status:1]
+type Status struct {
+	code byte
+	status byte
+}
+
+func(m Status) Build_Message() []byte {
+	message := make([]byte, 2)
+	message[0] = m.code
+	message[1] = m.status
+	return message
+}
+
+//[code:1,userid:4,status:1]
+type Userid_Status struct {
+	code byte
+	userid []byte
+	status byte
+}
+
+func(m Userid_Status) Build_Message() []byte {
+	message := make([]byte, 6)
+	message[0] = m.code
+	copy(message[1:4], userid[:])
+	message[5] = m.status
+	return message
+}
+
+//[code:1,text:]
+type Text struct {
+	code byte
+	text []byte
+}
+
+func(m Text) Build_Message() []byte {
+	message := make([]byte, 1 + len(m.text))
+	message[0] = m.code
+	copy(message[1:], text[:])
 	return message
 }
 
 //Parse function: takes in type User from User.go and byte array recieved from client
 //Identifies what type of message is being recieved and decides what type of message to send
-func Parse_data (user *User, data []byte) {
+func Parse_Data (user *User, data []byte) {
 
 	//Initializes all code cases
 
@@ -303,8 +355,6 @@ func Parse_data (user *User, data []byte) {
 	var login byte = 2
 	var login_fail byte = 3
 	var login_success byte = 4
-	var status_change byte = 5
-	var status_broadcast byte = 6
 
 	//Message type codes
 	var message_client_send byte = 16
@@ -332,12 +382,23 @@ func Parse_data (user *User, data []byte) {
 	var send_new_server_display_name byte = 65
 	var send_new_room_display_name byte = 66
 
+	//Status of client type codes
+	var status_change byte = 80
+	var status_broadcast byte = 81
+	var server_change byte = 82
+	var server_broadcast byte = 83
+	var room_change byte = 84
+	var room_broadcast byte = 85
+
+	//Error type codes
+	var error_check byte = 255
+
 	//Initializes Message type
 	var m Message
 
 	//Compares first byte of data byte array to all code cases
 	if(data[0] == create_user) {
-		m = Username_password{
+		m = Username_Password{
 			code: data[0],
 			username: data[1:20],
 			password: data[21:]}
@@ -349,17 +410,17 @@ func Parse_data (user *User, data []byte) {
 		} else {
 			data[0] = create_user_fail
 		}
-		Parse_data(user, data)
+		Parse_Data(user, data)
 	
 	} else if(data[0] == create_user_fail) {
 		m = Base{
 			code: data[0]}
 
 		//Calls Write to send message to a user that does not have a userid
-		user.Write(m.Build_message())
+		user.Write(m.Build_Message())
 	
 	} else if(data[0] == login) {
-		m = Username_password{
+		m = Username_Password{
 			code: data[0],
 			username: data[1:20],
 			password: data[21:]}
@@ -373,14 +434,14 @@ func Parse_data (user *User, data []byte) {
 			data[0] = login_fail
 		}
 		user.id = id
-		Parse_data(user, data)
+		Parse_Data(user, data)
 	
 	} else if(data[0] == login_fail) {
 		m = Base{
 			code: data[0]}
 
 		//Calls Write to send message to a user that does not have a userid
-		user.Write(m.Build_message())
+		user.Write(m.Build_Message())
 	
 	} else if(data[0] == login_success) {
 		m = Userid{
@@ -389,18 +450,6 @@ func Parse_data (user *User, data []byte) {
 
 		//Sends login success to user
 		Send_Message(user, m)
-
-	} else if(data[0] == status_change) {
-		m = Status{
-			code: data[0],
-			userid: data[1:4],
-			status: data[5]}
-		
-	} else if(data[0] == status_broadcast) {
-		m = Status{
-			code: data[0],
-			userid: data[1:4],
-			status: data[5]}
 	
 	} else if(data[0] == message_client_send) {
 		m = Message_send{
@@ -417,7 +466,7 @@ func Parse_data (user *User, data []byte) {
 		//Calls Time_Stamp to convert message to code type 17 or message_client_recieve
 		data[0] = message_client_recieve
 		data = Time_Stamp(data)
-		Parse_data(user, data)
+		Parse_Data(user, data)
 	
 	} else if(data[0] == message_client_recieve) {
 		m = Message_recieve{
@@ -467,7 +516,7 @@ func Parse_data (user *User, data []byte) {
 		new_data[0] = recieve_display_name
 		copy(new_data[1:12], data[1:12])
 		copy(new_data[13:], display_name[:])
-		Parse_data(user, new_data)
+		Parse_Data(user, new_data)
 
 	} else if(data[0] == request_all_serverid) {
 		m = Double_userid{
