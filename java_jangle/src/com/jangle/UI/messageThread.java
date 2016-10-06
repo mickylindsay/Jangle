@@ -3,6 +3,7 @@ package com.jangle.UI;
 import com.jangle.client.Client;
 import com.jangle.client.Message;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -37,7 +38,7 @@ public class messageThread implements Runnable {
 
             if (size == mClient.getMessages().size()){
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(20);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -49,7 +50,15 @@ public class messageThread implements Runnable {
                     //String message = mClient.getMessages().get(mClient.getMessages().size() - difference + i).getMessageContent();
                     messages.add(mClient.getMessages().get(mClient.getMessages().size() - difference + i));
                     messageList = FXCollections.observableArrayList(messages);
-                    ui.updateMessages(messageList);
+
+                    //Making new UI update thread
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            ui.updateMessages(messageList);
+                        }
+                    });
+
                 }
                 size = mClient.getMessages().size();
             }

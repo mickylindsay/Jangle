@@ -34,40 +34,9 @@ public class Text_UI extends Application {
 
 
 	private Parent createContent() throws IOException {
-		// Setting pref height of UI on .show() call
-		//chatArea.setPrefHeight(550);
-		//chatArea.setEditable(false);
 
-
-		//Loading FXML main UI
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/mainUI.fxml"));
 		VBox root = loader.load();
-
-		// Making a network connection that connects to the server
-		//mClient = new Client();
-
-		/*try {
-			mClientParseData = new Client_ParseData(mClient, "localhost", 9090);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} */
-
-		// On event listener for submitting entered text in text box
-		/*messageStage.setOnAction(event -> {
-			String message = messageStage.getText();
-			// Send the string to the server
-			try {
-				mClientParseData.sendMessage(new Message(0, message, System.currentTimeMillis(), 0, 0));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			messageStage.clear();
-		}); */
-
-		//VBox root = new VBox(20, chatArea, messageStage);
-		//root.setPrefSize(600, 600);
-		//messageThread = new messageThread(mClient, this);
-		//userThread = new userThread(mClient, this);
 
 		return root;
 	}
