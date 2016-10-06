@@ -14,6 +14,9 @@ public final class CommUtil {
 	public static final int SERVERID_WIDTH = 4;
 	public static final int TIME_WIDTH = 4;
 	
+	public static final byte LOGIN_FAIL = (byte) 3;
+	public static final byte LOGIN_SUCCESS = (byte) 4;
+	public static final byte LOGIN = (byte) 2;
 	public static final byte MESSAGE_TO_SERVER = (byte) 16;
 	public static final byte MESSAGE_FROM_SERVER = (byte) 17;
 	
@@ -38,7 +41,10 @@ public final class CommUtil {
 		return data & 0xFF;
 	}
 	
-	public static enum LoginResult{
+	/**
+	 * Enum for login the Results of various things.
+	 */
+	public enum Result{
 		SUCESS, FAIL, TIMEOUT
 	}
 

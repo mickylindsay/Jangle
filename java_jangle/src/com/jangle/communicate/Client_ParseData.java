@@ -2,10 +2,10 @@ package com.jangle.communicate;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import com.jangle.client.*;
-import static com.jangle.communicate.Comm_CONSTANTS.*;
+import com.jangle.communicate.CommUtil.*;
 
 public class Client_ParseData implements IPARSER {
 
@@ -13,6 +13,7 @@ public class Client_ParseData implements IPARSER {
 	private Client_Communicator Comm;
 	
 	private int loginResult;
+	private int UserID;
 	
 	
 	
@@ -64,27 +65,59 @@ public class Client_ParseData implements IPARSER {
 	 */
 	public void parseData(byte[] data) {
 
-		if (data[0] == MESSAGE_FROM_SERVER){
+		if (data[0] == CommUtil.MESSAGE_FROM_SERVER){
 			Cl.addMessage(new Message (data));
+		}
+		
+		if (data[1] == CommUtil.LOGIN_SUCCESS){
+			loginResult = 1;
+			UserID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
+		}
+		
+		if (data[2] == CommUtil.LOGIN_FAIL){
+			loginResult = 0;
 		}
 	}
 	
 	
 	
 	/**
-	 * Submit username and password for log in.
-	 * @param username the username to log in with
+	 * Submit username and password for log in. If the login is true, the userID for that user
+	 * can be retrieved by calling getUserIDLastLogin()
+	 * @param Username the username to log in with
 	 * @param Password password to log in with
+	 * @param UserId If the login is a success, the UserID will be put here
 	 * @return 0 if login failed. 1 if success. -1 if there was a time out
+	 * @throws IOException 
 	 */
-	public int submitLogIn(String username, String Password){
+	public int submitLogIn(String Username, String Password, String UserId) throws IOException{
 		
+		Username = Username.trim();
+		Password = Password.trim();
+		byte[] data = new byte[Username.length() + Password.length() + 1];
+		UserID = 0;
+		
+		
+		data[0] = (byte) 2;
 		loginResult = -1;
 		
+		Comm.sendToServer(data);
 		
-		return 0;
+		//Sleep the thread, so we can give time to the thread listing to the receiver
+		//time to update values.
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return loginResult;
 		
 		
+	}
+	
+	public int getUserIDLastLogin(){
+		return UserID;
 	}
 	
 	/**
