@@ -1,21 +1,25 @@
 GC=go build
 BIN= bin
-_TEST = $(BIN)/_test
 SRC = src
+SERVEROBJ = Database.go Message.go User.go Util.go
+SERVEROBJ := $(addprefix $(SRC)/, $(SERVEROBJ))
+CLIENTOBJ = 
+CLIENTOBJ := $(addprefix $(SRC)/, $(CLIENTOBJ))
+SERVER = Server.go
+CLIENT = Client.go
 
 all: server
 
-client: $(SRC)/_test/Client.go
+client: $(SRC)/$(CLIENT)
 	@echo Compiling Go Test Client
-	@$(GC) -o $(BIN)/_test/$@ $<
+	@$(GC) -o $(BIN)/$@ $(SRC)/$(CLIENT) $(CLIENTOBJ)
 
-server: $(SRC)/Server.go
+server: $(SRC)/$(SERVER)
 	@echo Compiling Server
-	@$(GC) -o $(BIN)/$@ $(SRC)/*.go
+	@$(GC) -o $(BIN)/$@ $(SRC)/$(SERVER) $(SERVEROBJ)
 
 .PHONY: clean
 
 clean:
 	@echo Removing compiled files
-	@rm  $(BIN) *~ -rf
-
+	@rm  $(BIN) *~  -rf
