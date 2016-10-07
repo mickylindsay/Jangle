@@ -14,6 +14,9 @@ public final class CommUtil {
 	public static final int SERVERID_WIDTH = 4;
 	public static final int TIME_WIDTH = 4;
 	
+	
+	public static final byte CREATE_USER = (byte) 0;
+	public static final byte CREATE_USER_FAIL = (byte) 1;
 	public static final byte LOGIN_FAIL = (byte) 3;
 	public static final byte LOGIN_SUCCESS = (byte) 4;
 	public static final byte LOGIN = (byte) 2;
@@ -44,8 +47,12 @@ public final class CommUtil {
 	/**
 	 * Enum for login the Results of various things.
 	 */
-	public enum Result{
+	public enum LoginResult{
 		SUCESS, FAIL, TIMEOUT
+	}
+	
+	public enum UserStatus{
+		ONLINE, OFFLINE, AWAY
 	}
 
 }
