@@ -14,11 +14,39 @@ import (
 type Jangle struct {
 	userlist *list.List
 	db *sql.DB
+	address string
 }
 
 var jangle Jangle;
 
 func main() {
+	Init_Server();
+	
+	fmt.Println("JANGLE GO SERVER");
+	fmt.Println("listening on - " + jangle.address);
+	
+	listener, e := net.Listen("tcp", jangle.address);
+	Check_Error(e);
+	defer listener.Close();
+	//Read server console input and write that input to every user
+	//go write_stdio_to_clients(jangle.userlist);
+	//Listen for new client connection
+	for {
+		conn, err := listener.Accept();
+		defer conn.Close();
+		fmt.Println("User Connected");
+		user := &User{
+			c : &conn,
+		};
+		//Add new connection onto the end of connections list
+		elem := jangle.userlist.PushBack(user);
+		Check_Error(err);
+		//Read from client and write data to every client
+		go Listen_To_Clients(user, elem);
+	}
+}
+
+func Init_Server(){
 	//Create new list to store every client connection
 	jangle.userlist = list.New();
 
@@ -30,57 +58,13 @@ func main() {
 	fmt.Println("Database Connection Successful.")
 
 	//Address to host server on	
-	var address string
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0])) 
 	dat, err := ioutil.ReadFile(dir + "/../.address")
 	//If such file does not exist prompt the user to enter a DSN
 	if err != nil{
-		address = "localhost:9090"
+		jangle.address = "localhost:9090"
 	}else{
-		address = string(dat)
-	}
-
-	fmt.Println("JANGLE GO SERVER");
-	fmt.Println("listening on - " + address);
-	
-	listener, e := net.Listen("tcp", address);
-	Check_Error(e);
-	defer listener.Close();
-	//Read server console input and write that input to every user
-	//go write_stdio_to_clients(jangle.userlist);
-	//Listen for new client connection
-	for {
-		conn, err := listener.Accept();
-		defer conn.Close();
-		fmt.Println("User Connected... Waiting for login message.");
-		user := &User{
-			c : &conn,
-		};
-		//Add new connection onto the end of connections list
-		elem := jangle.userlist.PushBack(user);
-		Check_Error(err);
-		//Read from client and write data to every client
-		go listen_to_clients(user, elem);
-	}
-}
-
-func listen_to_clients(user *User, e *list.Element){
-	//Array to store data read from client
-	read_data := make([]byte, 1024);
-
-	for {
-		//Read data from client
-		len, err := (*user).Read(read_data);
-		//If server fails to read from client,
-		//the user has disconnected and can be
-		//removed from the lsit fo connections
-		if err != nil {
-			jangle.userlist.Remove(e);
-			fmt.Println("User Disconnected");
-			break;
-		}
-		//Send read array to Message file for parsing and processing
-		Parse_Data(user, read_data[:len]);
+		jangle.address = string(dat)
 	}
 }
 
