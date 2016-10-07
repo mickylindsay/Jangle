@@ -80,15 +80,7 @@ func listen_to_clients(user *User, e *list.Element){
 			break;
 		}
 		//Send read array to Message file for parsing and processing
-		Parse_data(user, read_data[:len]);
+		Parse_Data(user, read_data[:len]);
 	}
 }
 
-//Writes a string to every connection in the list of client connections
-func write_to_clients(connections *list.List, s string){
-	//Iterate over every client
-	for e := connections.Front(); e != nil; e = e.Next() {
-		//Write data to every connection
-		e.Value.(*User).Printf("%s", s)
-	}
-}

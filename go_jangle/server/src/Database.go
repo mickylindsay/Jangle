@@ -98,7 +98,7 @@ func Request_Offset_Messages(offset uint) ([]Message, error){
 		fmt.Println(text_read);
 		Check_Error(err);
 		//Create a "17" message to send back to user
-		m := Message_recieve{
+		m := Message_Recieve{
 			code: 17,
 			serverid: Int_Converter(0),
 			roomid: Int_Converter(0),

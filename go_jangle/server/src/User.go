@@ -31,13 +31,13 @@ func (u *User) Scanf(format string, a ...interface{}) (int, error){
 }
 
 func Send_Message(user *User, message Message) uint{
-	user.Write(message.Build_message())
+	user.Write(message.Build_Message())
 	
 	return 0;
 }
 
 func Send_Broadcast(message Message){
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
-		e.Value.(*User).Write(message.Build_message())
+		e.Value.(*User).Write(message.Build_Message())
 	}			
 }

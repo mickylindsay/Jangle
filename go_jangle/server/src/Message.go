@@ -213,14 +213,14 @@ func(m Multi_Message) Build_Message() []byte {
 //[code:1,requested_userid:4,display_name:]
 type Display_Name struct {
 	code byte
-	requested_userid []byte
+	userid []byte
 	display_name []byte
 }
 
 func(m Display_Name) Build_Message() []byte {
 	message := make([]byte, 5 + len(m.display_name))
 	message[0] = m.code
-	copy(message[1:4], m.requested_userid[:])
+	copy(message[1:4], m.userid[:])
 	copy(message[5:], m.display_name[:])
 	return message
 }
@@ -228,14 +228,14 @@ func(m Display_Name) Build_Message() []byte {
 //[code:1,requested_serverid:4,server_display_name:]
 type Server_Display_Name struct {
 	code byte
-	requested_serverid []byte
+	serverid []byte
 	server_display_name []byte
 }
 
 func(m Server_Display_Name) Build_Message() []byte {
 	message := make([]byte, 5 + len(m.server_display_name))
 	message[0] = m.code
-	copy(message[1:4], m.requested_serverid[:])
+	copy(message[1:4], m.serverid[:])
 	copy(message[5:], m.server_display_name[:])
 	return message
 }
@@ -243,16 +243,16 @@ func(m Server_Display_Name) Build_Message() []byte {
 //[code:1,requested_serverid:4,requested_roomid:4,room_display_name:]
 type Room_Display_Name struct {
 	code byte
-	requested_serverid []byte
-	requested_roomid []byte
+	serverid []byte
+	roomid []byte
 	room_display_name []byte
 }
 
 func(m Room_Display_Name) Build_Message() []byte {
 	message := make([]byte, 9 + len(m.room_display_name))
 	message[0] = m.code
-	copy(message[1:4], m.requested_serverid[:])
-	copy(message[5:8], m.requested_roomid[:])
+	copy(message[1:4], m.serverid[:])
+	copy(message[5:8], m.roomid[:])
 	copy(message[9:], m.room_display_name[:])
 	return message
 }
@@ -325,7 +325,7 @@ type Userid_Status struct {
 func(m Userid_Status) Build_Message() []byte {
 	message := make([]byte, 6)
 	message[0] = m.code
-	copy(message[1:4], userid[:])
+	copy(message[1:4], m.userid[:])
 	message[5] = m.status
 	return message
 }
@@ -339,7 +339,7 @@ type Text struct {
 func(m Text) Build_Message() []byte {
 	message := make([]byte, 1 + len(m.text))
 	message[0] = m.code
-	copy(message[1:], text[:])
+	copy(message[1:], m.text[:])
 	return message
 }
 
@@ -383,6 +383,8 @@ func Parse_Data (user *User, data []byte) {
 	var send_new_room_display_name byte = 66
 
 	//Status of client type codes
+	//TODO
+	/*
 	var status_change byte = 80
 	var status_broadcast byte = 81
 	var server_change byte = 82
@@ -390,8 +392,10 @@ func Parse_Data (user *User, data []byte) {
 	var room_change byte = 84
 	var room_broadcast byte = 85
 
+
 	//Error type codes
 	var error_check byte = 255
+        */
 
 	//Initializes Message type
 	var m Message
@@ -452,7 +456,7 @@ func Parse_Data (user *User, data []byte) {
 		Send_Message(user, m)
 	
 	} else if(data[0] == message_client_send) {
-		m = Message_send{
+		m = Message_Send{
 			code: data[0],
 			serverid: data[1:4],
 			roomid: data[5:8],
@@ -469,7 +473,7 @@ func Parse_Data (user *User, data []byte) {
 		Parse_Data(user, data)
 	
 	} else if(data[0] == message_client_recieve) {
-		m = Message_recieve{
+		m = Message_Recieve{
 			code: data[0],
 			serverid: data[1:4],
 			roomid: data[5:8],
@@ -481,12 +485,9 @@ func Parse_Data (user *User, data []byte) {
 		Send_Broadcast(m)
 	
 	} else if(data[0] == request_n_messages) {
-		m = Multi_message{
+		m = Multi_Message{
 			code: data[0],
-			serverid: data[1:4],
-			roomid: data[5:8],
-			userid: data[9:12],
-			offset: data[13]}
+			offset: data[1]}
 
 		//Send user multiple code type 17 messages depending on the offset value
 		num := uint(data[13])
@@ -499,15 +500,13 @@ func Parse_Data (user *User, data []byte) {
 	} else if(data[0] == request_all_userid) {
 		m = Serverid{
 			code: data[0],
-			serverid: data[1:4],
-			userid: data[5:8]}
+			serverid: data[1:4]}
 	
 	} else if(data[0] == request_display_name) {
-		m = Serverid_userid{
+		m = Serverid_Userid{
 			code: data[0],
 			serverid: data[1:4],
-			userid: data[5:8],
-			requested_userid: data[9:12]}
+			userid: data[5:8]}
 
 		//Calls Request_Display_Name given a userid to reference database and builds code type 49 message
 		id := Byte_Converter(data[5:8])
@@ -519,42 +518,34 @@ func Parse_Data (user *User, data []byte) {
 		Parse_Data(user, new_data)
 
 	} else if(data[0] == request_all_serverid) {
-		m = Double_userid{
+		m = Userid{
 			code: data[0],
-			userid: data[1:4],
-			requested_userid: data[5:8]}
+			userid: data[1:4]}
 	
 	} else if(data[0] == request_server_display_name) {
 		m = Serverid{
 			code: data[0],
-			serverid: data[1:4],
-			userid: data[5:8]}
+			serverid: data[1:4]}
 	
 	} else if(data[0] == request_all_roomid) {
 		m = Serverid{
 			code: data[0],
-			serverid: data[1:4],
-			userid: data[5:8]}
+			serverid: data[1:4]}
 	
 	} else if(data[0] == request_room_display_name) {
 		m = Roomid{
 			code: data[0],
-			serverid: data[1:4],
-			roomid: data[5:8],
-			userid: data[9:12]}
+			roomid: data[1:4]}
 	
 	} else if(data[0] == recieve_userid) {
 		m = Serverid{
 			code: data[0],
-			serverid: data[1:4],
-			userid: data[5:8]}
+			serverid: data[1:4]}
 	
 	} else if(data[0] == recieve_display_name) {
-		m = Display_name{
+		m = Display_Name{
 			code: data[0],
-			serverid: data[1:4],
 			userid: data[5:8],
-			requested_userid: data[9:12],
 			display_name: data[13:]}
 
 		//Sends user the requested display name
@@ -563,51 +554,42 @@ func Parse_Data (user *User, data []byte) {
 	} else if(data[0] == recieve_serverid) {
 		m = Serverid{
 			code: data[0],
-			serverid: data[1:4],
-			userid: data[5:8]}
+			serverid: data[1:4]}
 	
 	} else if(data[0] == recieve_server_display_name) {
-		m = Server_display_name{
+		m = Server_Display_Name{
 			code: data[0],
 			serverid: data[1:4],
-			userid: data[5:8],
-			server_display_name: data[9:]}
+			server_display_name: data[5:]}
 	
 	} else if(data[0] == recieve_roomid) {
 		m = Roomid{
 			code: data[0],
-			serverid: data[1:4],
-			roomid: data[5:8],
-			userid: data[9:12]}
+			roomid: data[1:4]}
 	
 	} else if(data[0] == recieve_room_display_name) {
-		m = Room_display_name{
+		m = Room_Display_Name{
 			code: data[0],
 			serverid: data[1:4],
 			roomid: data[5:8],
-			userid: data[9:12],
-			room_display_name: data[13:]}
+			room_display_name: data[9:]}
 	
 	} else if(data[0] == send_new_display_name) {
-		m = New_display_name{
+		m = New_Display_Name{
 			code: data[0],
-			serverid: data[1:4],
-			userid: data[5:8],
-			new_display_name: data[9:]}
+			new_display_name: data[1:]}
 	
 	} else if(data[0] == send_new_server_display_name) {
-		m = New_server_display_name{
+		m = New_Server_Display_Name{
 			code: data[0],
 			serverid: data[1:4],
-			userid: data[5:8],
-			new_server_display_name: data[9:]}
+			new_server_display_name: data[5:]}
 	
 	} else if(data[0] == send_new_room_display_name) {
-		m = New_room_display_name{
+		m = New_Room_Display_Name{
 			code: data[0],
 			serverid: data[1:4],
 			roomid: data[5:8],
-			userid: data[9:12],
-			new_room_display_name: data[13:]}
+			new_room_display_name: data[9:]}
 	}
 }
