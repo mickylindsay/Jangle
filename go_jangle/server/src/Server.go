@@ -2,13 +2,10 @@ package main
 
 import (
 	"fmt"
+	"flag"
 	"net"
-	"os"	
-	"io/ioutil"
-	"path/filepath"
 	"container/list"
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 )
 
 type Jangle struct {
@@ -21,15 +18,17 @@ var jangle Jangle;
 
 func main() {
 	Init_Server();
+	Init_Flags();
 	
-	fmt.Println("JANGLE GO SERVER");
-	fmt.Println("listening on - " + jangle.address);
+	fmt.Println("\x1b[0;31mJANGLE GO SERVER");
+	fmt.Println("\x1b[0;0mlistening on - " + jangle.address);
 	
 	listener, e := net.Listen("tcp", jangle.address);
 	Check_Error(e);
 	defer listener.Close();
 	//Read server console input and write that input to every user
 	//go write_stdio_to_clients(jangle.userlist);
+
 	//Listen for new client connection
 	for {
 		conn, err := listener.Accept();
@@ -41,11 +40,12 @@ func main() {
 		//Add new connection onto the end of connections list
 		elem := jangle.userlist.PushBack(user);
 		Check_Error(err);
-		//Read from client and write data to every client
+		//Recieve data packets from clients
 		go Listen_To_Clients(user, elem);
 	}
 }
 
+//Initializes the list of users and makes connection to the database
 func Init_Server(){
 	//Create new list to store every client connection
 	jangle.userlist = list.New();
@@ -57,14 +57,17 @@ func Init_Server(){
 	Check_Error(e);
 	fmt.Println("Database Connection Successful.")
 
-	//Address to host server on	
-	dir, _ := filepath.Abs(filepath.Dir(os.Args[0])) 
-	dat, err := ioutil.ReadFile(dir + "/../.address")
-	//If such file does not exist prompt the user to enter a DSN
-	if err != nil{
-		jangle.address = "localhost:9090"
-	}else{
-		jangle.address = string(dat)
-	}
 }
 
+//Creates command line flags and finds their values
+func Init_Flags(){
+	//Creates address flag (defaults to 'localhost')
+	address_flag := flag.String("address", "localhost", "Address of Server");
+	//Creates port flag (defaults to '9090')
+	port_flag := flag.String("port", "9090", "Port of Server");
+
+	flag.Parse();
+
+	jangle.address = *address_flag + ":" + *port_flag;
+
+}
