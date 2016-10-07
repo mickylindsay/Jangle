@@ -12,6 +12,7 @@ type Jangle struct {
 	userlist *list.List
 	db *sql.DB
 	address string
+	debug boolean
 }
 
 var jangle Jangle;
@@ -66,8 +67,10 @@ func Init_Flags(){
 	//Creates port flag (defaults to '9090')
 	port_flag := flag.String("port", "9090", "Port of Server");
 
+	debug_flag := flag.Bool("debug", false, "Puts server in debug mode");
+
 	flag.Parse();
 
 	jangle.address = *address_flag + ":" + *port_flag;
-
+	jangle.debug = *debug_flag;
 }
