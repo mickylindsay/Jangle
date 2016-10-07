@@ -28,7 +28,7 @@ func main() {
 	jangle.db, e = Connect_Database();
 	Check_Error(e);
 	fmt.Println("Database Connection Successful.")
-	User_Create([]byte("micky"), []byte("micky"))
+
 	//Address to host server on	
 	var address string
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0])) 
@@ -47,7 +47,7 @@ func main() {
 	Check_Error(e);
 	defer listener.Close();
 	//Read server console input and write that input to every user
-//	go write_stdio_to_clients(jangle.userlist);
+	//go write_stdio_to_clients(jangle.userlist);
 	//Listen for new client connection
 	for {
 		conn, err := listener.Accept();
@@ -81,8 +81,6 @@ func listen_to_clients(user *User, e *list.Element){
 		}
 		//Send read array to Message file for parsing and processing
 		Parse_data(user, read_data[:len]);
-		
-		
 	}
 }
 
