@@ -10,6 +10,7 @@ import (
 
 type Jangle struct {
 	userlist *list.List
+	bot *User
 	db *sql.DB
 	address string
 	debug bool
@@ -21,8 +22,8 @@ var jangle Jangle;
 func main() {
 	Init_Flags();
 	Init_Server();
-	
-	fmt.Println("\x1b[0;31m" + "JANGLE GO SERVER");
+
+	Color_Println("red", "JANGLE GO SERVER");
 	fmt.Println("\x1b[0;0m" + "listening on - " + jangle.address);
 	
 	listener, e := net.Listen("tcp", jangle.address);
@@ -35,7 +36,7 @@ func main() {
 	for {
 		conn, err := listener.Accept();
 		defer conn.Close();
-		fmt.Println("User Connected");
+		Color_Println("green", "User Connected");
 		user := &User{
 			c : &conn,
 		};
@@ -60,19 +61,20 @@ func Init_Server(){
 
 //Creates command line flags and finds their values
 func Init_Flags(){
+	//String Flags
 	//Creates address flag (defaults to 'localhost')
 	address_flag := flag.String("address", "localhost", "Address of Server");
 	//Creates port flag (defaults to '9090')
 	port_flag := flag.String("port", "9090", "Port of Server");
 
+	//Boolean Flags
 	debug_flag := flag.Bool("debug", false, "Puts server in debug mode");
-
 	no_database_flag := flag.Bool("nodb", false, "Turns off connection to database");
 
-	
 	flag.Parse();
 
 	jangle.address = *address_flag + ":" + *port_flag;
 	jangle.debug = *debug_flag;
 	jangle.no_database = *no_database_flag;
 }
+

@@ -5,7 +5,7 @@ import (
 	"container/list"
 )
 
-
+//Listens for data in from clients
 func Listen_To_Clients(user *User, e *list.Element){
 	//Array to store data read from client
 	read_data := make([]byte, 1024);
@@ -18,7 +18,7 @@ func Listen_To_Clients(user *User, e *list.Element){
 		//removed from the lsit fo connections
 		if err != nil {
 			jangle.userlist.Remove(e);
-			fmt.Println("User Disconnected");
+			Color_Println("orange", "User Disconnected");
 			break;
 		}
 		if(jangle.debug){
@@ -29,6 +29,7 @@ func Listen_To_Clients(user *User, e *list.Element){
 	}
 }
 
+//Sends message to one specific user.
 func Send_Message(user *User, message Message) uint{
 	write_data := message.Build_Message();
 	if (jangle.debug){
@@ -39,6 +40,8 @@ func Send_Message(user *User, message Message) uint{
 	return 0;
 }
 
+//Broadcasts a message to all users.
+//TODO Update to only broadcast to users in same room and server.
 func Send_Broadcast(message Message){
 	write_data := message.Build_Message();
 	if (jangle.debug){
