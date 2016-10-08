@@ -21,20 +21,31 @@ func Listen_To_Clients(user *User, e *list.Element){
 			fmt.Println("User Disconnected");
 			break;
 		}
+		if(jangle.debug){
+			fmt.Println("In: ", read_data[:len]);
+		}
 		//Send read array to Message file for parsing and processing
 		Parse_Data(user, read_data[:len]);
 	}
 }
 
 func Send_Message(user *User, message Message) uint{
-	user.Write(message.Build_Message())
+	write_data := message.Build_Message();
+	if (jangle.debug){
+		fmt.Println("OUT: ", write_data);
+	}
+	user.Write(write_data)
 	
 	return 0;
 }
 
 func Send_Broadcast(message Message){
+	write_data := message.Build_Message();
+	if (jangle.debug){
+		fmt.Println("OUT: ", write_data);
+	}
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
-		e.Value.(*User).Write(message.Build_Message())
+		e.Value.(*User).Write(write_data);
 	}			
 }
 

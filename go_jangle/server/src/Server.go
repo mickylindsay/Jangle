@@ -22,8 +22,8 @@ func main() {
 	Init_Flags();
 	Init_Server();
 	
-	fmt.Println("\x1b[0;31mJANGLE GO SERVER");
-	fmt.Println("\x1b[0;0mlistening on - " + jangle.address);
+	fmt.Println("\x1b[0;31m" + "JANGLE GO SERVER");
+	fmt.Println("\x1b[0;0m" + "listening on - " + jangle.address);
 	
 	listener, e := net.Listen("tcp", jangle.address);
 	Check_Error(e);
