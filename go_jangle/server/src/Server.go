@@ -10,7 +10,6 @@ import (
 
 type Jangle struct {
 	userlist *list.List
-	bot *User
 	db *sql.DB
 	address string
 	debug bool
@@ -24,7 +23,7 @@ func main() {
 	Init_Server();
 
 	Color_Println("red", "JANGLE GO SERVER");
-	fmt.Println("\x1b[0;0m" + "listening on - " + jangle.address);
+	fmt.Println("listening on - " + jangle.address);
 	
 	listener, e := net.Listen("tcp", jangle.address);
 	Check_Error(e);
@@ -34,7 +33,7 @@ func main() {
 
 	//Listen for new client connection
 	for {
-		conn, err := listener.Accept();
+		conn, _ := listener.Accept();
 		defer conn.Close();
 		Color_Println("green", "User Connected");
 		user := &User{
@@ -42,7 +41,6 @@ func main() {
 		};
 		//Add new connection onto the end of connections list
 		elem := jangle.userlist.PushBack(user);
-		Check_Error(err);
 		//Recieve data packets from clients
 		go Listen_To_Clients(user, elem);
 	}
@@ -53,10 +51,7 @@ func Init_Server(){
 	//Create new list to store every client connection
 	jangle.userlist = list.New();
 	//Make connection to Database
-	var e error;
-	jangle.db, e = Connect_Database();
-	Check_Error(e);
-
+	jangle.db, _ = Connect_Database();
 }
 
 //Creates command line flags and finds their values

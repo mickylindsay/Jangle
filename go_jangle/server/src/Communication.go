@@ -8,7 +8,7 @@ import (
 //Listens for data in from clients
 func Listen_To_Clients(user *User, e *list.Element){
 	//Array to store data read from client
-	read_data := make([]byte, 1024);
+	read_data := make([]byte, 1048576);
 
 	for {
 		//Read data from client

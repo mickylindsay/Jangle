@@ -30,9 +30,9 @@ func Connect_Database() (*sql.DB, error){
 		//Attempts to open a conncetion to the mysql database
 		db , err := sql.Open("mysql", dsn);
 		if(err == nil){
-			fmt.Println("Database Connection Successful.");
+			Color_Println("green", "Database Connection Successful.");
 		}else{
-			fmt.Println("Failed to connect to Database.");
+			Color_Println("orange", "Failed to connect to Database.");
 			fmt.Println("Running in 'no_database' mode.");
 			jangle.no_database = true;
 		}
@@ -53,7 +53,7 @@ func User_Login(u []byte, p []byte) (uint, error) {
 	return 1, nil;
 }
 
-//Returnst the next valid userid
+//Returns the next valid userid
 func Request_Display_Name(id uint) []byte{
 	if(!jangle.no_database){
 		var temp []byte;
@@ -63,7 +63,7 @@ func Request_Display_Name(id uint) []byte{
 	return []byte("Display Name")
 }
 
-//Returnst the next valid userid
+//Returns the next valid userid
 func Next_Userid() uint{
 	if(!jangle.no_database){
 		var temp uint;

@@ -72,15 +72,8 @@ func Color_Println(c string, text string){
 		//Default
 		s = "\x1b[0;0m";
 	}
-
 	s += text;
 	s +="\x1b[0;0m";
 
 	fmt.Println(s);	
 }
-
-/*
-func (u *User) Printf(format string, a ...interface{}) (int, error){
-	return fmt.Fprintf((*(*u).c), format, a...)
-}
-*/
