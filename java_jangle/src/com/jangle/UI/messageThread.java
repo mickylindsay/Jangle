@@ -49,12 +49,13 @@ public class messageThread implements Runnable {
                 for (int i = 0; i < difference; i++) {
                     //String message = mClient.getMessages().get(mClient.getMessages().size() - difference + i).getMessageContent();
                     messages.add(mClient.getMessages().get(mClient.getMessages().size() - difference + i));
-                    messageList = FXCollections.observableArrayList(messages);
+                    
 
                     //Making new UI update thread
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                        	messageList = FXCollections.observableArrayList(messages);
                             ui.updateMessages(messageList);
                         }
                     });
