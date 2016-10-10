@@ -145,3 +145,111 @@ func Request_Offset_Messages(offset uint) ([]Message, error){
 	}
 	return nil, nil;
 }
+
+//Requests all userids with same serverid as user
+func Request_Userid_Messages(serverid uint) ([]Message, error){
+	var userid uint;
+	i := 0;
+	messages := make([]Message, 50);
+	if(!jangle.no_database){
+		//Query 50 rows of messages
+		rows, err := jangle.db.Query("SELECT userid FROM users AS u WHERE ? = u.serverid",serverid);
+		Check_Error(err);
+		defer rows.Close();
+		//Iterate through the rows
+		for rows.Next() {
+			//Scan the columns into variables
+			err := rows.Scan(&userid);
+			Check_Error(err);
+			//Create a "48" message to send back to user
+			m := Userid{
+				code: 48,
+				userid: Int_Converter(userid)};
+			//Add that message to the array which will be returned
+			messages = append(messages, m);
+			i++;
+		}
+		//Return array of messages
+		return messages, err;
+	}
+	return nil, nil;
+}
+
+//Request all serverids which a userid is in
+func Request_Serverid_Messages(userid uint) ([]Message, error){
+	var serverid uint;
+	i := 0;
+	messages := make([]Message, 50);
+	if(!jangle.no_database){
+		//Query 50 rows of messages
+		rows, err := jangle.db.Query("SELECT serverid FROM members AS m WHERE ? = m.userid", userid);
+		Check_Error(err);
+		defer rows.Close();
+		//Iterate through the rows
+		for rows.Next() {
+			//Scan the columns into variables
+			err := rows.Scan(&serverid);
+			Check_Error(err);
+			//Create a "50" message to send back to user
+			m := Serverid_Userid{
+				code: 50,
+				serverid: Int_Converter(serverid),
+				userid: Int_Converter(userid)};
+			//Add that message to the array which will be returned
+			messages = append(messages, m);
+			i++;
+		}
+		//Return array of messages
+		return messages, err;
+	}
+	return nil, nil;
+}
+
+//Request the Name of a server by serverid
+func Request_Server_Display_Name(serverid uint) ([]byte,error) {
+	if(!jangle.no_database){
+		var temp string;
+		err := jangle.db.QueryRow("SELECT servername FROM servers AS s WHERE s.serverid = ?", serverid).Scan(&temp);
+		return []byte(temp), err;
+	}
+	return []byte("TEMP"), nil;
+}
+
+//Request all Roomids a server contains
+func Request_Roomid_Messages(serverid uint) ([]Message, error){
+	var roomid uint;
+	i := 0;
+	messages := make([]Message, 50);
+	if(!jangle.no_database){
+		rows, err := jangle.db.Query("SELECT roomid FROM rooms AS r WHERE ? = r.serverid", serverid);
+		Check_Error(err);
+		defer rows.Close();
+		//Iterate through the rows
+		for rows.Next() {
+			//Scan the columns into variables
+			err := rows.Scan(&roomid);
+			Check_Error(err);
+			//Create a "52" message to send back to user
+			m := Serverid_Userid{
+				code: 52,
+				serverid: Int_Converter(serverid),
+				userid: Int_Converter(roomid)};
+			//Add that message to the array which will be returned
+			messages = append(messages, m);
+			i++;
+		}
+		//Return array of messages
+		return messages, err;
+	}
+	return nil, nil;
+}
+
+//Request the name of the Room by serverid and roomid
+func Request_Room_Display_Name(serverid uint, roomid uint) ([]byte,error) {
+	if(!jangle.no_database){
+		var temp string;
+		err := jangle.db.QueryRow("SELECT roomname FROM roomss AS r WHERE r.serverid = ? AND r.roomid = ?", serverid, roomid).Scan(&temp);
+		return []byte(temp), err;
+	}
+	return []byte("TEMP"), nil;
+}
