@@ -11,12 +11,13 @@ public class Client_ParseData implements IPARSER {
 
 	private Client Cl;
 	private Client_Communicator Comm;
-	
+
+	// ints used when recieving data from the server. These are used as
+	// temporary
+	// storage, and are not guaranted to hold any value
 	private LoginResult loginResult;
 	private int UserID;
-	
-	
-	
+	private String DislayName;
 
 	/**
 	 * Create a parser object with no Client_Commmunicator attached to it.
@@ -54,99 +55,141 @@ public class Client_ParseData implements IPARSER {
 		Comm.sendToServer(mess.getByteArray());
 	}
 
-	
 	/**
 	 * Figure out what the data that was received is.
 	 * 
-	 * @param data the character array to parse, and figure out what it is
+	 * @param data
+	 *            the character array to parse, and figure out what it is
 	 */
 	public void parseData(byte[] data) {
 
-		if (data[0] == CommUtil.MESSAGE_FROM_SERVER){
-			Cl.addMessage(new Message (data));
+		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
+			Cl.addMessage(new Message(data));
 			return;
 		}
-		
-		if (data[0] == CommUtil.LOGIN_SUCCESS){
+
+		if (data[0] == CommUtil.LOGIN_SUCCESS) {
 			loginResult = LoginResult.SUCESS;
 			UserID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
 			return;
 		}
-		
-		if (data[0] == CommUtil.LOGIN_FAIL){
+
+		if (data[0] == CommUtil.LOGIN_FAIL) {
 			loginResult = LoginResult.FAIL;
 			return;
 		}
-		
-		if (data[0] == CommUtil.CREATE_USER_FAIL){
-			loginResult = LoginResult.FAIL;
-		}
-		
-		
-	}
-	
-	
-	
 
-	 /**
-	  * 
-	  * @param user user object for the user logging in. If succes, the user ID will be places in this user.
-	  * @param Password Password for the user
-	  * @return
-	  * @throws IOException
-	  */
-	public LoginResult submitLogIn(User user, String Password) throws IOException{
-		
-		byte[] data = new byte[user.getUserName().length() + Password.length() + 1];
-		data[0] = CommUtil.LOGIN;
-		loginResult = LoginResult.TIMEOUT;
-		
-		Comm.sendToServer(data);
-		
-		//Sleep the thread, so we can give time to the thread listing to the receiver
-		//time to update values.
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (data[0] == CommUtil.CREATE_USER_FAIL) {
+			loginResult = LoginResult.NAME_TAKEN;
 		}
-		
-		if (loginResult == LoginResult.SUCESS){
-			user.setId(UserID);
-		}
-		return loginResult;
+
 	}
-	
-	
+
 	/**
-	 * Submit request to create a new user
-	 * @param Username username of the new user
-	 * @param Password password for the new user
-	 * @return 
-	 * @throws IOException 
+	 * Submits a login request to the server. If the login is a success, the
+	 * user ID of the client that it passed to this parser when initalized will
+	 * get set to the user's userID
+	 * 
+	 * @param Username
+	 *            The username for the user
+	 * @param Password
+	 *            The password for the user
+	 * @return If the Login was a success
+	 * @throws IOException
 	 */
-	public LoginResult createUserInServer(User user, String Password) throws IOException{
-		byte[] data = new byte[user.getUserName().length() + Password.length() + 1];
-		data[0] = CommUtil.CREATE_USER;
+	public LoginResult submitLogIn(String Username, String Password) throws IOException {
+
+		byte[] data = new byte[20 + Password.length() + 1];
 		loginResult = LoginResult.TIMEOUT;
-		
+		int place = 0;
+
+		data[0] = CommUtil.LOGIN;
+		place++;
+
+		for (int i = 0; i < Username.length(); i++) {
+			data[place] = Username.getBytes()[i];
+			place++;
+		}
+
+		for (; place < 21; place++) {
+			data[place] = (byte) 0;
+		}
+		for (int i = 0; i < Password.length(); i++) {
+			data[place] = Password.getBytes()[i];
+			place++;
+		}
+
 		Comm.sendToServer(data);
-		
-		//Sleep the thread, so we can give time to the thread listing to the receiver
-		//time to update values.
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		long startTime = System.currentTimeMillis();
+
+		while ((loginResult == LoginResult.TIMEOUT)
+				&& (System.currentTimeMillis() - startTime < CommUtil.TIME_OUT_MILLI)) {
 		}
-		
-		if (loginResult == LoginResult.SUCESS){
-			user.setId(UserID);
+
+		if (loginResult == LoginResult.SUCESS) {
+			Cl.setUserID(UserID);
 		}
+
+		UserID = 0;
 		return loginResult;
 	}
 
+	/**
+	 * Submits a create user request. If the creation request is a success, the
+	 * userID of the client that is given at this parser instantiation will be set to the userID given by the server
+	 * 
+	 * @param Username
+	 * @param Password
+	 * @return
+	 * @throws IOException
+	 */
+	public LoginResult createUserInServer(String Username, String Password) throws IOException {
 
+		byte[] data = new byte[20 + Password.length() + 1];
+		loginResult = LoginResult.TIMEOUT;
+		int place = 0;
+
+		data[0] = CommUtil.CREATE_USER;
+		place++;
+
+		for (int i = 0; i < Username.length(); i++) {
+			data[place] = Username.getBytes()[i];
+			place++;
+		}
+
+		for (; place < 21; place++) {
+			data[place] = (byte) 0;
+		}
+		for (int i = 0; i < Password.length(); i++) {
+			data[place] = Password.getBytes()[i];
+			place++;
+		}
+
+		// Comm.sendToServer(data);
+		long startTime = System.currentTimeMillis();
+
+		while ((loginResult == LoginResult.TIMEOUT)
+				&& (System.currentTimeMillis() - startTime < CommUtil.TIME_OUT_MILLI)) {
+		}
+
+		if (loginResult == LoginResult.SUCESS) {
+			Cl.setUserID(UserID);
+		}
+
+		UserID = 0;
+		return loginResult;
+	}
+
+	//Still broke yo, this aint done yet.
+	public String requestDisplayName(User user) {
+
+		DislayName = "";
+
+		byte[] toServer = new byte[5];
+		toServer[0] = CommUtil.REQUEST_DISPLAY_NAME;
+
+		// Comm.sendToServer(Data);
+		return "";
+
+	}
 }
