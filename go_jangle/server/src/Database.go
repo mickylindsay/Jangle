@@ -54,13 +54,13 @@ func User_Login(u []byte, p []byte) (uint, error) {
 }
 
 //Returns the next valid userid
-func Request_Display_Name(id uint) []byte{
+func Request_Display_Name(id uint) ([]byte, error) {
 	if(!jangle.no_database){
 		var temp []byte;
-		_ = jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", id).Scan(&temp);
-		return temp;
+		err := jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", id).Scan(&temp);
+		return temp, err;
 	}
-	return []byte("Display Name")
+	return []byte("Display Name"), nil;
 }
 
 //Returns the next valid userid
