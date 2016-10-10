@@ -1,7 +1,7 @@
 GC = go build
 BIN = bin
 SRC = src
-SERVEROBJ = Database.go Message.go User.go Util.go Communication.go
+SERVEROBJ = Database.go Message.go User.go Util.go Communication.go Parse.go
 SERVEROBJ := $(addprefix $(SRC)/, $(SERVEROBJ))
 SERVER = Server.go
 

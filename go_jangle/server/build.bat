@@ -1,7 +1,7 @@
 @echo off
 IF NOT EXIST bin
    mkdir bin
-set obj = User.go Message.go Database.go Util.go
+set obj = User.go Message.go Database.go Util.go Parse.go Communication.go
 IF "%1"=="-c" 
    go build -o bin/server.exe Server.go %obj%
 ELSE
