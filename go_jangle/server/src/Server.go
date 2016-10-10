@@ -72,4 +72,3 @@ func Init_Flags(){
 	jangle.debug = *debug_flag;
 	jangle.no_database = *no_database_flag;
 }
-
