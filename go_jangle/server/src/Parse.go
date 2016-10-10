@@ -167,13 +167,13 @@ func Parse_Data (user *User, data []byte) {
 			requested_userid: data[1:4]}
 
 			//Converts message to code type 49
-			/*num := Byte_Converter(data[1:4])
+			num := Byte_Converter(data[1:4])
 			display_name := Request_Display_Name(num)
 			new_data := make([]byte, len(display_name) + 5)
 			new_data[0] = recieve_display_name
 			copy(new_data[1:4], data[1:4])
 			copy(new_data[5:], display_name[:])
-			Parse_Data(user, new_data)*/
+			Parse_Data(user, new_data)
 
 	} else if(data[0] == request_all_serverid) {
 		m = Requested_Userid{
