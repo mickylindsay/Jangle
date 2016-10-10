@@ -162,9 +162,9 @@ func Parse_Data (user *User, data []byte) {
 			}
 	
 	} else if(data[0] == request_display_name) {
-		m = Requested_Userid{
+		m = Userid{
 			code: data[0],
-			requested_userid: data[1:4]}
+			userid: data[1:4]}
 
 			//Converts message to code type 49
 			num := Byte_Converter(data[1:4])
@@ -177,9 +177,9 @@ func Parse_Data (user *User, data []byte) {
 			Parse_Data(user, new_data)
 
 	} else if(data[0] == request_all_serverid) {
-		m = Requested_Userid{
+		m = Userid{
 			code: data[0],
-			requested_userid: data[1:4]}
+			userid: data[1:4]}
 
 			//Send user all serverid from requested userid
 			num := Byte_Converter(data[1:4])
@@ -190,9 +190,9 @@ func Parse_Data (user *User, data []byte) {
 			}
 	
 	} else if(data[0] == request_server_display_name) {
-		m = Requested_Serverid{
+		m = Serverid{
 			code: data[0],
-			requested_serverid: data[1:4]}
+			serverid: data[1:4]}
 
 			//Converts message to code type 51
 			num := Byte_Converter(data[1:4])
@@ -205,9 +205,9 @@ func Parse_Data (user *User, data []byte) {
 			Parse_Data(user, new_data)
 	
 	} else if(data[0] == request_all_roomid) {
-		m = Requested_Serverid{
+		m = Serverid{
 			code: data[0],
-			requested_serverid: data[1:4]}
+			serverid: data[1:4]}
 
 			//Send user all roomid from requested serverid
 			num := Byte_Converter(data[1:4])
@@ -218,10 +218,10 @@ func Parse_Data (user *User, data []byte) {
 			}
 	
 	} else if(data[0] == request_room_display_name) {
-		m = Requested_Serverid_Roomid{
+		m = Serverid_Roomid{
 			code: data[0],
-			requested_serverid: data[1:4],
-			requested_roomid: data[5:8]}
+			serverid: data[1:4],
+			roomid: data[5:8]}
 
 			//Converts message to code type 53
 			num1 := Byte_Converter(data[1:4])
@@ -236,9 +236,9 @@ func Parse_Data (user *User, data []byte) {
 			Parse_Data(user, new_data)
 	
 	} else if(data[0] == recieve_userid) {
-		m = Requested_Userid{
+		m = Userid{
 			code: data[0],
-			requested_userid: data[1:4]}
+			userid: data[1:4]}
 
 			//Sends user the requested userid
 			Send_Message(user, m)
@@ -246,17 +246,17 @@ func Parse_Data (user *User, data []byte) {
 	} else if(data[0] == recieve_display_name) {
 		m = Display_Name{
 			code: data[0],
-			requested_userid: data[5:8],
+			userid: data[5:8],
 			display_name: data[13:]}
 
 			//Sends user the requested display name
 			Send_Message(user, m)
 	
 	} else if(data[0] == recieve_serverid) {
-		m = Requested_Serverid_Userid{
+		m = Serverid_Userid{
 			code: data[0],
-			requested_serverid: data[1:4],
-			requested_userid: data[5:8]}
+			serverid: data[1:4],
+			userid: data[5:8]}
 
 			//Send user the requested serverid from specified userid
 			Send_Message(user, m)
@@ -264,17 +264,17 @@ func Parse_Data (user *User, data []byte) {
 	} else if(data[0] == recieve_server_display_name) {
 		m = Server_Display_Name{
 			code: data[0],
-			requested_serverid: data[1:4],
+			serverid: data[1:4],
 			server_display_name: data[5:]}
 
 			//Send user the requested server display name
 			Send_Message(user, m)
 	
 	} else if(data[0] == recieve_roomid) {
-		m = Requested_Serverid_Roomid{
+		m = Serverid_Roomid{
 			code: data[0],
-			requested_serverid: data[1:4],
-			requested_roomid: data[5:8]}
+			serverid: data[1:4],
+			roomid: data[5:8]}
 
 			//Send user requested roomid from specified serverid
 			Send_Message(user, m)
@@ -282,8 +282,8 @@ func Parse_Data (user *User, data []byte) {
 	} else if(data[0] == recieve_room_display_name) {
 		m = Room_Display_Name{
 			code: data[0],
-			requested_serverid: data[1:4],
-			requested_roomid: data[5:8],
+			serverid: data[1:4],
+			roomid: data[5:8],
 			room_display_name: data[9:]}
 
 			//Send user room display name from specificed severid and roomid
@@ -294,8 +294,6 @@ func Parse_Data (user *User, data []byte) {
 			code: data[0],
 			new_display_name: data[1:]}
 
-			
-	
 	} else if(data[0] == send_new_server_display_name) {
 		m = New_Server_Display_Name{
 			code: data[0],

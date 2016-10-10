@@ -45,19 +45,6 @@ func(m Userid) Build_Message() []byte {
 	return message
 }
 
-//[code:1,requested_userid:4]
-type Requested_Userid struct {
-	code byte
-	requested_userid []byte
-}
-
-func(m Requested_Userid) Build_Message() []byte {
-	message := make([]byte, 5)
-	message[0] = m.code
-	copy(message[1:4], m.requested_userid[:])
-	return message
-}
-
 //[code:1,serverid:4]
 type Serverid struct {
 	code byte
@@ -68,19 +55,6 @@ func(m Serverid) Build_Message() []byte {
 	message := make([]byte, 5)
 	message[0] = m.code
 	copy(message[1:4], m.serverid[:])
-	return message
-}
-
-//[code:1,requested_serverid:4]
-type Requested_Serverid struct {
-	code byte
-	requested_serverid []byte
-}
-
-func(m Requested_Serverid) Build_Message() []byte {
-	message := make([]byte, 5)
-	message[0] = m.code
-	copy(message[1:4], m.requested_serverid[:])
 	return message
 }
 
@@ -96,21 +70,6 @@ func(m Serverid_Userid) Build_Message() []byte {
 	message[0] = m.code
 	copy(message[1:4], m.serverid[:])
 	copy(message[5:8], m.userid[:])
-	return message
-}
-
-//[code:1,requested_serverid:4,requested_userid:4]
-type Requested_Serverid_Userid struct {
-	code byte
-	requested_serverid []byte
-	requested_userid []byte
-}
-
-func(m Requested_Serverid_Userid) Build_Message() []byte {
-	message := make([]byte, 9)
-	message[0] = m.code
-	copy(message[1:4], m.requested_serverid[:])
-	copy(message[5:8], m.requested_userid[:])
 	return message
 }
 
@@ -142,18 +101,18 @@ func(m Roomid_Userid) Build_Message() []byte {
 	return message
 }
 
-//[code:1,requested_serverid:4,requested_roomid:4]
-type Requested_Serverid_Roomid struct {
+//[code:1,serverid:4,roomid:4]
+type Serverid_Roomid struct {
 	code byte
-	requested_serverid []byte
-	requested_roomid []byte
+	serverid []byte
+	roomid []byte
 }
 
-func(m Requested_Serverid_Roomid) Build_Message() []byte {
+func(m Serverid_Roomid) Build_Message() []byte {
 	message := make([]byte, 9)
 	message[0] = m.code
-	copy(message[1:4], m.requested_serverid[:])
-	copy(message[5:8], m.requested_roomid[:])
+	copy(message[1:4], m.serverid[:])
+	copy(message[5:8], m.roomid[:])
 	return message
 }
 
@@ -210,32 +169,32 @@ func(m Multi_Message) Build_Message() []byte {
 	return message
 }
 
-//[code:1,requested_userid:4,display_name:]
+//[code:1,userid:4,display_name:]
 type Display_Name struct {
 	code byte
-	requested_userid []byte
+	userid []byte
 	display_name []byte
 }
 
 func(m Display_Name) Build_Message() []byte {
 	message := make([]byte, 5 + len(m.display_name))
 	message[0] = m.code
-	copy(message[1:4], m.requested_userid[:])
+	copy(message[1:4], m.userid[:])
 	copy(message[5:], m.display_name[:])
 	return message
 }
 
-//[code:1,requested_serverid:4,server_display_name:]
+//[code:1,serverid:4,server_display_name:]
 type Server_Display_Name struct {
 	code byte
-	requested_serverid []byte
+	serverid []byte
 	server_display_name []byte
 }
 
 func(m Server_Display_Name) Build_Message() []byte {
 	message := make([]byte, 5 + len(m.server_display_name))
 	message[0] = m.code
-	copy(message[1:4], m.requested_serverid[:])
+	copy(message[1:4], m.serverid[:])
 	copy(message[5:], m.server_display_name[:])
 	return message
 }
@@ -243,16 +202,16 @@ func(m Server_Display_Name) Build_Message() []byte {
 //[code:1,requested_serverid:4,requested_roomid:4,room_display_name:]
 type Room_Display_Name struct {
 	code byte
-	requested_serverid []byte
-	requested_roomid []byte
+	serverid []byte
+	roomid []byte
 	room_display_name []byte
 }
 
 func(m Room_Display_Name) Build_Message() []byte {
 	message := make([]byte, 9 + len(m.room_display_name))
 	message[0] = m.code
-	copy(message[1:4], m.requested_serverid[:])
-	copy(message[5:8], m.requested_roomid[:])
+	copy(message[1:4], m.serverid[:])
+	copy(message[5:8], m.roomid[:])
 	copy(message[9:], m.room_display_name[:])
 	return message
 }
