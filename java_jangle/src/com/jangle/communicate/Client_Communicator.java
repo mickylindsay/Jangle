@@ -2,8 +2,7 @@ package com.jangle.communicate;
 
 import java.io.*;
 import java.net.*;
-import com.jangle.communicate.Comm_CONSTANTS;
-//add import for message 
+import com.jangle.communicate.CommUtil;
 
 public class Client_Communicator implements Runnable {
 

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"time"
 	"log"
 )
+
 //Converts byte array to unsigned int 
 func Byte_Converter (data []byte) uint {
 	var i uint
@@ -50,4 +52,28 @@ func Check_Error(e error){
 	if(e != nil){
 		log.Fatal(e);
 	}
+}
+
+func Color_Println(c string, text string){
+	var s string;
+	if(c == "red"){
+		s = "\x1b[0;31m";
+	}else if(c == "green"){
+		s = "\x1b[0;32m";
+	}else if(c == "orange"){
+		s = "\x1b[0;33m";
+	}else if(c == "blue"){
+		s = "\x1b[0;34m";
+	}else if(c == "purple"){
+		s = "\x1b[0;35m";
+	}else if(c == "cyan"){
+		s = "\x1b[0;36m";
+	}else{
+		//Default
+		s = "\x1b[0;0m";
+	}
+	s += text;
+	s +="\x1b[0;0m";
+
+	fmt.Println(s);	
 }

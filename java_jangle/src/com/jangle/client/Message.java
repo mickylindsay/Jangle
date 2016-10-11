@@ -2,8 +2,8 @@ package com.jangle.client;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-
-import static com.jangle.communicate.Comm_CONSTANTS.*;
+import com.jangle.communicate.CommUtil;
+//import com.jangle.communicate.CommUtil.*;
 
 /**
  * Created by Jess on 9/28/2016.
@@ -53,18 +53,17 @@ public class Message {
 			user[3 - i] = data[i + 9];
 			time[3 - i] = data[i + 13];
 		}
-		
+
 		content = Arrays.copyOfRange(data, 17, data.length);
 
-		this.userID = byteToInt(user);
-		this.channelID = byteToInt(chan);
-		this.serverID = byteToInt(server);
-		this.timeStamp = (long)byteToInt(time);
+		this.userID = CommUtil.byteToInt(user);
+		this.channelID = CommUtil.byteToInt(chan);
+		this.serverID = CommUtil.byteToInt(server);
+		this.timeStamp = (long) CommUtil.byteToInt(time);
 		this.messageContent = new String(content);
-		
-		
-		
+
 	}
+
 	public Message() {
 		this.channelID = 0;
 		this.userID = 0;
@@ -131,7 +130,7 @@ public class Message {
 		byte[] userid = ByteBuffer.allocate(4).putInt(userID).array();
 		int j = 0;
 
-		ret[0] = MESSAGE_TO_SERVER;
+		ret[0] = CommUtil.MESSAGE_TO_SERVER;
 
 		for (int i = 0; i < 4; i++) {
 			if (serverid.length > i) {
@@ -162,18 +161,6 @@ public class Message {
 
 		return ret;
 
-	}
-	
-	private int byteToInt(byte[] data){
-		
-		return (unsignByte(data[3]) * 1) + (unsignByte(data[2]) * 256) + (unsignByte(data[1]) * 256 * 256)
-				+ (unsignByte(data[0]) * 256 * 256 * 256);
-	}
-	
-	
-	
-	private int unsignByte(byte data){
-		return data & 0xFF;
 	}
 
 }
