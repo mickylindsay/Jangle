@@ -199,7 +199,7 @@ func(m Server_Display_Name) Build_Message() []byte {
 	return message
 }
 
-//[code:1,requested_serverid:4,requested_roomid:4,room_display_name:]
+//[code:1,serverid:4,roomid:4,room_display_name:]
 type Room_Display_Name struct {
 	code byte
 	serverid []byte
