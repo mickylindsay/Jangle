@@ -20,7 +20,7 @@ public class jangle_Main {
 		 * need be.
 		 */
 
-		Message test = new Message(0, "test", "1234", 0, 0);
+		Message test = new Message(0, "test", 1234, 0, 0);
 
 		byte[] s = test.getByteArray();
 

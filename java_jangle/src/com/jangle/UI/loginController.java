@@ -7,8 +7,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,13 +31,38 @@ public class loginController implements Initializable {
     public Button registerButton;
     @FXML
     public Button logInButton;
+    @FXML
+    public Label failedLogin;
+    @FXML
+    public Label loginTimeout;
+    @FXML
+    public Label itWontFitSenpai;
+    @FXML
+    public ImageView loadingAnim;
+    @FXML
+    public Label tooSmall;
 
     @FXML
     private void handleLogin(ActionEvent actionEvent) {
         String username = usernameField.getText();
         String password = passwordField.getText();
+        clearScreen();
+
+        if (username.length() > 20){
+            itWontFitSenpai.setVisible(true);
+            return;
+        }
+        else if(username.length() == 0 || password.length() == 0){
+            return;
+        }
+        else if(username.length() < 3){
+            tooSmall.setVisible(true);
+            return;
+        }
 
         //Send login to server
+        mClient_parseData.submitLogIn(username, password);
+        loadingAnim.setVisible(true);
         System.out.println("login");
 
     }
@@ -44,7 +71,23 @@ public class loginController implements Initializable {
     private void handleRegister(ActionEvent actionEvent) {
         String username = usernameField.getText();
         String password = passwordField.getText();
+        clearScreen();
+
+        if (username.length() > 20){
+            itWontFitSenpai.setVisible(true);
+            return;
+        }
+        else if(username.length() == 0 || password.length() == 0){
+            return;
+        }
+        else if(username.length() < 3){
+            tooSmall.setVisible(true);
+            return;
+        }
+
         // Send the register user to the server
+        mClient_parseData.createUser(username, password);
+        loadingAnim.setVisible(true);
         System.out.println("resgister");
     }
 
@@ -53,5 +96,15 @@ public class loginController implements Initializable {
 
     }
 
+    private void clearScreen(){
+        loginTimeout.setVisible(false);
+        itWontFitSenpai.setVisible(false);
+        failedLogin.setVisible(false);
+        loadingAnim.setVisible(false);
+        tooSmall.setVisible(false);
+    }
 
+    public void setmClient_parseData(Client_ParseData Client_parseData){
+        this.mClient_parseData = Client_parseData;
+    }
 }

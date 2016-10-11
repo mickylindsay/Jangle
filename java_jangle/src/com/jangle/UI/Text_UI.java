@@ -42,10 +42,15 @@ public class Text_UI extends Application {
 	}
 
 	private Parent createLoginDialog() throws IOException {
+		mClient = new Client();
+		mClientParseData = new Client_ParseData(mClient);
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/login.fxml"));
+		AnchorPane dialog = loader.load();
+		loginController mLogin = loader.getController();
+		mLogin.setmClient_parseData(mClientParseData);
 
-		return loader.<AnchorPane>load();
+		return dialog;
 	}
 
 	public static void main(String[] args) {
@@ -60,7 +65,6 @@ public class Text_UI extends Application {
 
 		primaryStage.setScene(new Scene(createContent()));
 		primaryStage.show();
-
 
 	}
 
