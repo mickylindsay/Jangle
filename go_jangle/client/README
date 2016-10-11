@@ -1,0 +1,28 @@
+Jangle Go Server Side
+
+Jangle is a Persistant Chat and Voice client.
+
+.databasedsn
+	File determines MySQL database location.
+	Contains file with single line formatted as such
+	<username>:<password>@<host>:<port>/<database>
+	User will be prompted if file does not exist
+
+.address
+	File containing single line dictating the address and port of server
+	<address>:<port>
+
+Building
+Windows
+	run build.bat [-c:to build client]
+Linux,OS X
+	make [client] [clean]
+
+
+Usage
+Windows
+	bin/server.exe [options]
+	bin/client.exe [options]
+Linux, OS X
+       ./bin.server [options]
+       ./bin/client [options]
