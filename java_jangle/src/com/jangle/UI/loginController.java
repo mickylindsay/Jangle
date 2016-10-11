@@ -61,7 +61,11 @@ public class loginController implements Initializable {
         }
 
         //Send login to server
-        mClient_parseData.submitLogIn(username, password);
+        try {
+            mClient_parseData.submitLogIn(username, password);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         loadingAnim.setVisible(true);
         System.out.println("login");
 
@@ -86,7 +90,11 @@ public class loginController implements Initializable {
         }
 
         // Send the register user to the server
-        mClient_parseData.createUser(username, password);
+        try {
+            mClient_parseData.createUserInServer(username, password);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         loadingAnim.setVisible(true);
         System.out.println("resgister");
     }
