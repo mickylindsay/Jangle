@@ -2,6 +2,7 @@ package com.jangle.communicate;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.jangle.client.*;
@@ -165,7 +166,7 @@ public class Client_ParseData implements IPARSER {
 			place++;
 		}
 
-		// Comm.sendToServer(data);
+		Comm.sendToServer(data);
 		long startTime = System.currentTimeMillis();
 
 		while ((loginResult == LoginResult.TIMEOUT)
@@ -178,6 +179,10 @@ public class Client_ParseData implements IPARSER {
 
 		UserID = 0;
 		return loginResult;
+	}
+	
+	public int request50MessagesWithOffset(){
+		return -1;
 	}
 
 	//Still broke yo, this aint done yet.
