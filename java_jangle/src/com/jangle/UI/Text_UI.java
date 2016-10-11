@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -34,42 +35,17 @@ public class Text_UI extends Application {
 
 
 	private Parent createContent() throws IOException {
-		// Setting pref height of UI on .show() call
-		//chatArea.setPrefHeight(550);
-		//chatArea.setEditable(false);
 
-
-		//Loading FXML main UI
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/mainUI.fxml"));
-		VBox root = loader.load();
 
-		// Making a network connection that connects to the server
-		//mClient = new Client();
+		return loader.<VBox>load();
+	}
 
-		/*try {
-			mClientParseData = new Client_ParseData(mClient, "localhost", 9090);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} */
+	private Parent createLoginDialog() throws IOException {
 
-		// On event listener for submitting entered text in text box
-		/*messageStage.setOnAction(event -> {
-			String message = messageStage.getText();
-			// Send the string to the server
-			try {
-				mClientParseData.sendMessage(new Message(0, message, System.currentTimeMillis(), 0, 0));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			messageStage.clear();
-		}); */
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/login.fxml"));
 
-		//VBox root = new VBox(20, chatArea, messageStage);
-		//root.setPrefSize(600, 600);
-		//messageThread = new messageThread(mClient, this);
-		//userThread = new userThread(mClient, this);
-
-		return root;
+		return loader.<AnchorPane>load();
 	}
 
 	public static void main(String[] args) {
@@ -78,8 +54,14 @@ public class Text_UI extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws IOException {
+		Stage loginStage = new Stage();
+		loginStage.setScene(new Scene(createLoginDialog()));
+		loginStage.showAndWait();
+
 		primaryStage.setScene(new Scene(createContent()));
 		primaryStage.show();
+
+
 	}
 
 }

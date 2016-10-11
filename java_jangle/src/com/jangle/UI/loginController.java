@@ -2,6 +2,7 @@ package com.jangle.UI;
 
 import com.jangle.client.Message;
 import com.jangle.communicate.Client_ParseData;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,17 +30,14 @@ public class loginController implements Initializable {
     @FXML
     public Button logInButton;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-    }
-
     @FXML
     private void handleLogin(ActionEvent actionEvent) {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
         //Send login to server
+        System.out.println("login");
+
     }
 
     @FXML
@@ -47,5 +45,13 @@ public class loginController implements Initializable {
         String username = usernameField.getText();
         String password = passwordField.getText();
         // Send the register user to the server
+        System.out.println("resgister");
     }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+    }
+
+
 }

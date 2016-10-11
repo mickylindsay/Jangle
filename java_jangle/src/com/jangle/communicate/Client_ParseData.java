@@ -2,15 +2,22 @@ package com.jangle.communicate;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import com.jangle.client.*;
-import static com.jangle.communicate.Comm_CONSTANTS.*;
+import com.jangle.communicate.CommUtil.*;
 
 public class Client_ParseData implements IPARSER {
 
-	Client Cl;
-	Client_Communicator Comm;
+	private Client Cl;
+	private Client_Communicator Comm;
+
+	// ints used when recieving data from the server. These are used as
+	// temporary
+	// storage, and are not guaranted to hold any value
+	private LoginResult loginResult;
+	private int UserID;
+	private String DislayName;
 
 	/**
 	 * Create a parser object with no Client_Commmunicator attached to it.
@@ -45,79 +52,144 @@ public class Client_ParseData implements IPARSER {
 	 * specification
 	 */
 	public void sendMessage(Message mess) throws IOException {
-
-		//when ready to send opcode
-		//Comm.sendToServer(generateMessage(mess)); when opcode is ready;
-		Comm.sendToServer(mess.getMessageContent().getBytes());
-	}
-
-	/**
-	 * Generate a message to be sent, based off of message specification
-	 * 
-	 * @param mess
-	 *            the message object to create from
-	 * @return a byte array formatted for sending to the server.
-	 */
-	private byte[] generateMessage(Message mess) {
-
-		byte[] toSend = new byte[1024];
-		byte[] channelID = ByteBuffer.allocate(4).putInt(mess.getChannelID()).array();
-		byte[] serverID = ByteBuffer.allocate(4).putInt(mess.getServerID()).array();
-		byte[] userID = ByteBuffer.allocate(4).putInt(mess.getUserID()).array();
-
-		toSend[0] = MESSAGE_TO_SERVER;
-
-		for (int i = 0; i < 4; i++) {
-			toSend[1 + i] = serverID[i];
-			toSend[5 + i] = channelID[i];
-			toSend[9 + i] = userID[i];
-		}
-
-		byte[] tmp = mess.getMessageContent().getBytes();
-
-		for (int i = 0; i < tmp.length; i++) {
-			toSend[17 + i] = tmp[i];
-		}
-
-		return toSend;
+		Comm.sendToServer(mess.getByteArray());
 	}
 
 	/**
 	 * Figure out what the data that was received is.
 	 * 
-	 * @param tmp the character array to parse, and figure out what it is
+	 * @param data
+	 *            the character array to parse, and figure out what it is
 	 */
-	public void parseData(String tmp) {
+	public void parseData(byte[] data) {
 
-		// get the opcode
-		// byte opcode = Data.substring(0, 1).getBytes()[0];
+		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
+			Cl.addMessage(new Message(data));
+			return;
+		}
 
-		/*
-		 * opcode not implemented in version of go server I was running, force
-		 * adding message if (opcode == MESSAGE_FROM_SERVER) { String ServerID =
-		 * Data.substring(1, 5); int serverID = Integer.valueOf(ServerID);
-		 * 
-		 * String ChannelID = Data.substring(5, 9); int channelID =
-		 * Integer.valueOf(ChannelID);
-		 * 
-		 * String UserID = Data.substring(9, 13); int userID =
-		 * Integer.valueOf(UserID);
-		 * 
-		 * String timeStamp = Data.substring(13, 17); String messageContent =
-		 * Data.substring(17); Message tmp = new Message(userID, messageContent,
-		 * timeStamp, serverID, channelID);
-		 * 
-		 * Cl.addMessage(tmp); return;
-		 * 
-		 * }
-		 */
-		Cl.addMessage(new Message(0, tmp, System.currentTimeMillis(), 0, 0));
-		// System.out.println("Unknown opcode " + opcode);
+		if (data[0] == CommUtil.LOGIN_SUCCESS) {
+			loginResult = LoginResult.SUCESS;
+			UserID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
+			return;
+		}
+
+		if (data[0] == CommUtil.LOGIN_FAIL) {
+			loginResult = LoginResult.FAIL;
+			return;
+		}
+
+		if (data[0] == CommUtil.CREATE_USER_FAIL) {
+			loginResult = LoginResult.NAME_TAKEN;
+		}
+
 	}
 
-	/*
-	 * Parse the data from the communicator, see what is, and move the data on
-	 * its way to the UI. Buffer size is 1024 Bytes
+	/**
+	 * Submits a login request to the server. If the login is a success, the
+	 * user ID of the client that it passed to this parser when initalized will
+	 * get set to the user's userID
+	 * 
+	 * @param Username
+	 *            The username for the user
+	 * @param Password
+	 *            The password for the user
+	 * @return If the Login was a success
+	 * @throws IOException
 	 */
+	public LoginResult submitLogIn(String Username, String Password) throws IOException {
 
+		byte[] data = new byte[20 + Password.length() + 1];
+		loginResult = LoginResult.TIMEOUT;
+		int place = 0;
+
+		data[0] = CommUtil.LOGIN;
+		place++;
+
+		for (int i = 0; i < Username.length(); i++) {
+			data[place] = Username.getBytes()[i];
+			place++;
+		}
+
+		for (; place < 21; place++) {
+			data[place] = (byte) 0;
+		}
+		for (int i = 0; i < Password.length(); i++) {
+			data[place] = Password.getBytes()[i];
+			place++;
+		}
+
+		Comm.sendToServer(data);
+		long startTime = System.currentTimeMillis();
+
+		while ((loginResult == LoginResult.TIMEOUT)
+				&& (System.currentTimeMillis() - startTime < CommUtil.TIME_OUT_MILLI)) {
+		}
+
+		if (loginResult == LoginResult.SUCESS) {
+			Cl.setUserID(UserID);
+		}
+
+		UserID = 0;
+		return loginResult;
+	}
+
+	/**
+	 * Submits a create user request. If the creation request is a success, the
+	 * userID of the client that is given at this parser instantiation will be set to the userID given by the server
+	 * 
+	 * @param Username
+	 * @param Password
+	 * @return
+	 * @throws IOException
+	 */
+	public LoginResult createUserInServer(String Username, String Password) throws IOException {
+
+		byte[] data = new byte[20 + Password.length() + 1];
+		loginResult = LoginResult.TIMEOUT;
+		int place = 0;
+
+		data[0] = CommUtil.CREATE_USER;
+		place++;
+
+		for (int i = 0; i < Username.length(); i++) {
+			data[place] = Username.getBytes()[i];
+			place++;
+		}
+
+		for (; place < 21; place++) {
+			data[place] = (byte) 0;
+		}
+		for (int i = 0; i < Password.length(); i++) {
+			data[place] = Password.getBytes()[i];
+			place++;
+		}
+
+		// Comm.sendToServer(data);
+		long startTime = System.currentTimeMillis();
+
+		while ((loginResult == LoginResult.TIMEOUT)
+				&& (System.currentTimeMillis() - startTime < CommUtil.TIME_OUT_MILLI)) {
+		}
+
+		if (loginResult == LoginResult.SUCESS) {
+			Cl.setUserID(UserID);
+		}
+
+		UserID = 0;
+		return loginResult;
+	}
+
+	//Still broke yo, this aint done yet.
+	public String requestDisplayName(User user) {
+
+		DislayName = "";
+
+		byte[] toServer = new byte[5];
+		toServer[0] = CommUtil.REQUEST_DISPLAY_NAME;
+
+		// Comm.sendToServer(Data);
+		return "";
+
+	}
 }

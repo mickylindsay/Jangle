@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: #3f3f3f;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: #3f3f3f;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jangle.UI.loginController">
    <children>
       <Label layoutX="105.0" layoutY="84.0" text="Jangle V0.1" textFill="WHITE">
          <font>
@@ -20,7 +20,7 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <Button fx:id="logInButton" layoutX="171.0" layoutY="293.0" mnemonicParsing="false" text="Log in" />
-      <Button fx:id="registerButton" layoutX="75.0" layoutY="293.0" mnemonicParsing="false" text="Register" />
+      <Button fx:id="logInButton" onAction="#handleLogin" layoutX="171.0" layoutY="293.0" mnemonicParsing="false" text="Log in" />
+      <Button fx:id="registerButton" onAction="#handleRegister" layoutX="75.0" layoutY="293.0" mnemonicParsing="false" text="Register" />
    </children>
 </AnchorPane>

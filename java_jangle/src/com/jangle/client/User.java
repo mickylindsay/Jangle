@@ -8,17 +8,27 @@ public class User {
     private int id;
     private int status;
     private String displayName;
+    private String userName;
 
     public User(String displayName, int id, int status) {
         this.displayName = displayName;
         this.id = id;
         this.status = status;
+        this.userName = "";
+    }
+    
+    public User(String displayName, String userName, int id, int status){
+    	this.displayName = displayName;
+        this.id = id;
+        this.status = status;
+        this.userName = userName;
     }
 
     public User(String displayName, int id) {
         this.displayName = displayName;
         this.id = id;
         this.status = 0;
+        this.userName = "";
     }
 
     public String getDisplayName() {
@@ -43,6 +53,14 @@ public class User {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+    
+    public String getUserName(){
+    	return userName;
+    }
+    
+    public void setUserName(String userName){
+    	this.userName = userName;
     }
 
     public String toString(){
