@@ -168,13 +168,20 @@ func Parse_Data (user *User, data []byte) {
 
 			//Converts message to code type 49
 			num := Byte_Converter(data[1:4])
-			display_name, err := Request_Display_Name(num)
+			requested_display_name, err := Request_Display_Name(num)
 			Check_Error(err)
-			new_data := make([]byte, len(display_name) + 5)
+
+			/*new_data := make([]byte, len(requested_display_name) + 5)
 			new_data[0] = recieve_display_name
 			copy(new_data[1:4], data[1:4])
-			copy(new_data[5:], display_name[:])
-			Parse_Data(user, new_data)
+			copy(new_data[5:], requested_display_name[:])*/
+
+			new_m := Display_Name{
+				code: recieve_display_name,
+				userid: data[1:4],
+				display_name: requested_display_name}
+
+				Parse_Data(user, new_m.Build_Message())
 
 	} else if(data[0] == request_all_serverid) {
 		m = Userid{
@@ -196,13 +203,20 @@ func Parse_Data (user *User, data []byte) {
 
 			//Converts message to code type 51
 			num := Byte_Converter(data[1:4])
-			server_display_name, err := Request_Server_Display_Name(num)
+			requested_server_display_name, err := Request_Server_Display_Name(num)
 			Check_Error(err)
-			new_data := make([]byte, len(server_display_name) + 5)
+
+			/*new_data := make([]byte, len(requested_server_display_name) + 5)
 			new_data[0] = recieve_server_display_name
 			copy(new_data[1:4], data[1:4])
-			copy(new_data[5:], server_display_name[:])
-			Parse_Data(user, new_data)
+			copy(new_data[5:], requested_server_display_name[:])*/
+
+			new_m := Server_Display_Name{
+				code: recieve_server_display_name,
+				serverid: data[1:4],
+				server_display_name: requested_server_display_name}
+
+				Parse_Data(user, new_m.Build_Message())
 	
 	} else if(data[0] == request_all_roomid) {
 		m = Serverid{
@@ -226,14 +240,22 @@ func Parse_Data (user *User, data []byte) {
 			//Converts message to code type 53
 			num1 := Byte_Converter(data[1:4])
 			num2 := Byte_Converter(data[5:8])
-			room_display_name, err := Request_Room_Display_Name(num1, num2)
+			requested_room_display_name, err := Request_Room_Display_Name(num1, num2)
 			Check_Error(err)
-			new_data := make([]byte, len(room_display_name) + 9)
+
+			/*new_data := make([]byte, len(requested_room_display_name) + 9)
 			new_data[0] = recieve_room_display_name
 			copy(new_data[1:4], data[1:4])
 			copy(new_data[5:8], data[5:8])
-			copy(new_data[9:], room_display_name[:])
-			Parse_Data(user, new_data)
+			copy(new_data[9:], requested_room_display_name[:])*/
+
+			new_m := Room_Display_Name{
+				code: recieve_room_display_name,
+				serverid: data[1:4],
+				roomid: data[5:8],
+				room_display_name: requested_room_display_name}
+			
+				Parse_Data(user, new_m.Build_Message())
 	
 	} else if(data[0] == recieve_userid) {
 		m = Userid{
