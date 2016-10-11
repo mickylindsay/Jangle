@@ -147,7 +147,7 @@ func Parse_Data (user *User, data []byte) {
 			messages,err := Request_Offset_Messages(num)
 			Check_Error(err)
 			for i := 0; i < len(messages); i++ {
-				Send_Message(user, messages[i])
+				Parse_Data(user, messages[i].Build_Message())
 			}
 	
 	} else if(data[0] == request_all_userid) {
@@ -158,7 +158,7 @@ func Parse_Data (user *User, data []byte) {
 			messages,err := Request_Userid_Messages(user.serverid)
 			Check_Error(err)
 			for i := 0; i < len(messages); i++ {
-				Send_Message(user, messages[i])
+				Parse_Data(user, messages[i].Build_Message())
 			}
 	
 	} else if(data[0] == request_display_name) {
@@ -186,7 +186,7 @@ func Parse_Data (user *User, data []byte) {
 			messages,err := Request_Serverid_Messages(num)
 			Check_Error(err)
 			for i := 0; i < len(messages); i++ {
-				Send_Message(user, messages[i])
+				Parse_Data(user, messages[i].Build_Message())
 			}
 	
 	} else if(data[0] == request_server_display_name) {
@@ -214,7 +214,7 @@ func Parse_Data (user *User, data []byte) {
 			messages,err := Request_Roomid_Messages(num)
 			Check_Error(err)
 			for i := 0; i < len(messages); i++ {
-				Send_Message(user, messages[i])
+				Parse_Data(user, messages[i].Build_Message())
 			}
 	
 	} else if(data[0] == request_room_display_name) {
@@ -294,11 +294,17 @@ func Parse_Data (user *User, data []byte) {
 			code: data[0],
 			new_display_name: data[1:]}
 
+			//
+			//Set_New_Display_Name(user.serverid, user.id, m.new_display_name)
+
 	} else if(data[0] == send_new_server_display_name) {
 		m = New_Server_Display_Name{
 			code: data[0],
 			serverid: data[1:4],
 			new_server_display_name: data[5:]}
+
+			//
+			//Set_New_Server_Display_Name(m.serverid, m.new_server_display_name)
 	
 	} else if(data[0] == send_new_room_display_name) {
 		m = New_Room_Display_Name{
@@ -306,6 +312,9 @@ func Parse_Data (user *User, data []byte) {
 			serverid: data[1:4],
 			roomid: data[5:8],
 			new_room_display_name: data[9:]}
+
+			//
+			//Set_New_Room_Display_Name(m.serverid, m.roomid, m.new_room_display_name)
 	
 	} else if(data[0] == status_change) {
 		m = Status{
