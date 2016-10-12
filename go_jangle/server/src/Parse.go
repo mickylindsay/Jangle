@@ -4,52 +4,6 @@ package main
 //Identifies what type of message is being recieved and decides what type of message to send
 func Parse_Data (user *User, data []byte) {
 
-	//Initializes all code cases
-
-	//Login type codes
-	var create_user byte = 0
-	var create_user_fail byte = 1
-	var login byte = 2
-	var login_fail byte = 3
-	var login_success byte = 4
-
-	//Message type codes
-	var message_client_send byte = 16
-	var message_client_recieve byte = 17
-
-	//Request from client type codes
-	var request_n_messages byte = 32
-	var request_all_userid byte = 33
-	var request_display_name byte = 34
-	var request_all_serverid byte = 35
-	var request_server_display_name byte = 36
-	var request_all_roomid byte = 37
-	var request_room_display_name byte = 38
-
-	//Client recieve type codes
-	var recieve_userid byte = 48
-	var recieve_display_name byte = 49
-	var recieve_serverid byte = 50
-	var recieve_server_display_name byte = 51
-	var recieve_roomid byte = 52
-	var recieve_room_display_name byte = 53
-
-	//Client send type codes
-	var send_new_display_name byte = 64
-	var send_new_server_display_name byte = 65
-	var send_new_room_display_name byte = 66
-
-	//Status of client type codes
-	var status_change byte = 80
-	var status_broadcast byte = 81
-	var server_change byte = 82
-	var server_broadcast byte = 83
-	var room_change byte = 84
-	var room_broadcast byte = 85
-
-	//Error type codes
-	var error_check byte = 255
-
 	//Initializes Message type
 	var m Message
 
