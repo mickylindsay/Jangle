@@ -62,11 +62,14 @@ func Parse_Data (user *User, data []byte) {
 
 			//Calls User_Create to check if success or fail
 			err := User_Create(data[1:20], data[21:])
+
 			if(err == nil) {
 				data[0] = login_success
+
 			} else {
 				data[0] = create_user_fail
 			}
+
 			Parse_Data(user, data)
 	
 	} else if(data[0] == create_user_fail) {
@@ -84,12 +87,15 @@ func Parse_Data (user *User, data []byte) {
 
 			//Calls User_Login to check if success or fail
 			id, err := User_Login(data[1:20], data[21:])
+
 			if(err == nil) {
 				data[0] = login_success
 				copy(data[1:4], Int_Converter(id))
+
 			} else {
 				data[0] = login_fail
 			}
+
 			user.id = id
 			Parse_Data(user, data)
 		
@@ -146,6 +152,7 @@ func Parse_Data (user *User, data []byte) {
 			num := uint(data[1])
 			messages,err := Request_Offset_Messages(num)
 			Check_Error(err)
+
 			for i := 0; i < len(messages); i++ {
 				Parse_Data(user, messages[i].Build_Message())
 			}
@@ -157,6 +164,7 @@ func Parse_Data (user *User, data []byte) {
 			//Send user all requested userid on the connected server
 			messages,err := Request_Userid_Messages(user.serverid)
 			Check_Error(err)
+
 			for i := 0; i < len(messages); i++ {
 				Parse_Data(user, messages[i].Build_Message())
 			}
@@ -192,6 +200,7 @@ func Parse_Data (user *User, data []byte) {
 			num := Byte_Converter(data[1:4])
 			messages,err := Request_Serverid_Messages(num)
 			Check_Error(err)
+
 			for i := 0; i < len(messages); i++ {
 				Parse_Data(user, messages[i].Build_Message())
 			}
@@ -227,6 +236,7 @@ func Parse_Data (user *User, data []byte) {
 			num := Byte_Converter(data[1:4])
 			messages,err := Request_Roomid_Messages(num)
 			Check_Error(err)
+
 			for i := 0; i < len(messages); i++ {
 				Parse_Data(user, messages[i].Build_Message())
 			}
@@ -317,7 +327,10 @@ func Parse_Data (user *User, data []byte) {
 			new_display_name: data[1:]}
 
 			//
-			//Set_New_Display_Name(user.serverid, user.id, m.new_display_name)
+			/*message, err := Set_New_Display_Name(user.serverid, user.id, m.new_display_name)
+			Check_Error(err)
+
+			Send_Broadcast(message)*/
 
 	} else if(data[0] == send_new_server_display_name) {
 		m = New_Server_Display_Name{
@@ -326,8 +339,12 @@ func Parse_Data (user *User, data []byte) {
 			new_server_display_name: data[5:]}
 
 			//
-			//Set_New_Server_Display_Name(m.serverid, m.new_server_display_name)
-	
+			/*num := Byte_Converter(data[1:4])
+			message, err := Set_New_Server_Display_Name(num, m.new_server_display_name)
+			Check_Error(err)
+
+			Send_Broadcast(message)*/
+
 	} else if(data[0] == send_new_room_display_name) {
 		m = New_Room_Display_Name{
 			code: data[0],
@@ -336,7 +353,12 @@ func Parse_Data (user *User, data []byte) {
 			new_room_display_name: data[9:]}
 
 			//
-			//Set_New_Room_Display_Name(m.serverid, m.roomid, m.new_room_display_name)
+			/*num1 := Byte_Converter(data[1:4])
+			num2 := Byte_Converter(data[5:8])
+			message, err := Set_New_Room_Display_Name(num1, num2, m.new_room_display_name)
+			Check_Error(err)
+
+			Send_Broadcast(message)*/
 	
 	} else if(data[0] == status_change) {
 		m = Status{
