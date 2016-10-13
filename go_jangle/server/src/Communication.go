@@ -41,7 +41,6 @@ func Send_Message(user *User, message Message) uint{
 }
 
 //Broadcasts a message to all users.
-//TODO Update to only broadcast to users in same room and server.
 func Send_Broadcast(message Message){
 	write_data := message.Build_Message();
 	if (jangle.debug){
@@ -49,6 +48,32 @@ func Send_Broadcast(message Message){
 	}
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
 		e.Value.(*User).Write(write_data);
+	}			
+}
+
+//Broadcasts a message to all users in specific server.
+func Send_Broadcast_Server(message Message, serverid uint){
+	write_data := message.Build_Message();
+	if (jangle.debug){
+		fmt.Println(serverid, ": OUT: ", write_data);
+	}
+	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
+		if(e.Value.(*User).serverid == serverid){
+			e.Value.(*User).Write(write_data);
+		}
+	}			
+}
+
+//Broadcasts a message to all users in specific server and room.
+func Send_Broadcast_Server_Client(message Message, serverid uint, roomid uint){
+	write_data := message.Build_Message();
+	if (jangle.debug){
+		fmt.Println(serverid, ".", roomid, ": OUT: ", write_data);
+	}
+	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
+		if(e.Value.(*User).serverid == serverid && e.Value.(*User).roomid == roomid){
+			e.Value.(*User).Write(write_data);
+		}
 	}			
 }
 
