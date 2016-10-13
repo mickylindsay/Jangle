@@ -19,7 +19,6 @@ func Parse_Data (user *User, data []byte) {
 
 			if (err == nil) {
 				data[0] = login_success
-
 			} else {
 				data[0] = create_user_fail
 			}
@@ -45,7 +44,6 @@ func Parse_Data (user *User, data []byte) {
 			if (err == nil) {
 				data[0] = login_success
 				copy(data[1:4], Int_Converter(id))
-
 			} else {
 				data[0] = login_fail
 			}
@@ -135,11 +133,6 @@ func Parse_Data (user *User, data []byte) {
 			requested_display_name, err := Request_Display_Name(num)
 			Check_Error(err)
 
-			/*new_data := make([]byte, len(requested_display_name) + 5)
-			new_data[0] = recieve_display_name
-			copy(new_data[1:4], data[1:4])
-			copy(new_data[5:], requested_display_name[:])*/
-
 			new_m := Display_Name{
 				code: recieve_display_name,
 				userid: data[1:4],
@@ -170,11 +163,6 @@ func Parse_Data (user *User, data []byte) {
 			num := Byte_Converter(data[1:4])
 			requested_server_display_name, err := Request_Server_Display_Name(num)
 			Check_Error(err)
-
-			/*new_data := make([]byte, len(requested_server_display_name) + 5)
-			new_data[0] = recieve_server_display_name
-			copy(new_data[1:4], data[1:4])
-			copy(new_data[5:], requested_server_display_name[:])*/
 
 			new_m := Server_Display_Name{
 				code: recieve_server_display_name,
@@ -208,12 +196,6 @@ func Parse_Data (user *User, data []byte) {
 			num2 := Byte_Converter(data[5:8])
 			requested_room_display_name, err := Request_Room_Display_Name(num1, num2)
 			Check_Error(err)
-
-			/*new_data := make([]byte, len(requested_room_display_name) + 9)
-			new_data[0] = recieve_room_display_name
-			copy(new_data[1:4], data[1:4])
-			copy(new_data[5:8], data[5:8])
-			copy(new_data[9:], requested_room_display_name[:])*/
 
 			new_m := Room_Display_Name{
 				code: recieve_room_display_name,
@@ -282,11 +264,17 @@ func Parse_Data (user *User, data []byte) {
 			code: data[0],
 			new_display_name: data[1:]}
 
-			//
-			/*message, err := Set_New_Display_Name(user.serverid, user.id, data[1:])
+			//Sets a new display name specific to the connected server
+			err := Set_New_Display_Name(user.serverid, user.id, data[1:])
 			Check_Error(err)
 
-			Send_Broadcast_Server(user.serverid, message)*/
+			arr := Int_Converter(user.id)
+			new_m = Display_Name{
+				code: recieve_display_name,
+				userid: arr,
+				display_name: data[1:]}
+
+				Send_Broadcast_Server(user.serverid, new_m)
 
 	} else if (data[0] == send_new_server_display_name) {
 		m = New_Server_Display_Name{
