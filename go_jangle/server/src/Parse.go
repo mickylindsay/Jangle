@@ -95,7 +95,7 @@ func Parse_Data (user *User, data []byte) {
 			text: data[17:]}
 
 			//Send all users code type 17 message
-			Send_Broadcast(m)
+			Send_Broadcast_Server_Room(m)
 	
 	} else if(data[0] == request_n_messages) {
 		m = Multi_Message{
@@ -284,7 +284,7 @@ func Parse_Data (user *User, data []byte) {
 			/*message, err := Set_New_Display_Name(user.serverid, user.id, m.new_display_name)
 			Check_Error(err)
 
-			Send_Broadcast(message)*/
+			Send_Broadcast_Server(user.serverid, message)*/
 
 	} else if(data[0] == send_new_server_display_name) {
 		m = New_Server_Display_Name{
@@ -294,10 +294,12 @@ func Parse_Data (user *User, data []byte) {
 
 			//
 			/*num := Byte_Converter(data[1:4])
-			message, err := Set_New_Server_Display_Name(num, m.new_server_display_name)
+			messages, err := Set_New_Server_Display_Name(num, m.new_server_display_name)
 			Check_Error(err)
 
-			Send_Broadcast(message)*/
+			for i := 0, i < len(messages); i++ {
+				Parse_Data(user, messages[i])
+			}*/
 
 	} else if(data[0] == send_new_room_display_name) {
 		m = New_Room_Display_Name{
@@ -312,40 +314,69 @@ func Parse_Data (user *User, data []byte) {
 			message, err := Set_New_Room_Display_Name(num1, num2, m.new_room_display_name)
 			Check_Error(err)
 
-			Send_Broadcast(message)*/
+			Send_Broadcast_Server(num1, message)*/
 	
 	} else if(data[0] == status_change) {
 		m = Status{
 			code: data[0],
 			status: data[1]}
 
+			/*num := uint(data[1])
+			message, err := Set_Status(user.id, num)
+			Check_Error(err)
+
+			Parse_Data(user, message.Build_Message())*/
+
 	} else if(data[0] == status_broadcast) {
 		m = Userid_Status{
 			code: data[0],
 			userid: data[1:4],
 			status: data[5]}
+
+			//
+			Send_Broadcast(m)
 		
 	} else if(data[0] == server_change) {
 		m = Serverid{
 			code: data[0],
 			serverid: data[1:4]}
+
+			//
+			/*num := Byte_Converter(data[1:4])
+			message, err := Set_Server(num, user.id)
+			Check_Error(err)
+
+			Parse_Data(user, message.Build_Message())*/
 		
 	} else if(data[0] == server_broadcast) {
 		m = Serverid_Userid{
 			code: data[0],
 			serverid: data[1:4],
 			userid: data[5:8]}
+
+			//
+			Send_Broadcast(m)
 		
 	} else if(data[0] == room_change) {
 		m = Roomid{
 			code: data[0],
 			roomid: data[1:4]}
+
+			//
+			/*num := Byte_Converter(data[1:4])
+			message, err := Set_Room(user.serverid,num,user.id)
+			Check_Error(err)
+
+			Parse_Data(user, message)*/
 		
 	} else if(data[0] == room_broadcast) {
 		m = Roomid_Userid{
 			code: data[0],
 			roomid: data[1:4],
 			userid: data[5:8]}
+
+			//
+			Send_Broadcast(m)
 		
 	} else if(data[0] == error_check) {
 		m = Text{
