@@ -23,7 +23,7 @@ public class loginThread implements Runnable{
 
     @Override
     public void run() {
-       /* while (true) {
+       while (true) {
             if (mClient.getClient().getUserID() != 0) {
                 mLoginController.successfulLogin();
                 return;
@@ -33,6 +33,6 @@ public class loginThread implements Runnable{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        } */
+        }
     }
 }
