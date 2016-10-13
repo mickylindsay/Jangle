@@ -130,7 +130,7 @@ func Parse_Data (user *User, data []byte) {
 
 			//Converts message to code type 49
 			num := Byte_Converter(data[1:4])
-			requested_display_name, err := Request_Display_Name(num)
+			requested_display_name, err := Request_Display_Name(user.serverid, num)
 			Check_Error(err)
 
 			new_m := Display_Name{
@@ -269,7 +269,7 @@ func Parse_Data (user *User, data []byte) {
 			Check_Error(err)
 
 			arr := Int_Converter(user.id)
-			new_m = Display_Name{
+			new_m := Display_Name{
 				code: recieve_display_name,
 				userid: arr,
 				display_name: data[1:]}
