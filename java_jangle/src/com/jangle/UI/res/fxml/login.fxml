@@ -31,5 +31,6 @@
          </image>
       </ImageView>
       <Label fx:id="tooSmall" layoutX="22.0" layoutY="193.0" text="Username too small, must be more than 3 letters" textFill="RED" visible="false" />
+      <Label fx:id="noUsernameOrPassword" layoutX="47.0" layoutY="193.0" text="Please enter a username and password" textFill="RED" visible="false" />
    </children>
 </AnchorPane>
