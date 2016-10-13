@@ -1,5 +1,3 @@
-@echo off
-IF NOT EXIST bin
-   mkdir bin
-go build -o bin/server.exe Server.go User.go Message.go Database.go Util.go Parse.go Communication.go
+echo off
 
+go build -o bin/server.exe src/Server.go src/User.go src/Message.go src/Database.go src/Util.go src/Parse.go src/Communication.go
