@@ -13,17 +13,22 @@ public class Client {
     private ArrayList<Message> mMessages;
     private int serverID;
     private int channelID;
+    private int userID;
+    private String displayName;
+
 
     public Client(ArrayList<User> users, ArrayList<Message> messages, int serverID, int channelID) {
         this.channelID = channelID;
         this.serverID = serverID;
         this.mMessages = messages;
         this.mUsers = users;
+        this.userID = 0;
     }
 
     public Client(ArrayList<User> users, ArrayList<Message> messages) {
         this.mUsers = users;
         this.mMessages = messages;
+        this.userID = 0;
     }
 
     public Client(int serverID, int channelID) {
@@ -38,6 +43,7 @@ public class Client {
         this.mMessages = new ArrayList<>();
         serverID = 0;
         channelID = 0;
+        this.userID = 0;
     }
 
     public void addMessage(Message message) {
@@ -90,4 +96,19 @@ public class Client {
         this.channelID = channelID;
     }
 
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 }

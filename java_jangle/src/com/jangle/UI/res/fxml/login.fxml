@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: #3f3f3f;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jangle.UI.loginController">
+   <children>
+      <Label layoutX="106.0" layoutY="54.0" text="Jangle V0.1" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <TextField fx:id="usernameField" layoutX="38.0" layoutY="218.0" prefHeight="25.0" prefWidth="225.0" promptText="Please enter your username" />
+      <PasswordField fx:id="passwordField" layoutX="38.0" layoutY="258.0" prefHeight="25.0" prefWidth="225.0" promptText="Please enter your password" />
+      <Label fx:id="failedLogin" layoutX="19.0" layoutY="191.0" text="Your username or password were incorrect" textFill="#f80000" visible="false">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Button fx:id="logInButton" layoutX="171.0" layoutY="293.0" mnemonicParsing="false" onAction="#handleLogin" text="Log in" />
+      <Button fx:id="registerButton" layoutX="75.0" layoutY="293.0" mnemonicParsing="false" onAction="#handleRegister" text="Register" />
+      <Label fx:id="loginTimeout" layoutX="115.0" layoutY="193.0" prefHeight="17.0" prefWidth="112.0" text="Login Timeout" textAlignment="CENTER" textFill="RED" visible="false" />
+      <Label fx:id="itWontFitSenpai" layoutX="12.0" layoutY="193.0" text="Username is too long. Must be 20 characters or less." textFill="RED" visible="false" />
+      <ImageView fx:id="loadingAnim" fitHeight="127.0" fitWidth="192.0" layoutX="66.0" layoutY="81.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../img/loading.gif" />
+         </image>
+      </ImageView>
+      <Label fx:id="tooSmall" layoutX="22.0" layoutY="193.0" text="Username too small, must be more than 3 letters" textFill="RED" visible="false" />
+      <Label fx:id="noUsernameOrPassword" layoutX="47.0" layoutY="193.0" text="Please enter a username and password" textFill="RED" visible="false" />
+   </children>
+</AnchorPane>

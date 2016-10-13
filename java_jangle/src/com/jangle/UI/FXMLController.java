@@ -40,7 +40,7 @@ public class FXMLController implements Initializable {
         String message = messageStage.getText();
         // Send the string to the server
         try {
-            mClientParseData.sendMessage(new Message(0, message, System.currentTimeMillis(), 0, 0));
+            mClientParseData.sendMessage(new Message(1, message, 1, 1));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,11 +53,11 @@ public class FXMLController implements Initializable {
         mClient = new Client();
         testlist = FXCollections.observableArrayList();
 
-        try {
+        /*try {
             mClientParseData = new Client_ParseData(mClient, "localhost", 9090);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         messageThread = new messageThread(mClient, this);
         userThread = new userThread(mClient, this);
@@ -66,5 +66,9 @@ public class FXMLController implements Initializable {
 
     public void updateMessages(ObservableList messages) {
         messageArea.setItems(messages);
+    }
+
+    public void setmClientParseData(Client_ParseData clientParseData){
+        this.mClientParseData = clientParseData;
     }
 }
