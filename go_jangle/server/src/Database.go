@@ -246,12 +246,12 @@ func Request_Room_Display_Name(serverid uint, roomid uint) ([]byte,error) {
 }
 
 //Request the Name of a server by serverid
-func Request_User_Display_Name(user *User) ([]byte,error) {
+func Request_Display_Name(serverid uint, userid uint) ([]byte,error) {
 	if(!jangle.no_database){
 		var temp string;
-		err := jangle.db.QueryRow("SELECT displayname FROM display WHERE serverid = ? and userid = ?", user.serverid, user.id).Scan(&temp);
+		err := jangle.db.QueryRow("SELECT displayname FROM display WHERE serverid = ? and userid = ?", serverid, userid).Scan(&temp);
 		if(err==nil){
-			err = jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", user.id).Scan(&temp);
+			err = jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", userid).Scan(&temp);
 		}
 		return []byte(temp), err;
 	}
