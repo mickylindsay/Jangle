@@ -43,6 +43,8 @@ public class loginController implements Initializable {
     public ImageView loadingAnim;
     @FXML
     public Label tooSmall;
+    @FXML
+    public Label noUsernameOrPassword;
 
     @FXML
     private void handleLogin(ActionEvent actionEvent) {
@@ -55,6 +57,7 @@ public class loginController implements Initializable {
             return;
         }
         else if(username.length() == 0 || password.length() == 0){
+            noUsernameOrPassword.setVisible(true);
             return;
         }
         else if(username.length() < 3){
@@ -84,6 +87,7 @@ public class loginController implements Initializable {
             return;
         }
         else if(username.length() == 0 || password.length() == 0){
+            noUsernameOrPassword.setVisible(true);
             return;
         }
         else if(username.length() < 3){
@@ -112,6 +116,7 @@ public class loginController implements Initializable {
         failedLogin.setVisible(false);
         loadingAnim.setVisible(false);
         tooSmall.setVisible(false);
+        noUsernameOrPassword.setVisible(false);
     }
 
     public void successfulLogin() {
