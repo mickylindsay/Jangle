@@ -197,4 +197,8 @@ public class Client_ParseData implements IPARSER {
 		return "";
 
 	}
+
+	public Client getClient(){
+		return this.Cl;
+	}
 }
