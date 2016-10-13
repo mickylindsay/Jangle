@@ -101,8 +101,17 @@ func Message_Create(user *User, messagetext []byte) error{
 		if(user.id == 0){
 			_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", 1, Milli_Time(), Next_Messageid(), string(messagetext), 1, 1);
 		}else{
-			_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", user.id, Milli_Time(), Next_Messageid(), string(messagetext), 1, 1);
+			_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", user.id, Milli_Time(), Next_Messageid(), string(messagetext), user.serverid, user.roomid);
 		}
+		return err;
+	}
+	return nil;
+}
+
+//Inserts a new server specific 
+func Display_Name_Create(user *User, name []byte) error{
+	if(!jangle.no_database){
+		_, err := jangle.db.Exec("INSERT INTO display (userid, serverid, displayname) VALUES (?,?,?);", user.id, user.serverid, string(name));
 		return err;
 	}
 	return nil;
@@ -252,4 +261,17 @@ func Request_Room_Display_Name(serverid uint, roomid uint) ([]byte,error) {
 		return []byte(temp), err;
 	}
 	return []byte("TEMP"), nil;
+}
+
+//Request the Name of a server by serverid
+func Request_User_Display_Name(user *User) ([]byte,error) {
+	if(!jangle.no_database){
+		var temp string;
+		err := jangle.db.QueryRow("SELECT displayname FROM display WHERE serverid = ? and userid = ?", user.serverid, user.id).Scan(&temp);
+		if(err==nil){
+			err = jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", user.id).Scan(&temp);
+		}
+		return []byte(temp), err;
+	}
+	return []byte("TEMP_DISPLAY_NAME"), nil;
 }
