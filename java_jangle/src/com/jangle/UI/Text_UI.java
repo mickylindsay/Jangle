@@ -31,13 +31,19 @@ public class Text_UI extends Application {
 	private Parent createContent() throws IOException {
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/mainUI.fxml"));
+		FXMLController controller = loader.getController();
+		controller.setmClientParseData(mClientParseData);
 
 		return loader.<VBox>load();
 	}
 
 	private Parent createLoginDialog() throws IOException {
-		mClient = new Client();
-		mClientParseData = new Client_ParseData(mClient);
+		this.mClient = new Client();
+		try {
+			this.mClientParseData = new Client_ParseData(mClient, "localhost", 9090);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/login.fxml"));
 		AnchorPane dialog = loader.load();
