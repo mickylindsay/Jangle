@@ -6,7 +6,7 @@ import (
 )
 
 //Listens for data in from clients
-func Listen_To_Clients(user *User, e *list.Element){
+func Listen_To_Clients (user *User, e *list.Element) {
 	//Array to store data read from client
 	read_data := make([]byte, 1048576);
 
@@ -21,7 +21,7 @@ func Listen_To_Clients(user *User, e *list.Element){
 			Color_Println("orange", "User Disconnected");
 			break;
 		}
-		if(jangle.debug){
+		if (jangle.debug) {
 			fmt.Println("In: ", read_data[:len]);
 		}
 		//Send read array to Message file for parsing and processing
@@ -30,9 +30,9 @@ func Listen_To_Clients(user *User, e *list.Element){
 }
 
 //Sends message to one specific user.
-func Send_Message(user *User, message Message) uint{
+func Send_Message (user *User, message Message) uint {
 	write_data := message.Build_Message();
-	if (jangle.debug){
+	if (jangle.debug) {
 		fmt.Println("OUT: ", write_data);
 	}
 	user.Write(write_data)
@@ -41,9 +41,9 @@ func Send_Message(user *User, message Message) uint{
 }
 
 //Broadcasts a message to all users.
-func Send_Broadcast(message Message){
+func Send_Broadcast (message Message) {
 	write_data := message.Build_Message();
-	if (jangle.debug){
+	if (jangle.debug) {
 		fmt.Println("OUT: ", write_data);
 	}
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
@@ -52,43 +52,43 @@ func Send_Broadcast(message Message){
 }
 
 //Broadcasts a message to all users in specific server.
-func Send_Broadcast_Server(serverid uint, message Message){
+func Send_Broadcast_Server (serverid uint, message Message) {
 	write_data := message.Build_Message();
-	if (jangle.debug){
+	if (jangle.debug) {
 		fmt.Println(serverid, ": OUT: ", write_data);
 	}
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
-		if(e.Value.(*User).serverid == serverid){
+		if (e.Value.(*User).serverid == serverid) {
 			e.Value.(*User).Write(write_data);
 		}
 	}			
 }
 
 //Broadcasts a message to all users in specific server and room.
-func Send_Broadcast_Server_Room(serverid uint, roomid uint, message Message){
+func Send_Broadcast_Server_Room (serverid uint, roomid uint, message Message) {
 	write_data := message.Build_Message();
-	if (jangle.debug){
+	if (jangle.debug) {
 		fmt.Println(serverid, ".", roomid, ": OUT: ", write_data);
 	}
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
-		if(e.Value.(*User).serverid == serverid && e.Value.(*User).roomid == roomid){
+		if (e.Value.(*User).serverid == serverid && e.Value.(*User).roomid == roomid) {
 			e.Value.(*User).Write(write_data);
 		}
 	}			
 }
 
-func (u *User) Read(read_data []byte) (int, error){
+func (u *User) Read (read_data []byte) (int, error) {
 	return (*(*u).c).Read(read_data)
 }
 
-func (u *User) Write(write_data []byte) (int, error){
+func (u *User) Write (write_data []byte) (int, error) {
 	return (*(*u).c).Write(write_data)
 }
 
-func (u *User) Printf(format string, a ...interface{}) (int, error){
+func (u *User) Printf (format string, a ...interface{}) (int, error) {
 	return fmt.Fprintf((*(*u).c), format, a...)
 }
 
-func (u *User) Scanf(format string, a ...interface{}) (int, error){
+func (u *User) Scanf (format string, a ...interface{}) (int, error) {
 	return fmt.Fscanf(*(*u).c, format, a...)
 }
