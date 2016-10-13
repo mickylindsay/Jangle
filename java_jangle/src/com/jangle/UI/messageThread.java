@@ -47,9 +47,8 @@ public class messageThread implements Runnable {
             else if (size < mClient.getMessages().size()){
                 int difference = mClient.getMessages().size() - size;
                 for (int i = 0; i < difference; i++) {
-                    //String message = mClient.getMessages().get(mClient.getMessages().size() - difference + i).getMessageContent();
+
                     messages.add(mClient.getMessages().get(mClient.getMessages().size() - difference + i));
-                    
 
                     //Making new UI update thread
                     Platform.runLater(new Runnable() {
@@ -59,7 +58,6 @@ public class messageThread implements Runnable {
                             ui.updateMessages(messageList);
                         }
                     });
-
                 }
                 size = mClient.getMessages().size();
             }
