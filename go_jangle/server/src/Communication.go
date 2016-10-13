@@ -52,7 +52,7 @@ func Send_Broadcast(message Message){
 }
 
 //Broadcasts a message to all users in specific server.
-func Send_Broadcast_Server(message Message, serverid uint){
+func Send_Broadcast_Server(serverid uint, message Message){
 	write_data := message.Build_Message();
 	if (jangle.debug){
 		fmt.Println(serverid, ": OUT: ", write_data);
@@ -65,7 +65,7 @@ func Send_Broadcast_Server(message Message, serverid uint){
 }
 
 //Broadcasts a message to all users in specific server and room.
-func Send_Broadcast_Server_Client(message Message, serverid uint, roomid uint){
+func Send_Broadcast_Server_Room(serverid uint, roomid uint, message Message){
 	write_data := message.Build_Message();
 	if (jangle.debug){
 		fmt.Println(serverid, ".", roomid, ": OUT: ", write_data);
@@ -92,4 +92,3 @@ func (u *User) Printf(format string, a ...interface{}) (int, error){
 func (u *User) Scanf(format string, a ...interface{}) (int, error){
 	return fmt.Fscanf(*(*u).c, format, a...)
 }
-

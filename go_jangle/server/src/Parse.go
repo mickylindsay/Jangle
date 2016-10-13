@@ -95,7 +95,9 @@ func Parse_Data (user *User, data []byte) {
 			text: data[17:]}
 
 			//Send all users code type 17 message
-			Send_Broadcast_Server_Room(m)
+			num1 := Byte_Converter(data[1:4])
+			num2 := Byte_Converter(data[5:8])
+			Send_Broadcast_Server_Room(num1, num2, m)
 	
 	} else if(data[0] == request_n_messages) {
 		m = Multi_Message{
@@ -104,7 +106,7 @@ func Parse_Data (user *User, data []byte) {
 
 			//Send user multiple code type 17 messages depending on the offset value
 			num := uint(data[1])
-			messages,err := Request_Offset_Messages(num)
+			messages, err := Request_Offset_Messages(num)
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
@@ -152,7 +154,7 @@ func Parse_Data (user *User, data []byte) {
 
 			//Send user all serverid from requested userid
 			num := Byte_Converter(data[1:4])
-			messages,err := Request_Serverid_Messages(num)
+			messages, err := Request_Serverid_Messages(num)
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
@@ -188,7 +190,7 @@ func Parse_Data (user *User, data []byte) {
 
 			//Send user all roomid from requested serverid
 			num := Byte_Converter(data[1:4])
-			messages,err := Request_Roomid_Messages(num)
+			messages, err := Request_Roomid_Messages(num)
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
@@ -281,7 +283,7 @@ func Parse_Data (user *User, data []byte) {
 			new_display_name: data[1:]}
 
 			//
-			/*message, err := Set_New_Display_Name(user.serverid, user.id, m.new_display_name)
+			/*message, err := Set_New_Display_Name(user.serverid, user.id, data[1:])
 			Check_Error(err)
 
 			Send_Broadcast_Server(user.serverid, message)*/
@@ -294,11 +296,11 @@ func Parse_Data (user *User, data []byte) {
 
 			//
 			/*num := Byte_Converter(data[1:4])
-			messages, err := Set_New_Server_Display_Name(num, m.new_server_display_name)
+			messages, err := Set_New_Server_Display_Name(num, data[5:])
 			Check_Error(err)
 
 			for i := 0, i < len(messages); i++ {
-				Parse_Data(user, messages[i])
+				Parse_Data(user, messages[i].Build_Message())
 			}*/
 
 	} else if(data[0] == send_new_room_display_name) {
@@ -311,7 +313,7 @@ func Parse_Data (user *User, data []byte) {
 			//
 			/*num1 := Byte_Converter(data[1:4])
 			num2 := Byte_Converter(data[5:8])
-			message, err := Set_New_Room_Display_Name(num1, num2, m.new_room_display_name)
+			message, err := Set_New_Room_Display_Name(num1, num2, data[9:])
 			Check_Error(err)
 
 			Send_Broadcast_Server(num1, message)*/
@@ -334,7 +336,7 @@ func Parse_Data (user *User, data []byte) {
 			status: data[5]}
 
 			//
-			Send_Broadcast(m)
+			//Send_Broadcast(m)
 		
 	} else if(data[0] == server_change) {
 		m = Serverid{
@@ -355,7 +357,7 @@ func Parse_Data (user *User, data []byte) {
 			userid: data[5:8]}
 
 			//
-			Send_Broadcast(m)
+			//Send_Broadcast(m)
 		
 	} else if(data[0] == room_change) {
 		m = Roomid{
@@ -376,7 +378,7 @@ func Parse_Data (user *User, data []byte) {
 			userid: data[5:8]}
 
 			//
-			Send_Broadcast(m)
+			//Send_Broadcast(m)
 		
 	} else if(data[0] == error_check) {
 		m = Text{
