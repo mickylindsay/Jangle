@@ -108,14 +108,6 @@ func Message_Create(user *User, messagetext []byte) error{
 	return nil;
 }
 
-//Inserts a new server specific 
-func Display_Name_Create(user *User, name []byte) error{
-	if(!jangle.no_database){
-		_, err := jangle.db.Exec("INSERT INTO display (userid, serverid, displayname) VALUES (?,?,?);", user.id, user.serverid, string(name));
-		return err;
-	}
-	return nil;
-}
 
 //Request chunks of 50 messages offset by (offset*50) and returns them as array of message objects
 func Request_Offset_Messages(offset uint) ([]Message, error){
@@ -274,4 +266,19 @@ func Request_User_Display_Name(user *User) ([]byte,error) {
 		return []byte(temp), err;
 	}
 	return []byte("TEMP_DISPLAY_NAME"), nil;
+}
+
+//Inserts or update a new server specific displayname
+func Set_New_Display_Name(serverid uint, userid uint, name []byte) error{
+	if(!jangle.no_database){
+		err := jangle.db.QueryRow("SELECT displayname FROM display WHERE serverid = ? and userid = ?", serverid, userid);
+		if(err != nil){
+			_, e := jangle.db.Exec("UPDATE display  SET displayname = ? WHERE userid = ? AND serverid = ?;", string(name), userid, serverid);
+			return e;
+		}else{	
+			_, e := jangle.db.Exec("INSERT INTO display (userid, serverid, displayname) VALUES (?,?,?);", userid, serverid, string(name));
+			return e;
+		}
+	}
+	return nil;
 }

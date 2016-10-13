@@ -2,6 +2,7 @@ package main
 
 import (
 	"net"
+	"fmt"
 )
 
 type User struct {
@@ -29,10 +30,10 @@ func (u *User) Scanf (format string, a ...interface{}) (int, error) {
 	return fmt.Fscanf(*(*u).c, format, a...);
 }
 
-func (u *User) Set_Room (roomid int) {
+func (u *User) Set_Room (roomid uint) {
 	u.roomid = roomid;
 }
 
-func (u *User) Set_Server (serverid int) {
+func (u *User) Set_Server (serverid uint) {
 	u.serverid = serverid;
 }
