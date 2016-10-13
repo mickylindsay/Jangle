@@ -357,7 +357,8 @@ func Parse_Data (user *User, data []byte) {
 			userid: data[5:8]}
 
 			//
-			//Send_Broadcast(m)
+			/*num := Byte_Converter(data[1:4])
+			Send_Broadcast_Server(num, m)*/
 		
 	} else if (data[0] == room_change) {
 		m = Roomid{
