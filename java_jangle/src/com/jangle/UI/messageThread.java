@@ -38,7 +38,7 @@ public class messageThread implements Runnable {
 
             if (size == mClient.getMessages().size()){
                 try {
-                    Thread.sleep(20);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

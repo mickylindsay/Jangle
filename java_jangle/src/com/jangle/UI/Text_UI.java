@@ -1,11 +1,9 @@
 package com.jangle.UI;
 
 import com.jangle.client.Client;
-import com.jangle.client.Message;
 import com.jangle.communicate.Client_ParseData;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
@@ -15,11 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import com.jangle.communicate.Client_Communicator;
 
 
 public class Text_UI extends Application {
@@ -49,6 +43,7 @@ public class Text_UI extends Application {
 		AnchorPane dialog = loader.load();
 		loginController mLogin = loader.getController();
 		mLogin.setmClient_parseData(mClientParseData);
+		mLogin.initializeThread();
 
 		return dialog;
 	}

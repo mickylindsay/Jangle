@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,6 +23,7 @@ import java.util.ResourceBundle;
 public class loginController implements Initializable {
 
     private Client_ParseData mClient_parseData;
+    private loginThread mLoginThread;
 
     @FXML
     public TextField usernameField;
@@ -110,6 +112,15 @@ public class loginController implements Initializable {
         failedLogin.setVisible(false);
         loadingAnim.setVisible(false);
         tooSmall.setVisible(false);
+    }
+
+    public void successfulLogin() {
+        Stage here = (Stage) logInButton.getScene().getWindow();
+        here.close();
+    }
+
+    public void initializeThread(){
+        mLoginThread = new loginThread(mClient_parseData, this);
     }
 
     public void setmClient_parseData(Client_ParseData Client_parseData){
