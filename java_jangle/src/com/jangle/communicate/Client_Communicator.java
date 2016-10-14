@@ -106,7 +106,12 @@ public class Client_Communicator implements Runnable {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		}
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
 	}
 }
