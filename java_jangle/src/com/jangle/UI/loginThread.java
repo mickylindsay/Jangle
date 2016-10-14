@@ -2,6 +2,8 @@ package com.jangle.UI;
 
 import com.jangle.client.Client;
 import com.jangle.communicate.Client_ParseData;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
 
 /**
  * Created by Jess on 10/13/2016.
@@ -25,7 +27,16 @@ public class loginThread implements Runnable{
     public void run() {
        while (true) {
             if (mClient.getClient().getUserID() != 0) {
-                mLoginController.successfulLogin();
+
+
+                //Making new UI update thread
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLoginController.successfulLogin();
+                    }
+                });
+
                 return;
             }
             try {
