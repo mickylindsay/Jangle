@@ -1,5 +1,143 @@
 package main
 
+/*func Message0 (user *User, data []byte) {
+	m = Username_Password{
+			code: data[0],
+			username: data[1:20],
+			password: data[21:]}
+
+			//Calls User_Create to check if success or fail
+			err := User_Create(data[1:20], data[21:])
+
+			if (err == nil) {
+				data[0] = login_success
+			} else {
+				data[0] = create_user_fail
+			}
+
+			Parse_Data(user, data)
+}
+
+func Message1 (user *User, data []byte) {
+	m = Base{
+			code: data[0]}
+
+			//Calls Write to send message to a user that does not have a userid
+			user.Write(m.Build_Message())
+}*/
+
+func Message2 (user *User, data []byte) {
+
+}
+
+func Message3 (user *User, data []byte) {
+
+}
+
+func Message4 (user *User, data []byte) {
+
+}
+
+func Message16 (user *User, data []byte) {
+
+}
+
+func Message17 (user *User, data []byte) {
+
+}
+
+func Message32 (user *User, data []byte) {
+
+}
+
+func Message33 (user *User, data []byte) {
+
+}
+
+func Message34 (user *User, data []byte) {
+
+}
+
+func Message35 (user *User, data []byte) {
+
+}
+
+func Message36 (user *User, data []byte) {
+
+}
+
+func Message37 (user *User, data []byte) {
+
+}
+
+func Message38 (user *User, data []byte) {
+
+}
+
+func Message48 (user *User, data []byte) {
+
+}
+
+func Message49 (user *User, data []byte) {
+
+}
+
+func Message50 (user *User, data []byte) {
+
+}
+
+func Message51 (user *User, data []byte) {
+
+}
+
+func Message52 (user *User, data []byte) {
+
+}
+
+func Message53 (user *User, data []byte) {
+
+}
+
+func Message64 (user *User, data []byte) {
+
+}
+
+func Message65 (user *User, data []byte) {
+
+}
+
+func Message66 (user *User, data []byte) {
+
+}
+
+func Message80 (user *User, data []byte) {
+
+}
+
+func Message81 (user *User, data []byte) {
+
+}
+
+func Message82 (user *User, data []byte) {
+
+}
+
+func Message83 (user *User, data []byte) {
+
+}
+
+func Message84 (user *User, data []byte) {
+
+}
+
+func Message85 (user *User, data []byte) {
+
+}
+
+func Message255 (user *User, data []byte) {
+
+}
+
 //Parse function: takes in type User from User.go and byte array recieved from client
 //Identifies what type of message is being recieved and decides what type of message to send
 func Parse_Data (user *User, data []byte) {
