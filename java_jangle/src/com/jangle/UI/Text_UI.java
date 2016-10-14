@@ -31,10 +31,11 @@ public class Text_UI extends Application {
 	private Parent createContent() throws IOException {
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/mainUI.fxml"));
+        VBox mainUI = loader.load();
 		FXMLController controller = loader.getController();
 		controller.setmClientParseData(mClientParseData);
 
-		return loader.<VBox>load();
+		return mainUI;
 	}
 
 	private Parent createLoginDialog() throws IOException {
