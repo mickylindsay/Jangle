@@ -2,6 +2,7 @@ package com.jangle.UI;
 
 import com.jangle.client.Message;
 import com.jangle.communicate.Client_ParseData;
+import com.jangle.communicate.CommUtil;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,7 +24,8 @@ import java.util.ResourceBundle;
 public class loginController implements Initializable {
 
     private Client_ParseData mClient_parseData;
-    private loginThread mLoginThread;
+    //private loginThread mLoginThread;
+    private CommUtil.LoginResult mLoginResult;
 
     @FXML
     public TextField usernameField;
@@ -45,6 +47,8 @@ public class loginController implements Initializable {
     public Label tooSmall;
     @FXML
     public Label noUsernameOrPassword;
+    @FXML
+    public Label usernameTaken;
 
     @FXML
     private void handleLogin(ActionEvent actionEvent) {
@@ -68,9 +72,22 @@ public class loginController implements Initializable {
         //Send login to server
         loadingAnim.setVisible(true);
         try {
-            mClient_parseData.submitLogIn(username, password);
+            mLoginResult = mClient_parseData.submitLogIn(username, password);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        if (mLoginResult == CommUtil.LoginResult.TIMEOUT) {
+            loginTimeout.setVisible(true);
+            loadingAnim.setVisible(false);
+        }
+        else if (mLoginResult == CommUtil.LoginResult.FAIL) {
+            loadingAnim.setVisible(false);
+            failedLogin.setVisible(true);
+        }
+        else if (mLoginResult == CommUtil.LoginResult.SUCESS) {
+            loadingAnim.setVisible(false);
+            successfulLogin();
         }
 
         System.out.println("login");
@@ -99,9 +116,22 @@ public class loginController implements Initializable {
         // Send the register user to the server
         loadingAnim.setVisible(true);
         try {
-            mClient_parseData.createUserInServer(username, password);
+           mLoginResult = mClient_parseData.createUserInServer(username, password);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        if (mLoginResult == CommUtil.LoginResult.TIMEOUT) {
+            loginTimeout.setVisible(true);
+            loadingAnim.setVisible(false);
+        }
+        else if (mLoginResult == CommUtil.LoginResult.NAME_TAKEN) {
+            loadingAnim.setVisible(false);
+            usernameTaken.setVisible(true);
+        }
+        else if (mLoginResult == CommUtil.LoginResult.SUCESS) {
+            loadingAnim.setVisible(false);
+            successfulLogin();
         }
 
         System.out.println("resgister");
@@ -118,6 +148,7 @@ public class loginController implements Initializable {
         failedLogin.setVisible(false);
         loadingAnim.setVisible(false);
         tooSmall.setVisible(false);
+        usernameTaken.setVisible(false);
         noUsernameOrPassword.setVisible(false);
     }
 
@@ -126,9 +157,6 @@ public class loginController implements Initializable {
         here.close();
     }
 
-    public void initializeThread(){
-        mLoginThread = new loginThread(mClient_parseData, this);
-    }
 
     public void setmClient_parseData(Client_ParseData Client_parseData){
         this.mClient_parseData = Client_parseData;
