@@ -11,7 +11,7 @@ func Message0 (user *User, data []byte) {
 		username: data[1:20],
 		password: data[21:]}
 
-			id, err := User_Create(data[1:20], data[21:])
+			/*id, err := User_Create(data[1:20], data[21:])
 
 			if (err == nil) {
 				data[0] = login_success
@@ -21,7 +21,7 @@ func Message0 (user *User, data []byte) {
 			} else {
 				data[0] = create_user_fail
 				Message1(user, data)
-			}
+			}*/
 }
 
 //
@@ -56,6 +56,7 @@ func Message2 (user *User, data []byte) {
 
 //
 func Message3 (user *User, data []byte) {
+
 	m = Base{
 		code: data[0]}
 
@@ -64,6 +65,7 @@ func Message3 (user *User, data []byte) {
 
 //
 func Message4 (user *User, data []byte) {
+
 	m = Userid{
 		code: data[0],
 		userid: data[1:4]}
@@ -73,6 +75,7 @@ func Message4 (user *User, data []byte) {
 
 //
 func Message16 (user *User, data []byte) {
+
 	m = Message_Send{
 		code: data[0],
 		serverid: data[1:4],
@@ -85,11 +88,12 @@ func Message16 (user *User, data []byte) {
 
 			data[0] = message_client_recieve
 			data = Time_Stamp(data)
-			Parse_Data(user, data)
+			Message17(user, data)
 }
 
 //
 func Message17 (user *User, data []byte) {
+
 	m = Message_Recieve{
 		code: data[0],
 		serverid: data[1:4],
@@ -105,6 +109,7 @@ func Message17 (user *User, data []byte) {
 
 //
 func Message32 (user *User, data []byte) {
+
 	m = Multi_Message{
 		code: data[0],
 		offset: data[1]}
@@ -114,12 +119,13 @@ func Message32 (user *User, data []byte) {
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
-				Parse_Data(user, messages[i].Build_Message())
+				Message17(user, messages[i].Build_Message())
 			}
 }
 
 //
 func Message33 (user *User, data []byte) {
+
 	m = Base{
 		code: data[0]}
 
@@ -127,12 +133,13 @@ func Message33 (user *User, data []byte) {
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
-				Parse_Data(user, messages[i].Build_Message())
+				Message48(user, messages[i].Build_Message())
 			}
 }
 
 //
 func Message34 (user *User, data []byte) {
+
 	m = Userid{
 		code: data[0],
 		userid: data[1:4]}
@@ -141,16 +148,17 @@ func Message34 (user *User, data []byte) {
 			requested_display_name, err := Request_Display_Name(user.serverid, num)
 			Check_Error(err)
 
-			new_m := Display_Name{
-				code: recieve_display_name,
-				userid: data[1:4],
-				display_name: requested_display_name}
+			new_data := make([]byte, len(requested_display_name) + 5)
+			new_data[0] = recieve_display_name
+			copy(new_data[1:4], data[1:4])
+			copy(new_data[5:], requested_display_name)
 
-				Parse_Data(user, new_m.Build_Message())
+			Message49(user, new_data)				
 }
 
 //
 func Message35 (user *User, data []byte) {
+
 	m = Userid{
 		code: data[0],
 		userid: data[1:4]}
@@ -160,12 +168,13 @@ func Message35 (user *User, data []byte) {
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
-				Parse_Data(user, messages[i].Build_Message())
+				Message50(user, messages[i].Build_Message())
 			}
 }
 
 //
 func Message36 (user *User, data []byte) {
+
 	m = Serverid{
 		code: data[0],
 		serverid: data[1:4]}
@@ -174,16 +183,17 @@ func Message36 (user *User, data []byte) {
 			requested_server_display_name, err := Request_Server_Display_Name(num)
 			Check_Error(err)
 
-			new_m := Server_Display_Name{
-				code: recieve_server_display_name,
-				serverid: data[1:4],
-				server_display_name: requested_server_display_name}
+			new_data := make([]byte, len(requested_server_display_name) + 5)
+			new_data[0] = recieve_server_display_name
+			copy(new_data[1:4], data[1:4])
+			copy(new_data[5:], requested_server_display_name)
 
-				Parse_Data(user, new_m.Build_Message())
+			Message51(user, new_data)
 }
 
 //
 func Message37 (user *User, data []byte) {
+
 	m = Serverid{
 		code: data[0],
 		serverid: data[1:4]}
@@ -193,12 +203,13 @@ func Message37 (user *User, data []byte) {
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
-				Parse_Data(user, messages[i].Build_Message())
+				Message52(user, messages[i].Build_Message())
 			}
 }
 
 //
 func Message38 (user *User, data []byte) {
+
 	m = Serverid_Roomid{
 		code: data[0],
 		serverid: data[1:4],
@@ -209,17 +220,17 @@ func Message38 (user *User, data []byte) {
 			requested_room_display_name, err := Request_Room_Display_Name(num1, num2)
 			Check_Error(err)
 
-			new_m := Room_Display_Name{
-				code: recieve_room_display_name,
-				serverid: data[1:4],
-				roomid: data[5:8],
-				room_display_name: requested_room_display_name}
-			
-				Parse_Data(user, new_m.Build_Message())
+			new_data := make([]byte, len(requested_room_display_name) + 9)
+			new_data[0] = recieve_room_display_name
+			copy(new_data[1:8], data[1:8])
+			copy(new_data[9:], requested_room_display_name)
+
+			Message53(user, new_data)
 }
 
 //
 func Message48 (user *User, data []byte) {
+
 	m = Userid{
 		code: data[0],
 		userid: data[1:4]}
@@ -229,16 +240,18 @@ func Message48 (user *User, data []byte) {
 
 //
 func Message49 (user *User, data []byte) {
+
 	m = Display_Name{
 		code: data[0],
-		userid: data[5:8],
-		display_name: data[13:]}
+		userid: data[1:4],
+		display_name: data[5:]}
 
 			Send_Message(user, m)
 }
 
 //
 func Message50 (user *User, data []byte) {
+
 	m = Serverid_Userid{
 		code: data[0],
 		serverid: data[1:4],
@@ -249,6 +262,7 @@ func Message50 (user *User, data []byte) {
 
 //
 func Message51 (user *User, data []byte) {
+
 	m = Server_Display_Name{
 		code: data[0],
 		serverid: data[1:4],
@@ -259,6 +273,7 @@ func Message51 (user *User, data []byte) {
 
 //
 func Message52 (user *User, data []byte) {
+
 	m = Serverid_Roomid{
 		code: data[0],
 		serverid: data[1:4],
@@ -269,6 +284,7 @@ func Message52 (user *User, data []byte) {
 
 //
 func Message53 (user *User, data []byte) {
+
 	m = Room_Display_Name{
 		code: data[0],
 		serverid: data[1:4],
@@ -280,6 +296,7 @@ func Message53 (user *User, data []byte) {
 
 //
 func Message64 (user *User, data []byte) {
+
 	m = New_Display_Name{
 		code: data[0],
 		new_display_name: data[1:]}
@@ -298,6 +315,7 @@ func Message64 (user *User, data []byte) {
 
 //
 func Message65 (user *User, data []byte) {
+
 	m = New_Server_Display_Name{
 		code: data[0],
 		serverid: data[1:4],
@@ -314,6 +332,7 @@ func Message65 (user *User, data []byte) {
 
 //
 func Message66 (user *User, data []byte) {
+
 	m = New_Room_Display_Name{
 		code: data[0],
 		serverid: data[1:4],
@@ -330,6 +349,7 @@ func Message66 (user *User, data []byte) {
 
 //
 func Message80 (user *User, data []byte) {
+
 	m = Status{
 		code: data[0],
 		status: data[1]}
@@ -343,6 +363,7 @@ func Message80 (user *User, data []byte) {
 
 //
 func Message81 (user *User, data []byte) {
+
 	m = Userid_Status{
 		code: data[0],
 		userid: data[1:4],
@@ -353,6 +374,7 @@ func Message81 (user *User, data []byte) {
 
 //
 func Message82 (user *User, data []byte) {
+
 	m = Serverid{
 		code: data[0],
 		serverid: data[1:4]}
@@ -366,6 +388,7 @@ func Message82 (user *User, data []byte) {
 
 //
 func Message83 (user *User, data []byte) {
+
 	m = Serverid_Userid{
 		code: data[0],
 		serverid: data[1:4],
@@ -377,6 +400,7 @@ func Message83 (user *User, data []byte) {
 
 //
 func Message84 (user *User, data []byte) {
+
 	m = Roomid{
 		code: data[0],
 		roomid: data[1:4]}
@@ -390,6 +414,7 @@ func Message84 (user *User, data []byte) {
 
 //
 func Message85 (user *User, data []byte) {
+
 	m = Roomid_Userid{
 		code: data[0],
 		roomid: data[1:4],
@@ -400,6 +425,7 @@ func Message85 (user *User, data []byte) {
 
 //
 func Message255 (user *User, data []byte) {
+	
 	m = Text{
 		code: data[0],
 		text: data[1:]}
