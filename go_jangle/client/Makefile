@@ -1,7 +1,7 @@
 GC = go build
 BIN = bin
 SRC = src
-CLIENTOBJ = 
+CLIENTOBJ = TerminalUI.go
 CLIENTOBJ := $(addprefix $(SRC)/, $(CLIENTOBJ))
 CLIENT = Client.go
 
