@@ -97,6 +97,7 @@ public class Client_Communicator implements Runnable {
 			try {
 				tmp = readFromServer();
 				if (tmp != null) {
+					System.out.println(tmp);
 					Parser.parseData(tmp);
 				}
 

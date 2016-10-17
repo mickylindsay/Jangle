@@ -19,6 +19,7 @@ public class Client_ParseData implements IPARSER {
 	private LoginResult loginResult;
 	private int UserID;
 	private String DislayName;
+	private int numMessagesRecieved;
 
 	/**
 	 * Create a parser object with no Client_Commmunicator attached to it.
@@ -181,7 +182,22 @@ public class Client_ParseData implements IPARSER {
 		return loginResult;
 	}
 	
-	public int request50MessagesWithOffset(){
+	/**
+	 * Request block of 50 messages from the server
+	 * @param offSet Which block of 50 to 
+	 * @return
+	 * @throws IOException 
+	 */
+	public int request50MessagesWithOffset(int offSet) throws IOException{
+		
+		numMessagesRecieved = 0;
+		
+		byte[] test = new byte[2];
+		test[0] = CommUtil.REQUEST_N_MESSAGES;
+		test[1] = (byte) 0;
+		
+		Comm.sendToServer(test);
+		
 		return -1;
 	}
 
