@@ -3,7 +3,8 @@ package main
 //Initializes Message type
 var m Message
 
-//
+//If create user successful, convert message to code type 4
+//If create user fail, convert message to code type 1
 func Message0 (user *User, data []byte) {
 
 	m = Username_Password{
@@ -24,7 +25,7 @@ func Message0 (user *User, data []byte) {
 			}*/
 }
 
-//
+//Writes to user message code type 1, create user fail
 func Message1 (user *User, data []byte) {
 
 	m = Base{
@@ -33,7 +34,8 @@ func Message1 (user *User, data []byte) {
 			user.Write(m.Build_Message())
 }
 
-//
+//If login successful, convert message to code type 4
+//If login fail, convert message to code type 3
 func Message2 (user *User, data []byte) {
 
 	m = Username_Password{
@@ -54,7 +56,7 @@ func Message2 (user *User, data []byte) {
 			}
 }
 
-//
+//Writes to user message code type 3, login fail
 func Message3 (user *User, data []byte) {
 
 	m = Base{
@@ -63,7 +65,7 @@ func Message3 (user *User, data []byte) {
 			user.Write(m.Build_Message())
 }
 
-//
+//Send message code type 4 to client, login success
 func Message4 (user *User, data []byte) {
 
 	m = Userid{
@@ -73,7 +75,8 @@ func Message4 (user *User, data []byte) {
 			Send_Message(user, m)
 }
 
-//
+//Converts message code type 16, message client send
+//to message code type 17, message client recieve
 func Message16 (user *User, data []byte) {
 
 	m = Message_Send{
@@ -91,7 +94,8 @@ func Message16 (user *User, data []byte) {
 			Message17(user, data)
 }
 
-//
+//Sends message code type 17, message client recieve,
+//to a chat room on a specific server
 func Message17 (user *User, data []byte) {
 
 	m = Message_Recieve{
@@ -107,7 +111,8 @@ func Message17 (user *User, data []byte) {
 			Send_Broadcast_Server_Room(num1, num2, m)
 }
 
-//
+//Requests n message code type 17's, message client recieve, from database 
+//dependent on offset value from message code type 32, request n messages
 func Message32 (user *User, data []byte) {
 
 	m = Multi_Message{
@@ -123,7 +128,8 @@ func Message32 (user *User, data []byte) {
 			}
 }
 
-//
+//Requests message code type 48's, recieve userid, from database
+//which consists of all userids conected to a specific server
 func Message33 (user *User, data []byte) {
 
 	m = Base{
@@ -137,7 +143,9 @@ func Message33 (user *User, data []byte) {
 			}
 }
 
-//
+//Requests a display name from the database from a user connected to a specific server
+//from requested userid in message code type 34, requested display name, then
+//builds a new byte array in the format of message code type 49, recieve display name
 func Message34 (user *User, data []byte) {
 
 	m = Userid{
@@ -156,7 +164,8 @@ func Message34 (user *User, data []byte) {
 			Message49(user, new_data)				
 }
 
-//
+//Requests message code type 50's, recieve serverid, which consists of all the serverids
+//that a specific user is connected to from message code type 35, request all serverid
 func Message35 (user *User, data []byte) {
 
 	m = Userid{
@@ -172,7 +181,9 @@ func Message35 (user *User, data []byte) {
 			}
 }
 
-//
+//Requests server display name from a specific server from the requested servid in
+//message code tye 36, request server display name, then builds
+//new byte array in the format of message code type 51, recieve server display name
 func Message36 (user *User, data []byte) {
 
 	m = Serverid{
@@ -191,7 +202,8 @@ func Message36 (user *User, data []byte) {
 			Message51(user, new_data)
 }
 
-//
+//Request message code type 52's, recieve roomid, which consist of all the roomids
+//on a specific server from the serverid in message code type 37, request all roomid
 func Message37 (user *User, data []byte) {
 
 	m = Serverid{
@@ -207,7 +219,9 @@ func Message37 (user *User, data []byte) {
 			}
 }
 
-//
+//Requests room display name from a specific room on specific server from the requested
+//serverid and roomid in message code type 38, request room display name, then builds
+//a new byte array in the format of message code type 53, recieve room display name
 func Message38 (user *User, data []byte) {
 
 	m = Serverid_Roomid{
@@ -228,7 +242,7 @@ func Message38 (user *User, data []byte) {
 			Message53(user, new_data)
 }
 
-//
+//Sends message code type 48, recieve userid, to client
 func Message48 (user *User, data []byte) {
 
 	m = Userid{
@@ -238,7 +252,7 @@ func Message48 (user *User, data []byte) {
 			Send_Message(user, m)
 }
 
-//
+//Sends message code type 49, recieve display name, to client
 func Message49 (user *User, data []byte) {
 
 	m = Display_Name{
@@ -249,7 +263,7 @@ func Message49 (user *User, data []byte) {
 			Send_Message(user, m)
 }
 
-//
+//Sends message code type 50, recieve serverid, to client
 func Message50 (user *User, data []byte) {
 
 	m = Serverid_Userid{
@@ -260,7 +274,7 @@ func Message50 (user *User, data []byte) {
 			Send_Message(user, m)
 }
 
-//
+//Sends message code type 51, recieve server display name, to client
 func Message51 (user *User, data []byte) {
 
 	m = Server_Display_Name{
@@ -271,7 +285,7 @@ func Message51 (user *User, data []byte) {
 			Send_Message(user, m)
 }
 
-//
+//Sends message code type 52, recieve roomid, to client
 func Message52 (user *User, data []byte) {
 
 	m = Serverid_Roomid{
@@ -282,7 +296,7 @@ func Message52 (user *User, data []byte) {
 			Send_Message(user, m)
 }
 
-//
+//Sends message code type 53, recieve room display name, to client
 func Message53 (user *User, data []byte) {
 
 	m = Room_Display_Name{
@@ -294,7 +308,9 @@ func Message53 (user *User, data []byte) {
 			Send_Message(user, m)
 }
 
-//
+//Replaces the user's display name with the new display name in message code type 64,
+//send new display name, then sends message code type 49, recieve display name, to
+//all users on the user's connected server
 func Message64 (user *User, data []byte) {
 
 	m = New_Display_Name{
@@ -313,7 +329,7 @@ func Message64 (user *User, data []byte) {
 				Send_Broadcast_Server(user.serverid, new_m)
 }
 
-//
+//TODO
 func Message65 (user *User, data []byte) {
 
 	m = New_Server_Display_Name{
@@ -330,7 +346,7 @@ func Message65 (user *User, data []byte) {
 			}*/
 }
 
-//
+//TODO
 func Message66 (user *User, data []byte) {
 
 	m = New_Room_Display_Name{
@@ -347,7 +363,7 @@ func Message66 (user *User, data []byte) {
 			Send_Broadcast_Server(num1, message)*/
 }
 
-//
+//TODO
 func Message80 (user *User, data []byte) {
 
 	m = Status{
@@ -361,7 +377,7 @@ func Message80 (user *User, data []byte) {
 			Parse_Data(user, message.Build_Message())*/
 }
 
-//
+//TODO
 func Message81 (user *User, data []byte) {
 
 	m = Userid_Status{
@@ -372,7 +388,7 @@ func Message81 (user *User, data []byte) {
 			//Send_Broadcast(m)
 }
 
-//
+//TODO
 func Message82 (user *User, data []byte) {
 
 	m = Serverid{
@@ -386,7 +402,7 @@ func Message82 (user *User, data []byte) {
 			Parse_Data(user, message.Build_Message())*/
 }
 
-//
+//TODO
 func Message83 (user *User, data []byte) {
 
 	m = Serverid_Userid{
@@ -398,7 +414,7 @@ func Message83 (user *User, data []byte) {
 			Send_Broadcast_Server(num, m)*/
 }
 
-//
+//TODO
 func Message84 (user *User, data []byte) {
 
 	m = Roomid{
@@ -412,7 +428,7 @@ func Message84 (user *User, data []byte) {
 			Parse_Data(user, message)*/
 }
 
-//
+//TODO
 func Message85 (user *User, data []byte) {
 
 	m = Roomid_Userid{
@@ -423,7 +439,7 @@ func Message85 (user *User, data []byte) {
 			//Send_Broadcast(m)
 }
 
-//
+//TODO
 func Message255 (user *User, data []byte) {
 	
 	m = Text{
@@ -431,97 +447,132 @@ func Message255 (user *User, data []byte) {
 		text: data[1:]}
 }
 
-//
+//Master function: takes paramaters type User struct and byte array
+//byte array is the message that is recieved from the client
+//the type User struct is a reference to the connection that represents
+//the client side user that is associated with the byte array message
+//this function determines what type of message is being recieved
+//and calls the appropiate function based off the code type
 func Parse_Data (user *User, data []byte) {
 
 	if (data[0] == create_user) {
+
 		Message0(user, data)
 	
 	} else if (data[0] == create_user_fail) {
+
 		Message1(user, data)
 	
 	} else if (data[0] == login) {
+
 		Message2(user, data)
 		
 	} else if (data[0] == login_fail) {
+
 		Message3(user, data)
 	
 	} else if (data[0] == login_success) {
+
 		Message4(user, data)
 	
 	} else if (data[0] == message_client_send) {
+
 		Message16(user, data)
 	
 	} else if (data[0] == message_client_recieve) {
+
 		Message17(user, data)
 	
 	} else if (data[0] == request_n_messages) {
+
 		Message32(user, data)
 	
 	} else if (data[0] == request_all_userid) {
+
 		Message33(user, data)
 	
 	} else if (data[0] == request_display_name) {
+
 		Message34(user, data)
 
 	} else if (data[0] == request_all_serverid) {
+
 		Message35(user, data)
 	
 	} else if (data[0] == request_server_display_name) {
+
 		Message36(user, data)
 	
 	} else if (data[0] == request_all_roomid) {
+
 		Message37(user, data)
 	
 	} else if (data[0] == request_room_display_name) {
+
 		Message38(user, data)
 	
 	} else if (data[0] == recieve_userid) {
+
 		Message48(user, data)
 	
 	} else if (data[0] == recieve_display_name) {
+
 		Message49(user, data)
 	
 	} else if (data[0] == recieve_serverid) {
+
 		Message50(user, data)
 	
 	} else if (data[0] == recieve_server_display_name) {
+
 		Message51(user, data)
 	
 	} else if (data[0] == recieve_roomid) {
+
 		Message52(user, data)
 	
 	} else if (data[0] == recieve_room_display_name) {
+
 		Message53(user, data)
 	
 	} else if (data[0] == send_new_display_name) {
+
 		Message64(user, data)
 
 	} else if (data[0] == send_new_server_display_name) {
+
 		Message65(user, data)
 
 	} else if (data[0] == send_new_room_display_name) {
+
 		Message66(user, data)
 	
 	} else if (data[0] == status_change) {
+
 		Message80(user, data)
 
 	} else if (data[0] == status_broadcast) {
+
 		Message81(user, data)
 		
 	} else if (data[0] == server_change) {
+
 		Message82(user, data)
 		
 	} else if (data[0] == server_broadcast) {
+
 		Message83(user, data)
 		
 	} else if (data[0] == room_change) {
+
 		Message84(user, data)
 		
 	} else if (data[0] == room_broadcast) {
+
 		Message85(user, data)
 		
 	} else if (data[0] == error_check) {
+
 		Message255(user, data)
 		
 	}
