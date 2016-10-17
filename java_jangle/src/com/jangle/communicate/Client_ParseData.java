@@ -67,6 +67,7 @@ public class Client_ParseData implements IPARSER {
 
 		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
 			Cl.addMessage(new Message(data));
+            System.out.print("Message added");
 			return;
 		}
 
@@ -212,5 +213,9 @@ public class Client_ParseData implements IPARSER {
 		// Comm.sendToServer(Data);
 		return "";
 
+	}
+
+	public Client getClient(){
+		return this.Cl;
 	}
 }

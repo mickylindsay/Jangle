@@ -18,7 +18,7 @@ public class Test {
 		
 		
 		try {
-			Parse.submitLogIn("Test", "123456789", Cl);
+			Parse.submitLogIn("Test", "123456789");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

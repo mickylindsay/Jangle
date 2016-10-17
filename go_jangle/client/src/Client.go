@@ -6,9 +6,18 @@ import (
 	"net"
 	"bufio"
 	"os"
+	"flag"
 )
 
+type Client struct {
+
+	debug bool
+}
+var client Client;
+
 func main(){
+	Init_Flags();
+	
 	read_data := make([]byte, 1024)
 	conn, err := net.Dial("tcp", "localhost:9090")
 	if err != nil {
@@ -18,10 +27,12 @@ func main(){
 		for {
 			read_len, _ := conn.Read(read_data)
 			if(read_len < 18){
-			
+				
 			}else{
 				fmt.Printf("%s\n", string(read_data[17:read_len]))
-				fmt.Println("IN: ", read_data[:read_len])
+				if(client.debug){
+					fmt.Println("IN: ", read_data[:read_len])
+				}
 			}
 		}
 	}()
@@ -40,7 +51,9 @@ func main(){
 		copy(write_data[5:8], Int_Converter(1)); 
 		copy(write_data[9:12], Int_Converter(1)); 
 		write_data[13] = 0;*/
-		fmt.Println("OUT: ",write_data)
+		if(client.debug){
+			fmt.Println("OUT: ",write_data)
+		}
 		conn.Write(write_data)
 		//send_message(conn,text)
 	}
@@ -59,4 +72,13 @@ func Int_Converter (num uint) []byte {
 		num /= 256
 	}
 	return data
+}
+
+func Init_Flags(){
+
+	debug_flag := flag.Bool("debug", false, "Turns on client debugging");
+
+	flag.Parse();
+
+	client.debug = *debug_flag;
 }
