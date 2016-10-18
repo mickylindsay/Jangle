@@ -48,10 +48,10 @@ public class Message {
 		byte[] content = new byte[data.length - 17];
 
 		for (int i = 0; i < 4; i++) {
-			server[3 - i] = data[i + 1];
-			chan[3 - i] = data[i + 5];
-			user[3 - i] = data[i + 9];
-			time[3 - i] = data[i + 13];
+			server[i] = data[i + 1];
+			chan[i] = data[i + 5];
+			user[i] = data[i + 9];
+			time[i] = data[i + 13];
 		}
 
 		content = Arrays.copyOfRange(data, 17, data.length);
@@ -134,20 +134,20 @@ public class Message {
 
 		for (int i = 0; i < 4; i++) {
 			if (serverid.length > i) {
-				ret[i + 1] = serverid[3 - i];
+				ret[i + 1] = serverid[i];
 			}
 			else {
 				ret[i + 1] = (byte) 0;
 			}
 
 			if (channelid.length > i) {
-				ret[i + 5] = channelid[3 - i];
+				ret[i + 5] = channelid[i];
 			}
 			else {
 				ret[i + 5] = (byte) 0;
 			}
 			if (userid.length > i) {
-				ret[i + 9] = userid[3 - i];
+				ret[i + 9] = userid[i];
 			}
 			else {
 				ret[i + 9] = (byte) 0;

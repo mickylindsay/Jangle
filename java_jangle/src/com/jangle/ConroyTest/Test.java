@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.jangle.*;
 import com.jangle.client.*;
 import com.jangle.communicate.Client_ParseData;
+import com.jangle.communicate.CommUtil;
 
 
 public class Test {
@@ -13,18 +14,27 @@ public class Test {
 		// TODO Auto-generated method stub
 
 		
-		Client Cl = new Client();
-		Client_ParseData Parse = new Client_ParseData(Cl);
+//		Client Cl = new Client();
+//		Client_ParseData Parse = null;
+//		TestServer server = new TestServer(9090);
+//		
+//		try {
+//			Parse = new Client_ParseData(Cl, "localhost", 9090);
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 		
 		
-		try {
-			Parse.submitLogIn("Test", "123456789");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		byte[] test = new byte[2004];
 		
-		System.out.println("done");
+		test[0] = (byte) 20;
+		test[1] = (byte) 0;
+		test[2] = (byte) 0;
+		test[3] = (byte) 0;
+		
+		System.out.println(CommUtil.byteToInt(test));
+		
 		
 	}
 

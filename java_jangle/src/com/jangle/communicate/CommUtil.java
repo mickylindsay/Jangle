@@ -38,14 +38,14 @@ public final class CommUtil {
 	
 
 	/**
-	 * Convert given byte array into an int. The highest (left most) byte is the LSB, while the lowest (right most) byte is the MSB
+	 * Convert given byte array into an int. The highest (left most, byte[0]) byte is the LSB, while the lowest (right most (byte.length -1)) byte is the MSB
 	 * @param data byte array to convert to int
 	 * @return returns the byte array as an int
 	 */
 	public static int byteToInt(byte[] data) {
 
-		return (unsignByte(data[3]) * 1) + (unsignByte(data[2]) * 256) + (unsignByte(data[1]) * 256 * 256)
-				+ (unsignByte(data[0]) * 256 * 256 * 256);
+		return (unsignByte(data[0]) * 1) + (unsignByte(data[1]) * 256) + (unsignByte(data[2]) * 256 * 256)
+				+ (unsignByte(data[3]) * 256 * 256 * 256);
 	}
 
 	/**
