@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import com.jangle.communicate.CommUtil;
+
 public class TestServer implements Runnable  {
 	
 	private ServerSocket Comm;
@@ -36,15 +38,34 @@ public class TestServer implements Runnable  {
 		t.start();
 		
 	}
-	
+	/**
+	 * Does not have long data built yet
+	 * @param data
+	 */
 	public void sendToClient(byte[] data){
+		
+		byte[] data2 = new byte[data.length + 4];
+		int length = data.length;
+		
+		byte[] size = CommUtil.intToByteArr(length);
+		
+		data2[0] = size[0];
+		data2[1] = size[1];
+		data2[2] = size[2];
+		data2[3] = size[3];
+		
+		for (int i = 0; i < data.length; i++){
+			data2[i + 4] = data[i];
+		}
+		
+		System.out.println();
 		try {
-			Write.write(data);
+			Write.write(data2);
 		} catch (IOException e) {
 			System.out.println("\n\nCannot send data to client\n\n");
 		}
 		
-		System.out.println("Sent data to client");
+		System.out.println("Sent " + data2.length + " bytes to client");
 	}
 	
 	public void readFromClient(){
@@ -58,6 +79,7 @@ public class TestServer implements Runnable  {
 		
 		
 	}
+	
 
 	@Override
 	public void run() {

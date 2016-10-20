@@ -83,6 +83,7 @@ public class Client_ParseData implements IPARSER {
 
 		if (data[0] == CommUtil.CREATE_USER_FAIL) {
 			loginResult = LoginResult.NAME_TAKEN;
+			return;
 		}
 
 	}

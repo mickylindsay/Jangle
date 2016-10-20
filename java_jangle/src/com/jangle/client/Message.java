@@ -46,7 +46,7 @@ public class Message {
 		byte[] server = new byte[4];
 		byte[] time = new byte[4];
 		byte[] content = new byte[data.length - 17];
-
+		
 		for (int i = 0; i < 4; i++) {
 			server[i] = data[i + 1];
 			chan[i] = data[i + 5];
@@ -56,12 +56,13 @@ public class Message {
 
 		content = Arrays.copyOfRange(data, 17, data.length);
 
+		
+		
 		this.userID = CommUtil.byteToInt(user);
 		this.channelID = CommUtil.byteToInt(chan);
 		this.serverID = CommUtil.byteToInt(server);
 		this.timeStamp = (long) CommUtil.byteToInt(time);
 		this.messageContent = new String(content);
-
 	}
 
 	public Message() {
@@ -118,7 +119,7 @@ public class Message {
 
 	/**
 	 * Creates a byte array of this message, in the format required to send the
-	 * message to the server
+	 * message to the server.
 	 * 
 	 * @return the byte array to send to the server.
 	 */

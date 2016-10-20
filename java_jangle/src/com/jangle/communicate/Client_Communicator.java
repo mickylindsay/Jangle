@@ -76,64 +76,32 @@ public class Client_Communicator implements Runnable {
 	 * @throws IOException
 	 */
 	private byte[] readFromServer() throws IOException {
-		byte[] dataFromServer = new byte[1024];
-		byte[] dataStore;
-		byte[] dataToRet = new byte[0];
 		byte[] tmp = new byte[4];
 		int amount = 0;
 		int bytesToRead = 0;
 
 		try {
-			amount += Reader.read(dataFromServer);
+			amount = Reader.read(tmp);
+			System.out.println(amount);
 
 		} catch (SocketTimeoutException ste) {
 			System.out.println("no");
 		}
 		
-		tmp[0] = dataFromServer[0];
-		tmp[1] = dataFromServer[1];
-		tmp[2] = dataFromServer[2];
-		tmp[3] = dataFromServer[3];
+		System.out.println("Client will read " + CommUtil.byteToInt(tmp));
 		
-		bytesToRead = CommUtil.byteToInt(tmp);
+		byte[] dataFromServer = new byte[CommUtil.byteToInt(tmp)];
 		
-		if (bytesToRead < amount) {
-			byte [] ret = new byte[dataFromServer.length - 4];
-			for (int i = 0; i < ret.length; i++){
-				ret[i] = dataFromServer[i + 4];
-			}
-			return ret;
+		try {
+			amount = Reader.read(dataFromServer);
+			System.out.println(amount + "\n");
+
+		} catch (SocketTimeoutException ste) {
+			System.out.println("no");
 		}
 		
-		while (true) {
-			
-			try {
-				amount += Reader.read(dataFromServer);
-
-			} catch (SocketTimeoutException ste) {
-				System.out.println("no");
-			}
-			
-			dataStore = dataToRet.clone();
-			dataToRet = new byte[dataStore.length + dataFromServer.length];
-			
-			for (int i = 0; i < dataStore.length; i++){
-				dataToRet[i] = dataStore[i];
-			}
-			
-			for (int i = 0; i < dataFromServer.length; i++){
-				dataToRet[dataStore.length + i] = dataFromServer[i];
-			}
-			
-			if (bytesToRead < amount){
-				byte[] ret = new byte[dataToRet.length - 4];
-				for (int i = 0; i < ret.length; i++){
-					ret[i] = dataToRet[i + 4];
-				}
-			}
-			
-
-		}
+		return dataFromServer;
+	
 	}
 
 	@Override
