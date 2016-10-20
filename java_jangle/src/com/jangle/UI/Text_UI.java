@@ -3,6 +3,7 @@ package com.jangle.UI;
 import com.jangle.client.Client;
 import com.jangle.communicate.Client_ParseData;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,6 +20,8 @@ public class Text_UI extends Application {
 
 	private Client_ParseData mClientParseData;
 	private Client mClient;
+    private ConfigUtil mConfigUtil;
+    private String[] serverIP;
 
 	private Parent createContent() throws IOException {
 
@@ -31,9 +34,11 @@ public class Text_UI extends Application {
 	}
 
 	private Parent createLoginDialog() throws IOException {
+        serverIP = mConfigUtil.getFormattedServerIP();
+
 		this.mClient = new Client();
 		try {
-			this.mClientParseData = new Client_ParseData(mClient, "localhost", 9090);
+			this.mClientParseData = new Client_ParseData(mClient, serverIP[0], new Integer(serverIP[1]));
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -52,6 +57,9 @@ public class Text_UI extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws IOException {
+        mConfigUtil = new ConfigUtil();
+        
+
 		Stage loginStage = new Stage();
 		loginStage.setScene(new Scene(createLoginDialog()));
 		loginStage.showAndWait();
