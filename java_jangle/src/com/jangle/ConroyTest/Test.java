@@ -20,7 +20,7 @@ public class Test {
 		// TestServer server = new TestServer(9090);
 		
 		 try {
-		 Parse = new Client_ParseData(Cl, "10.25.72.96", 9090);
+		 Parse = new Client_ParseData(Cl, "localhost", 9090);
 		 } catch (IOException e1) {
 		 // TODO Auto-generated catch block
 		 e1.printStackTrace();
