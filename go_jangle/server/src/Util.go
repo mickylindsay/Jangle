@@ -53,7 +53,7 @@ import (
 	var error_check byte = 255
 
 //Converts byte array to unsigned int 
-func Byte_Converter (data []byte) uint {
+func Byte_Converter(data []byte) uint {
 	var i uint
 	var sum uint
 
@@ -66,7 +66,7 @@ func Byte_Converter (data []byte) uint {
 }
 
 //Converts unsigned int to byte array
-func Int_Converter (num uint) []byte {
+func Int_Converter(num uint) []byte {
 	data := make([]byte, 4)
 
 	for i := 0; i < 4; i++ {
