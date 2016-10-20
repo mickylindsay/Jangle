@@ -65,7 +65,11 @@ public class FXMLController implements Initializable {
     }
 
     public void updateMessages(ObservableList messages) {
-        messageArea.setItems(messages);
+        this.messageArea.setItems(messages);
+    }
+
+    public void updateUsers(ObservableList userList){
+        this.users.setItems(userList);
     }
 
     public void setmClientParseData(Client_ParseData clientParseData){
