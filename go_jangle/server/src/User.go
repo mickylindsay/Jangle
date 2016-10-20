@@ -19,7 +19,10 @@ func (u *User) Read (read_data []byte) (int, error) {
 }
 
 func (u *User) Write (write_data []byte) (int, error) {
-	return (*(*u).c).Write(write_data);
+	data := make([]byte, len(write_data) + 4);
+	copy(data[:3], Int_Converter(uint(len(write_data))));
+	copy(data[4:], write_data[:]);
+	return (*(*u).c).Write(data);
 }
 
 func (u *User) Printf (format string, a ...interface{}) (int, error) {
