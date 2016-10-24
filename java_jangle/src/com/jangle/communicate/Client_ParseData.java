@@ -189,17 +189,22 @@ public class Client_ParseData implements IPARSER {
 	 * @return
 	 * @throws IOException 
 	 */
-	public int request50MessagesWithOffset(int offSet) throws IOException{
+	public void request50MessagesWithOffset(int offSet) throws IOException{
 		
 		numMessagesRecieved = 0;
 		
 		byte[] test = new byte[2];
 		test[0] = CommUtil.REQUEST_N_MESSAGES;
-		test[1] = (byte) 0;
+		test[1] = (byte) offSet;
 		
 		Comm.sendToServer(test);
+	}
+	
+	public UserRequestResult getAllUsersOnServer(){
+
 		
-		return -1;
+		return UserRequestResult.TIMEOUT;
+		
 	}
 
 	//Still broke yo, this aint done yet.

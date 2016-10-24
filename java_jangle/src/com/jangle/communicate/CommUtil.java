@@ -88,5 +88,9 @@ public final class CommUtil {
 	public enum UserStatus {
 		ONLINE, OFFLINE, AWAY
 	}
+	
+	public enum UserRequestResult{
+		SUCESS, TIMEOUT
+	}
 
 }
