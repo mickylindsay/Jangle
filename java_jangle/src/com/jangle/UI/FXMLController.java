@@ -8,11 +8,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 import javafx.event.ActionEvent;
+import javafx.stage.FileChooser;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -34,6 +38,8 @@ public class FXMLController implements Initializable {
     private TextField messageStage;
     @FXML
     private ListView<User> users;
+    @FXML
+    private Button attachButton;
 
     @FXML
     private void handleSendMessage(ActionEvent actionEvent) {
@@ -45,6 +51,16 @@ public class FXMLController implements Initializable {
             e.printStackTrace();
         }
         messageStage.clear();
+    }
+
+    @FXML
+    private void handleAttachment(ActionEvent actionEvent) {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose a file to attach.");
+        File attachment = fileChooser.showOpenDialog(messageArea.getScene().getWindow());
+
+        System.out.println(attachment);
     }
 
     @Override

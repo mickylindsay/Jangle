@@ -34,8 +34,8 @@ public class Text_UI extends Application {
 	}
 
 	private Parent createLoginDialog() throws IOException {
-        serverIP = mConfigUtil.getFormattedServerIP();
-
+        //serverIP = mConfigUtil.getFormattedServerIP();
+        serverIP = new String[]{"localhost", "9090"};
 		this.mClient = new Client();
 		try {
 			this.mClientParseData = new Client_ParseData(mClient, serverIP[0], new Integer(serverIP[1]));
@@ -58,7 +58,7 @@ public class Text_UI extends Application {
 	@Override
 	public void start(Stage primaryStage) throws IOException {
         mConfigUtil = new ConfigUtil();
-        
+
 
 		Stage loginStage = new Stage();
 		loginStage.setScene(new Scene(createLoginDialog()));
