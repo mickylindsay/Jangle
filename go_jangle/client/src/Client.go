@@ -19,7 +19,7 @@ func main(){
 	Init_Flags();
 	
 	read_data := make([]byte, 1024)
-	conn, err := net.Dial("tcp", "localhost:9090")
+	conn, err := net.Dial("tcp", "10.25.70.96:9090")
 	if err != nil {
 		log.Fatal(err)
 	}
