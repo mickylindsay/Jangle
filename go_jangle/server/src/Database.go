@@ -75,12 +75,12 @@ func Next_Messageid() uint{
 
 //Inserts a new user into the database
 //TODO implement Image Path and Password hashing
-func User_Create(u []byte, p []byte) error{
+func User_Create(u []byte, p []byte) (uint, error) {
 	if(!jangle.no_database){
-		_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);",Next_Userid(), string(u), string(u), "TEMPPATH", string(p), "0000");
-		return err;
+		_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);",Next_Userid(), string(u), string(u), "TEMPPATH", string(p), "0000")
+		return Next_Userid(), err
 	}
-	return nil;
+	return 1, nil
 }
 
 //Inserts a new Message into the database
@@ -272,3 +272,33 @@ func Set_New_Display_Name(serverid uint, userid uint, name []byte) error{
 	}
 	return nil;
 }
+
+/*TODO
+func Set_New_Server_Display_Name (serverrid uint, name []byte) error {
+	if (!jangle.no.database) {
+		err := jangle.db.QueryRow("SELECT server_display_name FROM display WHERE serverid = ?", serverid)
+		if (err != nil) {
+			_, e := jangle.db.Exec("UPDATE display SET server_display_name = ? WHERE serverid = ?", string(name), serverid)
+			return e
+		} else {
+			_, e := jangle.db.Exec("INSERT INTO display (serverid, server_display_name) VALUES (?,?);", serverid, string(name))
+			return e
+		}
+	}
+	return nil
+}*/
+
+/*TODO
+func Set_New_Room_Display_Name (serverrid uint, roomid uint, name []byte) error {
+	if (!jangle.no.database) {
+		err := jangle.db.QueryRow("SELECT room_display_name FROM display WHERE serverid = ? and roomid = ?", serverid, roomid)
+		if (err != nil) {
+			_, e := jangle.db.Exec("UPDATE display SET room_display_name = ? WHERE roomid = ? AND serverid = ?", string(name), roomid, serverid)
+			return e
+		} else {
+			_, e := jangle.db.Exec("INSERT INTO display (serverid, roomid, room_display_name) VALUES (?,?,?);", serverid, roomid, string(name))
+			return e
+		}
+	}
+	return nil
+}*/
