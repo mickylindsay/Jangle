@@ -273,7 +273,7 @@ func Set_New_Display_Name(serverid uint, userid uint, name []byte) error{
 	return nil;
 }
 
-/*TODO
+
 func Set_New_Server_Display_Name (serverrid uint, name []byte) error {
 	if (!jangle.no.database) {
 		err := jangle.db.QueryRow("SELECT server_display_name FROM display WHERE serverid = ?", serverid)
@@ -286,9 +286,8 @@ func Set_New_Server_Display_Name (serverrid uint, name []byte) error {
 		}
 	}
 	return nil
-}*/
+}
 
-/*TODO
 func Set_New_Room_Display_Name (serverrid uint, roomid uint, name []byte) error {
 	if (!jangle.no.database) {
 		err := jangle.db.QueryRow("SELECT room_display_name FROM display WHERE serverid = ? and roomid = ?", serverid, roomid)
@@ -301,4 +300,4 @@ func Set_New_Room_Display_Name (serverrid uint, roomid uint, name []byte) error 
 		}
 	}
 	return nil
-}*/
+}
