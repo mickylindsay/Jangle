@@ -338,12 +338,10 @@ func Message65 (user *User, data []byte) {
 		new_server_display_name: data[5:]}
 
 			/*num := Byte_Converter(data[1:4])
-			messages, err := Set_New_Server_Display_Name(num, data[5:])
-			Check_Error(err)
+			err := Set_New_Server_Display_Name(num, data[5:])
+			Check_Error(err)*/
 
-			for i := 0, i < len(messages); i++ {
-				Parse_Data(user, messages[i].Build_Message())
-			}*/
+			
 }
 
 //TODO
