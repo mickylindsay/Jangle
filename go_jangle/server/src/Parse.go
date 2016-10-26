@@ -12,7 +12,7 @@ func Message0 (user *User, data []byte) {
 		username: data[1:20],
 		password: data[21:]}
 
-			/*id, err := User_Create(data[1:20], data[21:])
+			id, err := User_Create(data[1:20], data[21:])
 
 			if (err == nil) {
 				data[0] = login_success
@@ -22,7 +22,7 @@ func Message0 (user *User, data []byte) {
 			} else {
 				data[0] = create_user_fail
 				Message1(user, data)
-			}*/
+			}
 }
 
 //Writes to user message code type 1, create user fail
@@ -339,9 +339,14 @@ func Message65 (user *User, data []byte) {
 
 			/*num := Byte_Converter(data[1:4])
 			err := Set_New_Server_Display_Name(num, data[5:])
-			Check_Error(err)*/
+			Check_Error(err)
 
-			
+			new_m := Server_Display_Name{
+				code: recieve_server_display_name,
+				serverid: data[1:4],
+				server_display_name: data[5:]}
+
+				Send_Broadcast_Members(num, new_m)*/
 }
 
 //TODO
@@ -355,10 +360,16 @@ func Message66 (user *User, data []byte) {
 
 			/*num1 := Byte_Converter(data[1:4])
 			num2 := Byte_Converter(data[5:8])
-			message, err := Set_New_Room_Display_Name(num1, num2, data[9:])
+			err := Set_New_Room_Display_Name(num1, num2, data[9:])
 			Check_Error(err)
 
-			Send_Broadcast_Server(num1, message)*/
+			new_m := Room_Display_Name{
+				code: recieve_room_display_name,
+				serverid: data[1:4],
+				roomid: data[5:8],
+				room_display_name: data[9:]}
+
+				Send_Broadcast_Server(num1, new_m)*/
 }
 
 //TODO
