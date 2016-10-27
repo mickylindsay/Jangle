@@ -285,12 +285,12 @@ func Set_New_Display_Name(serverid uint, userid uint, name []byte) error{
 //Inserts or update a new server display name
 func Set_New_Server_Display_Name (serverid uint, name []byte) error {
 	if (!jangle.no_database) {
-		err := jangle.db.QueryRow("SELECT server_display_name FROM display WHERE serverid = ?", serverid)
+		err := jangle.db.QueryRow("SELECT serverdisplayname FROM display WHERE serverid = ?", serverid)
 		if (err != nil) {
-			_, e := jangle.db.Exec("UPDATE display SET server_display_name = ? WHERE serverid = ?", string(name), serverid)
+			_, e := jangle.db.Exec("UPDATE display SET serverdisplayname = ? WHERE serverid = ?", string(name), serverid)
 			return e
 		} else {
-			_, e := jangle.db.Exec("INSERT INTO display (serverid, server_display_name) VALUES (?,?);", serverid, string(name))
+			_, e := jangle.db.Exec("INSERT INTO display (serverid, serverdisplayname) VALUES (?,?);", serverid, string(name))
 			return e
 		}
 	}
@@ -300,12 +300,12 @@ func Set_New_Server_Display_Name (serverid uint, name []byte) error {
 //Inserts or update a new room display name
 func Set_New_Room_Display_Name (serverid uint, roomid uint, name []byte) error {
 	if (!jangle.no_database) {
-		err := jangle.db.QueryRow("SELECT room_display_name FROM display WHERE serverid = ? and roomid = ?", serverid, roomid)
+		err := jangle.db.QueryRow("SELECT roomdisplayname FROM display WHERE serverid = ? and roomid = ?", serverid, roomid)
 		if (err != nil) {
-			_, e := jangle.db.Exec("UPDATE display SET room_display_name = ? WHERE roomid = ? AND serverid = ?", string(name), roomid, serverid)
+			_, e := jangle.db.Exec("UPDATE display SET roomdisplayname = ? WHERE roomid = ? AND serverid = ?", string(name), roomid, serverid)
 			return e
 		} else {
-			_, e := jangle.db.Exec("INSERT INTO display (serverid, roomid, room_display_name) VALUES (?,?,?);", serverid, roomid, string(name))
+			_, e := jangle.db.Exec("INSERT INTO display (serverid, roomid, roomdisplayname) VALUES (?,?,?);", serverid, roomid, string(name))
 			return e
 		}
 	}
