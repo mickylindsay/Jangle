@@ -5,6 +5,11 @@ import (
 	"container/list"
 )
 
+type Communicator interface{
+	Read (read_data []byte) (int, error)
+	Write (write_data []byte) (int, error)
+}
+
 //Listens for data in from clients
 func Listen_To_Clients (user *User, e *list.Element) {
 	//Array to store data read from client
