@@ -9,7 +9,7 @@ import com.jangle.communicate.CommUtil;
 
 public class Test {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 
 		Client Cl = new Client();
 		Client_ParseData Parse = null;
@@ -30,7 +30,13 @@ public class Test {
 
 		mess.setMessageContent("stuff");
 
-		Parse.sendMessage(mess);
+		byte[] testMessByte = mess.getByteArray();
+		
+		server.sendToClient(TestUtil.TEST_MESS);
+		
+		Thread.sleep(2000);
+		
+		System.out.println(Cl.getMessages().get(0).getMessageContent());
 	}
 
 }

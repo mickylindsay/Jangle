@@ -64,7 +64,17 @@ public class Client_Communicator implements Runnable {
 	 * @throws IOException
 	 */
 	public void sendToServer(byte[] Data) throws IOException {
-		Write.write(Data);
+		byte[] toServer = new byte[Data.length + 4];
+	    byte[] tmp = CommUtil.intToByteArr(Data.length);
+	    
+	    for (int i = 0; i < tmp.length; i++){
+	    	toServer[i] = tmp[i];
+	    }
+	    
+	    for (int i = 0; i < Data.length; i++){
+	    	toServer[4 + i] = Data[i];
+	    }
+		Write.write(toServer);
 
 	}
 
@@ -82,19 +92,17 @@ public class Client_Communicator implements Runnable {
 
 		try {
 			amount = Reader.read(tmp);
-			System.out.println(amount);
 
 		} catch (SocketTimeoutException ste) {
 			System.out.println("no");
 		}
+
 		
-		System.out.println("Client will read " + CommUtil.byteToInt(tmp));
 		
 		byte[] dataFromServer = new byte[CommUtil.byteToInt(tmp)];
 		
 		try {
 			amount = Reader.read(dataFromServer);
-			System.out.println(amount + "\n");
 
 		} catch (SocketTimeoutException ste) {
 			System.out.println("no");

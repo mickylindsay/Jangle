@@ -79,19 +79,16 @@ public class TestServer implements Runnable {
 
 		try {
 			amount = Reader.read(tmp);
-			System.out.println(amount);
 
 		} catch (SocketTimeoutException ste) {
 			System.out.println("no");
 		}
 
-		System.out.println("Client will read " + CommUtil.byteToInt(tmp));
 
 		byte[] dataFromServer = new byte[CommUtil.byteToInt(tmp)];
 
 		try {
 			amount = Reader.read(dataFromServer);
-			System.out.println(amount + "\n");
 
 		} catch (SocketTimeoutException ste) {
 			System.out.println("no");
@@ -99,10 +96,11 @@ public class TestServer implements Runnable {
 
 		if (dataFromServer != null) {
 
-			System.out.println("stuff from the client\n");
+			System.out.println("\nstuff from the client");
 			for (int i = 0; i < dataFromServer.length; i++) {
 				System.out.print(dataFromServer[i] + " ");
 			}
+			System.out.println("");
 		}
 	}
 
@@ -129,7 +127,8 @@ public class TestServer implements Runnable {
 		}
 
 		System.out.println("Test server initalized");
-		System.out.println("User Connected\n\n");
+		System.out.println("User Connected");
+		System.out.println("------------------------\n");
 		while (true) {
 			try {
 				readFromClient();
