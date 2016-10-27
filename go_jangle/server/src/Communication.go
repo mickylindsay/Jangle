@@ -9,9 +9,10 @@ import (
 func Listen_To_Clients (user *User, e *list.Element) {
 	//Array to store data read from client
 	packet_size := make([]byte, 4);
-	//read_data := make([]byte, 4);
+	if (jangle.debug) {
+			fmt.Println("Size: ", packet_size[:], "Converted: ", Byte_Converter(packet_size[:]));
+		}
 	for {
-		
 		//Read data from client
 		len, err := (*user).Read(packet_size);
 		if(len < 4){
