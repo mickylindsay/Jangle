@@ -96,3 +96,13 @@ func Send_Broadcast_Server_Room (serverid uint, roomid uint, message Message) {
 		}
 	}			
 }
+
+//TODO
+func Send_Broadcast_Members (serverid uint, message Message) {
+
+}
+
+//TODO
+func Send_Broadcast_View (userid uint, message Message) {
+	
+}

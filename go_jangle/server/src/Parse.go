@@ -135,7 +135,7 @@ func Message33 (user *User, data []byte) {
 	m = Base{
 		code: data[0]}
 
-			messages,err := Request_Userid_Messages(user.serverid)
+			messages, err := Request_Userid_Messages(user.serverid)
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
@@ -329,7 +329,9 @@ func Message64 (user *User, data []byte) {
 				Send_Broadcast_Server(user.serverid, new_m)
 }
 
-//TODO
+//Replaces the server's display name with the new server display name in message
+//code type 65, send new  server display name, then sends message code type 51,
+//recieve server display name, to all users on that are members of the server
 func Message65 (user *User, data []byte) {
 
 	m = New_Server_Display_Name{
@@ -337,7 +339,7 @@ func Message65 (user *User, data []byte) {
 		serverid: data[1:4],
 		new_server_display_name: data[5:]}
 
-			/*num := Byte_Converter(data[1:4])
+			num := Byte_Converter(data[1:4])
 			err := Set_New_Server_Display_Name(num, data[5:])
 			Check_Error(err)
 
@@ -346,10 +348,12 @@ func Message65 (user *User, data []byte) {
 				serverid: data[1:4],
 				server_display_name: data[5:]}
 
-				Send_Broadcast_Members(num, new_m)*/
+				Send_Broadcast_Members(num, new_m)
 }
 
-//TODO
+//Replaces the room's display name with the new room display name in message
+//code type 66, send new room display name, then sends message code type 53,
+//recieve room display name, to all users on that are connected to the server
 func Message66 (user *User, data []byte) {
 
 	m = New_Room_Display_Name{
@@ -358,7 +362,7 @@ func Message66 (user *User, data []byte) {
 		roomid: data[5:8],
 		new_room_display_name: data[9:]}
 
-			/*num1 := Byte_Converter(data[1:4])
+			num1 := Byte_Converter(data[1:4])
 			num2 := Byte_Converter(data[5:8])
 			err := Set_New_Room_Display_Name(num1, num2, data[9:])
 			Check_Error(err)
@@ -369,7 +373,7 @@ func Message66 (user *User, data []byte) {
 				roomid: data[5:8],
 				room_display_name: data[9:]}
 
-				Send_Broadcast_Server(num1, new_m)*/
+				Send_Broadcast_Server(num1, new_m)
 }
 
 //TODO
@@ -379,11 +383,17 @@ func Message80 (user *User, data []byte) {
 		code: data[0],
 		status: data[1]}
 
-			/*num := uint(data[1])
-			message, err := Set_Status(user.id, num)
+			num := uint(data[1])
+			err := Set_Status(user.id, num)
 			Check_Error(err)
 
-			Parse_Data(user, message.Build_Message())*/
+			arr := Int_Converter(user.id)
+			new_m := Userid_Status{
+				code: status_broadcast,
+				userid: arr,
+				status: data[1]}
+
+				Message81(user, new_m.Build_Message())
 }
 
 //TODO
@@ -394,7 +404,8 @@ func Message81 (user *User, data []byte) {
 		userid: data[1:4],
 		status: data[5]}
 
-			//Send_Broadcast(m)
+			num := Byte_Converter(data[1:4])
+			Send_Broadcast_View(num, m)
 }
 
 //TODO
