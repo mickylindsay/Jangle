@@ -29,7 +29,8 @@ public class FXMLController implements Initializable {
     private Client_ParseData mClientParseData;
     private Client mClient;
     private messageThread messageThread;
-    private userThread userThread;
+    //TODO: Phase out userThread
+    //private userThread userThread;
     private ObservableList<Message> testlist;
 
     @FXML
@@ -68,16 +69,10 @@ public class FXMLController implements Initializable {
 
         mClient = new Client();
         testlist = FXCollections.observableArrayList();
-
-        /*try {
-            mClientParseData = new Client_ParseData(mClient, "localhost", 9090);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
         messageThread = new messageThread(mClient, this);
-        userThread = new userThread(mClient, this);
 
+        //TODO: Phase out the userThread
+        //userThread = new userThread(mClient, this);
     }
 
     public void updateMessages(ObservableList messages) {
