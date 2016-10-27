@@ -452,7 +452,7 @@ func Message255 (user *User, data []byte) {
 //the type User struct is a reference to the connection that represents
 //the client side user that is associated with the byte array message
 //this function determines what type of message is being recieved
-//and calls the appropiate function based off the code type
+//and calls the appropriate function based off the code type
 func Parse_Data (user *User, data []byte) {
 
 	if (data[0] == create_user) {
