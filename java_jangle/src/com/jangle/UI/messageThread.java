@@ -73,15 +73,7 @@ public class messageThread implements Runnable {
 
 
             //Handling user listening
-            if (uSize == mClient.getUsers().size()){
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            else if (uSize < mClient.getUsers().size()){
+            if (uSize < mClient.getUsers().size()){
                 int difference = mClient.getUsers().size() - uSize;
                 for (int i = 0; i < difference; i++) {
                     mUsers.add(mClient.getUsers().get(mClient.getUsers().size() - difference + i));

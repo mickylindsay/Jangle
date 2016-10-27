@@ -29,7 +29,7 @@ public class Client_ParseData implements IPARSER {
 	 *            The client object this communicator references
 	 */
 	public Client_ParseData(Client Clie) {
-		Cl = Clie;
+		this.Cl = Clie;
 
 	}
 
@@ -46,8 +46,8 @@ public class Client_ParseData implements IPARSER {
 	 * @throws IOException
 	 */
 	public Client_ParseData(Client Clie, String Host, int port) throws UnknownHostException, IOException {
-		Cl = Clie;
-		Comm = new Client_Communicator(this, Host, port);
+		this.Cl = Clie;
+		this.Comm = new Client_Communicator(this, Host, port);
 	}
 
 	/**

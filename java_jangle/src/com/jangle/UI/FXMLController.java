@@ -45,6 +45,17 @@ public class FXMLController implements Initializable {
     @FXML
     private void handleSendMessage(ActionEvent actionEvent) {
         String message = messageStage.getText();
+        if (message.equals("Gimmie dat shit")){
+            try {
+                mClientParseData.request50MessagesWithOffset(0);
+                messageStage.clear();
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+                messageStage.clear();
+                return;
+            }
+        }
         // Send the string to the server
         try {
             mClientParseData.sendMessage(new Message(1, message, 1, 1));
@@ -62,14 +73,25 @@ public class FXMLController implements Initializable {
         File attachment = fileChooser.showOpenDialog(messageArea.getScene().getWindow());
 
         System.out.println(attachment);
+        String[] splitPath = attachment.getAbsolutePath().split(".");
+        if (splitPath.length != 2){
+            //more than one period in file path
+            //TODO: open an alert dialog
+        }
+        else {
+            String extension = splitPath[1];
+            if (extension.equals("png") || extension.equals("jpeg") || extension.equals("jpg") || extension.equals("bmp") || extension.equals("gif")) {
+                //TODO: upload the file to the hosting site
+            }
+            else {
+                //TODO: open a alert dialog
+            }
+        }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        mClient = new Client();
         testlist = FXCollections.observableArrayList();
-        messageThread = new messageThread(mClient, this);
 
         //TODO: Phase out the userThread
         //userThread = new userThread(mClient, this);
@@ -85,5 +107,7 @@ public class FXMLController implements Initializable {
 
     public void setmClientParseData(Client_ParseData clientParseData){
         this.mClientParseData = clientParseData;
+        this.mClient = mClientParseData.getClient();
+        this.messageThread = new messageThread(mClient, this);
     }
 }
