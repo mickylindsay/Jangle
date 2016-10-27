@@ -316,8 +316,3 @@ func Set_New_Room_Display_Name (serverid uint, roomid uint, name []byte) error {
 func Set_New_Master_Display_Name (userid uint, name []byte) error {
 	return nil
 }
-
-//TODO
-func Set_Status (userid uint, status uint) error {
-	return nil
-}
