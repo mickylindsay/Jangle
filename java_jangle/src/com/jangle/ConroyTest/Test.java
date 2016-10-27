@@ -21,22 +21,12 @@ public class Test {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
+		
+		Thread.sleep(1000);
+		
 		// EDIT BELOW HERE
 
-		Cl.setDisplayName("test");
-
-		Message mess = new Message();
-
-		mess.setMessageContent("stuff");
-
-		byte[] testMessByte = mess.getByteArray();
-		
-		server.sendToClient(TestUtil.TEST_MESS);
-		
-		Thread.sleep(2000);
-		
-		System.out.println(Cl.getMessages().get(0).getMessageContent());
+		Parse.setNewDisplayNameOnServer("test");
 	}
 
 }

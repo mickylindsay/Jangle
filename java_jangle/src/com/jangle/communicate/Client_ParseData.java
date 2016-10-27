@@ -260,14 +260,16 @@ public class Client_ParseData implements IPARSER {
 	
 	
 	//TODO develop this method
-	public void setNewDisplayNameOnServer(User user){
-		byte[] toServer = new byte[user.getDisplayName().length() + 1];
-		byte[] nameAsByte = user.getDisplayName().getBytes();
+	public void setNewDisplayNameOnServer(String user) throws IOException{
+		byte[] toServer = new byte[user.length() + 1];
+		byte[] nameAsByte = user.getBytes();
 		toServer[0] = CommUtil.SEND_NEW_DISPLAY_NAME;
 		
 		for (int i = 0; i < nameAsByte.length; i++){
 			toServer[i + 1] = nameAsByte[i];
 		}
+		
+		Comm.sendToServer(toServer);
 	}
 	
 
