@@ -126,9 +126,9 @@ public class Message {
 	public byte[] getByteArray() {
 
 		byte[] ret = new byte[messageContent.length() + 13];
-		byte[] serverid = ByteBuffer.allocate(4).putInt(serverID).array();
-		byte[] channelid = ByteBuffer.allocate(4).putInt(channelID).array();
-		byte[] userid = ByteBuffer.allocate(4).putInt(userID).array();
+		byte[] serverid = CommUtil.intToByteArr(serverID);
+		byte[] channelid = CommUtil.intToByteArr(channelID);
+		byte[] userid = CommUtil.intToByteArr(userID);
 		int j = 0;
 
 		ret[0] = CommUtil.MESSAGE_TO_SERVER;

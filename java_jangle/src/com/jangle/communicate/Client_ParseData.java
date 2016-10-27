@@ -98,7 +98,6 @@ public class Client_ParseData implements IPARSER {
 	}
 	
 	
-	//TODO test this with the server
 	/**
 	 * Submits a login request to the server. If the login is a success, the
 	 * user ID of the client that it passed to this parser when initalized will
@@ -148,7 +147,6 @@ public class Client_ParseData implements IPARSER {
 		return loginResult;
 	}
 
-	//TODO need to test with the server
 	/**
 	 * Submits a create user request. If the creation request is a success, the
 	 * userID of the client that is given at this parser instantiation will be set to the userID given by the server
@@ -195,7 +193,6 @@ public class Client_ParseData implements IPARSER {
 		return loginResult;
 	}
 	
-	//TODO Need to test this
 	/**
 	 * Request block of 50 messages from the server
 	 * @param offSet Which block of 50 to 

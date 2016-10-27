@@ -61,7 +61,11 @@ public class TestServer implements Runnable {
 			data2[i + 4] = data[i];
 		}
 
-		System.out.println();
+		System.out.println("");
+		for (int i = 0; i < data2.length; i++){
+			System.out.print(data2[i] + " ");
+		}
+		
 		try {
 			Write.write(data2);
 		} catch (IOException e) {
