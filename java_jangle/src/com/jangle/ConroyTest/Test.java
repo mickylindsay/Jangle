@@ -29,16 +29,14 @@ public class Test {
 
 		// EDIT BELOW HERE
 
-		User test = new User("test", 2);
+		User test = TestUtil.newNathan();
+		Message mess = TestUtil.genTest();
 		
-		test.setDisplayName(Parse.requestDisplayName(test));
-		
-		
-		
+		Parse.request50MessagesWithOffset(0);
 		
 		Thread.sleep(2000);
-
-		System.out.println(test.getDisplayName());
+		
+		System.out.println(Cl.getMessages().size());
 	}
 
 }

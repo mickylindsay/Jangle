@@ -99,7 +99,6 @@ public class Client_Communicator implements Runnable {
 			System.out.println("no");
 		}
 
-		System.out.println("here2");
 		byte[] dataFromServer = new byte[CommUtil.byteToInt(tmp)];
 
 		try {
@@ -132,7 +131,6 @@ public class Client_Communicator implements Runnable {
 				fromServer = null;
 
 			} catch (IOException e1) {
-				System.out.println("here4");
 				e1.printStackTrace();
 			}
 			try {
