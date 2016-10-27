@@ -258,6 +258,12 @@ func Request_Display_Name(serverid uint, userid uint) ([]byte,error) {
 	return []byte("TEMP_DISPLAY_NAME"), nil;
 }
 
+//TODO
+func Request_Master_Display_Name (userid uint) ([]byte, error) {
+	temp := "name"
+	return []byte(temp), nil
+}
+
 //Inserts or update a new server specific display name
 func Set_New_Display_Name(serverid uint, userid uint, name []byte) error{
 	if(!jangle.no_database){
@@ -300,6 +306,11 @@ func Set_New_Room_Display_Name (serverid uint, roomid uint, name []byte) error {
 			return e
 		}
 	}
+	return nil
+}
+
+//TODO
+func Set_New_Master_Display_Name (userid uint, name []byte) error {
 	return nil
 }
 
