@@ -12,12 +12,21 @@ type Communicator interface{
 
 //Listens for data in from clients
 func Listen_To_Clients (user *User, e *list.Element) {
-	//Array to store data read from client
-	packet_size := make([]byte, 4);
-	
 	for {
+		//Array to store data read from client
+		packet_size := make([]byte, 4);
 		//Read data from client
 		len, err := (*user).Read(packet_size);
+
+		//If server fails to read from client,
+		//the user has disconnected and can be
+		//removed from the lsit fo connections
+		if err != nil {
+			jangle.userlist.Remove(e);
+			Color_Println("orange", "User Disconnected");
+			break;
+		}
+
 		if (jangle.debug) {
 			fmt.Println("Size: ", packet_size[:], "\nConverted: ", Byte_Converter(packet_size[:]));
 		}
@@ -31,14 +40,6 @@ func Listen_To_Clients (user *User, e *list.Element) {
 			continue;
 		}
 		
-		//If server fails to read from client,
-		//the user has disconnected and can be
-		//removed from the lsit fo connections
-		if err != nil {
-			jangle.userlist.Remove(e);
-			Color_Println("orange", "User Disconnected");
-			break;
-		}
 		if (jangle.debug) {
 			fmt.Println("In: ", read_data[:]);
 		}
