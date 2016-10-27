@@ -139,10 +139,10 @@ func Request_Offset_Messages(offset uint) ([]Message, error){
 
 //Requests all userids with same serverid as user
 func Request_Userid_Messages(serverid uint) ([]Message, error){
-	var userid uint;
-	i := 0;
-	messages := make([]Message, 50);
 	if(!jangle.no_database){
+		var userid uint;
+		i := 0;
+		messages := make([]Message, 50);
 		//Query 50 rows of messages
 		rows, err := jangle.db.Query("SELECT userid FROM users AS u WHERE ? = u.serverid",serverid);
 		Check_Error(err);
@@ -168,10 +168,10 @@ func Request_Userid_Messages(serverid uint) ([]Message, error){
 
 //Request all serverids which a userid is in
 func Request_Serverid_Messages(userid uint) ([]Message, error){
-	var serverid uint;
-	i := 0;
-	messages := make([]Message, 50);
 	if(!jangle.no_database){
+		var serverid uint;
+		i := 0;
+		messages := make([]Message, 50);
 		//Query 50 rows of messages
 		rows, err := jangle.db.Query("SELECT serverid FROM members AS m WHERE ? = m.userid", userid);
 		Check_Error(err);

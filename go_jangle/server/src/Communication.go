@@ -8,11 +8,24 @@ import (
 //Listens for data in from clients
 func Listen_To_Clients (user *User, e *list.Element) {
 	//Array to store data read from client
-	read_data := make([]byte, 1048576);
-
+	packet_size := make([]byte, 4);
+	
 	for {
 		//Read data from client
-		len, err := (*user).Read(read_data);
+		len, err := (*user).Read(packet_size);
+		if (jangle.debug) {
+			fmt.Println("Size: ", packet_size[:], "\nConverted: ", Byte_Converter(packet_size[:]));
+		}
+		if(len < 4){
+			continue;
+		}
+		message_len := Byte_Converter(packet_size[:]);
+		read_data := make([]byte, message_len);
+		read_len, err := (*user).Read(read_data);
+		if(uint(read_len) < message_len){
+			continue;
+		}
+		
 		//If server fails to read from client,
 		//the user has disconnected and can be
 		//removed from the lsit fo connections
@@ -22,10 +35,12 @@ func Listen_To_Clients (user *User, e *list.Element) {
 			break;
 		}
 		if (jangle.debug) {
-			fmt.Println("In: ", read_data[:len]);
+			fmt.Println("In: ", read_data[:]);
 		}
 		//Send read array to Message file for parsing and processing
-		Parse_Data(user, read_data[:len]);
+		
+		Parse_Data(user, read_data[:]);
+		//}
 	}
 }
 
