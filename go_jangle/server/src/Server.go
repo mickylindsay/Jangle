@@ -14,6 +14,7 @@ type Jangle struct {
 	address string
 	debug bool
 	no_database bool
+	Messages []func(*User, []byte)
 }
 
 var jangle Jangle;
@@ -21,7 +22,8 @@ var jangle Jangle;
 func main() {
 	Init_Flags();
 	Init_Server();
-
+	Init_Parse();
+	
 	Color_Println("red", "JANGLE GO SERVER");
 	fmt.Println("listening on - " + jangle.address);
 	
@@ -39,6 +41,10 @@ func main() {
 		user := &User{
 			c : &conn,
 		};
+		if(jangle.debug){
+			user.roomid = 1;
+			user.serverid = 1;
+		}
 		//Add new connection onto the end of connections list
 		elem := jangle.userlist.PushBack(user);
 		//Recieve data packets from clients

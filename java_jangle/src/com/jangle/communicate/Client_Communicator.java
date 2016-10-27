@@ -2,8 +2,7 @@ package com.jangle.communicate;
 
 import java.io.*;
 import java.net.*;
-import com.jangle.communicate.Comm_CONSTANTS;
-//add import for message 
+import com.jangle.communicate.CommUtil;
 
 public class Client_Communicator implements Runnable {
 
@@ -44,9 +43,6 @@ public class Client_Communicator implements Runnable {
 			throws UnknownHostException, IOException {
 
 		Java_Socket = new Socket(Host, port);
-		//Java_Socket.setSendBufferSize(1024);
-		//Java_Socket.setReceiveBufferSize(1024);
-
 		Parser = gParser;
 
 		// Initialize PrintWriter to write to the output stream
@@ -71,6 +67,7 @@ public class Client_Communicator implements Runnable {
 		Write.write(Data);
 
 	}
+	
 
 	/**
 	 * Reads data from the server. This is a blocking call if there is nothing
@@ -81,30 +78,26 @@ public class Client_Communicator implements Runnable {
 	 */
 	private byte[] readFromServer() throws IOException {
 		byte[] tmp = new byte[1024];
-		int bytes;
+		int amount;
 		try {
-			bytes = Reader.read(tmp);
-			if (bytes < 3){
-				return null;
-			}
+			amount = Reader.read(tmp);
 			return tmp;
 
 		} catch (SocketTimeoutException ste) {
 			System.out.println("no");
 		}
-		return tmp;
+		return null;
 	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 
 		while (true) {
 			byte[] tmp = new byte[1024];
 			try {
 				tmp = readFromServer();
 				if (tmp != null) {
-					Parser.parseData(new String(tmp));
+					Parser.parseData(tmp);
 				}
 
 				tmp = null;
@@ -113,14 +106,12 @@ public class Client_Communicator implements Runnable {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-
-			// try {
-			// Thread.sleep(0);
-			// } catch (InterruptedException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// }
-		}
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
 	}
 }

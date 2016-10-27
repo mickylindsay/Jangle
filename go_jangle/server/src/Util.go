@@ -27,6 +27,7 @@ import (
 	var request_server_display_name byte = 36
 	var request_all_roomid byte = 37
 	var request_room_display_name byte = 38
+	var request_master_display_name byte = 39
 
 	//Client recieve type codes
 	var recieve_userid byte = 48
@@ -35,11 +36,13 @@ import (
 	var recieve_server_display_name byte = 51
 	var recieve_roomid byte = 52
 	var recieve_room_display_name byte = 53
+	var recieve_master_display_name byte = 54
 
 	//Client send type codes
 	var send_new_display_name byte = 64
 	var send_new_server_display_name byte = 65
 	var send_new_room_display_name byte = 66
+	var send_new_master_display_name byte = 67
 
 	//Status of client type codes
 	var status_change byte = 80
@@ -53,7 +56,7 @@ import (
 	var error_check byte = 255
 
 //Converts byte array to unsigned int 
-func Byte_Converter (data []byte) uint {
+func Byte_Converter(data []byte) uint {
 	var i uint
 	var sum uint
 
@@ -66,7 +69,7 @@ func Byte_Converter (data []byte) uint {
 }
 
 //Converts unsigned int to byte array
-func Int_Converter (num uint) []byte {
+func Int_Converter(num uint) []byte {
 	data := make([]byte, 4)
 
 	for i := 0; i < 4; i++ {

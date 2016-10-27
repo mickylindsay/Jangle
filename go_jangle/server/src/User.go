@@ -2,7 +2,6 @@ package main
 
 import (
 	"net"
-	"fmt"
 )
 
 type User struct {
@@ -12,6 +11,7 @@ type User struct {
 	roomid uint
 	serverid uint
 	logged_in bool
+	permissions uint
 }
 
 func (u *User) Read (read_data []byte) (int, error) {
@@ -19,21 +19,8 @@ func (u *User) Read (read_data []byte) (int, error) {
 }
 
 func (u *User) Write (write_data []byte) (int, error) {
-	return (*(*u).c).Write(write_data);
-}
-
-func (u *User) Printf (format string, a ...interface{}) (int, error) {
-	return fmt.Fprintf((*(*u).c), format, a...);
-}
-
-func (u *User) Scanf (format string, a ...interface{}) (int, error) {
-	return fmt.Fscanf(*(*u).c, format, a...);
-}
-
-func (u *User) Set_Room (roomid uint) {
-	u.roomid = roomid;
-}
-
-func (u *User) Set_Server (serverid uint) {
-	u.serverid = serverid;
+	data := make([]byte, len(write_data) + 4);
+	copy(data[:3], Int_Converter(uint(len(write_data))));
+	copy(data[4:], write_data[:]);
+	return (*(*u).c).Write(data);
 }
