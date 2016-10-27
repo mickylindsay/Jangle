@@ -2,30 +2,43 @@ package com.jangle.ConroyTest;
 
 import java.io.IOException;
 
+import javax.swing.text.html.HTMLEditorKit.Parser;
+
 import com.jangle.*;
 import com.jangle.client.*;
 import com.jangle.communicate.Client_ParseData;
-
+import com.jangle.communicate.CommUtil;
 
 public class Test {
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	public static void main(String[] args) throws IOException, InterruptedException {
 
-		
 		Client Cl = new Client();
-		Client_ParseData Parse = new Client_ParseData(Cl);
-		
-		
+		Client_ParseData Parse = null;
+		// TestServer server = new TestServer(9090);
+
 		try {
-			Parse.submitLogIn("Test", "123456789");
-		} catch (IOException e) {
+			Parse = new Client_ParseData(Cl, "localhost", 9090);
+			System.out.println("generated client");
+		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
 		}
+
+		Thread.sleep(1000);
+
+		// EDIT BELOW HERE
+
+		User test = new User("test", 2);
 		
-		System.out.println("done");
+		test.setDisplayName(Parse.requestDisplayName(test));
 		
+		
+		
+		
+		Thread.sleep(2000);
+
+		System.out.println(test.getDisplayName());
 	}
 
 }

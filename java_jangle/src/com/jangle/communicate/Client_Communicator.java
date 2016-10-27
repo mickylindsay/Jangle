@@ -64,10 +64,21 @@ public class Client_Communicator implements Runnable {
 	 * @throws IOException
 	 */
 	public void sendToServer(byte[] Data) throws IOException {
-		Write.write(Data);
+		byte[] toServer = new byte[Data.length + 4];
+		byte[] tmp = CommUtil.intToByteArr(Data.length);
+
+
+		for (int i = 0; i < tmp.length; i++) {
+			toServer[i] = tmp[i];
+		}
+
+		for (int i = 0; i < Data.length; i++) {
+			toServer[4 + i] = Data[i];
+		}
+
+		Write.write(toServer);
 
 	}
-	
 
 	/**
 	 * Reads data from the server. This is a blocking call if there is nothing
@@ -77,41 +88,59 @@ public class Client_Communicator implements Runnable {
 	 * @throws IOException
 	 */
 	private byte[] readFromServer() throws IOException {
-		byte[] tmp = new byte[1024];
-		int amount;
+		byte[] tmp = new byte[4];
+		int amount = 0;
+		int bytesToRead = 0;
+
 		try {
 			amount = Reader.read(tmp);
-			return tmp;
 
 		} catch (SocketTimeoutException ste) {
 			System.out.println("no");
 		}
-		return null;
+
+		System.out.println("here2");
+		byte[] dataFromServer = new byte[CommUtil.byteToInt(tmp)];
+
+		try {
+			amount = Reader.read(dataFromServer);
+
+		} catch (SocketTimeoutException ste) {
+			System.out.println("no");
+		}
+
+		
+		
+		return dataFromServer;
+
 	}
 
 	@Override
 	public void run() {
 
 		while (true) {
-			byte[] tmp = new byte[1024];
+			
 			try {
-				tmp = readFromServer();
-				if (tmp != null) {
-					Parser.parseData(tmp);
+				
+				byte[] fromServer = readFromServer();
+				
+				if (fromServer != null) {
+					
+					Parser.parseData(fromServer);
 				}
 
-				tmp = null;
+				fromServer = null;
 
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+				System.out.println("here4");
 				e1.printStackTrace();
 			}
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
 }

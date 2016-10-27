@@ -46,22 +46,23 @@ public class Message {
 		byte[] server = new byte[4];
 		byte[] time = new byte[4];
 		byte[] content = new byte[data.length - 17];
-
+		
 		for (int i = 0; i < 4; i++) {
-			server[3 - i] = data[i + 1];
-			chan[3 - i] = data[i + 5];
-			user[3 - i] = data[i + 9];
-			time[3 - i] = data[i + 13];
+			server[i] = data[i + 1];
+			chan[i] = data[i + 5];
+			user[i] = data[i + 9];
+			time[i] = data[i + 13];
 		}
 
 		content = Arrays.copyOfRange(data, 17, data.length);
 
+		
+		
 		this.userID = CommUtil.byteToInt(user);
 		this.channelID = CommUtil.byteToInt(chan);
 		this.serverID = CommUtil.byteToInt(server);
 		this.timeStamp = (long) CommUtil.byteToInt(time);
 		this.messageContent = new String(content);
-
 	}
 
 	public Message() {
@@ -118,36 +119,36 @@ public class Message {
 
 	/**
 	 * Creates a byte array of this message, in the format required to send the
-	 * message to the server
+	 * message to the server.
 	 * 
 	 * @return the byte array to send to the server.
 	 */
 	public byte[] getByteArray() {
 
 		byte[] ret = new byte[messageContent.length() + 13];
-		byte[] serverid = ByteBuffer.allocate(4).putInt(serverID).array();
-		byte[] channelid = ByteBuffer.allocate(4).putInt(channelID).array();
-		byte[] userid = ByteBuffer.allocate(4).putInt(userID).array();
+		byte[] serverid = CommUtil.intToByteArr(serverID);
+		byte[] channelid = CommUtil.intToByteArr(channelID);
+		byte[] userid = CommUtil.intToByteArr(userID);
 		int j = 0;
 
 		ret[0] = CommUtil.MESSAGE_TO_SERVER;
 
 		for (int i = 0; i < 4; i++) {
 			if (serverid.length > i) {
-				ret[i + 1] = serverid[3 - i];
+				ret[i + 1] = serverid[i];
 			}
 			else {
 				ret[i + 1] = (byte) 0;
 			}
 
 			if (channelid.length > i) {
-				ret[i + 5] = channelid[3 - i];
+				ret[i + 5] = channelid[i];
 			}
 			else {
 				ret[i + 5] = (byte) 0;
 			}
 			if (userid.length > i) {
-				ret[i + 9] = userid[3 - i];
+				ret[i + 9] = userid[i];
 			}
 			else {
 				ret[i + 9] = (byte) 0;

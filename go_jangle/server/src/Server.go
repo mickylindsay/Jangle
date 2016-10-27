@@ -39,6 +39,10 @@ func main() {
 		user := &User{
 			c : &conn,
 		};
+		if(jangle.debug){
+			user.roomid = 1;
+			user.serverid = 1;
+		}
 		//Add new connection onto the end of connections list
 		elem := jangle.userlist.PushBack(user);
 		//Recieve data packets from clients
