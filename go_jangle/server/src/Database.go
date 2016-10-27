@@ -100,7 +100,7 @@ func Message_Create(user *User, messagetext []byte) error{
 
 
 //Request chunks of 50 messages offset by (offset*50) and returns them as array of message objects
-func Request_Offset_Messages(offset uint) ([]Message, error){
+func Request_Offset_Messages(user *User, offset uint) ([]Message, error){
 	if(!jangle.no_database){
 		i := 0;
 		messages := make([]Message,50);
@@ -110,7 +110,7 @@ func Request_Offset_Messages(offset uint) ([]Message, error){
 			userid_read uint
 		)
 		//Query 50 rows of messages
-		rows, err := jangle.db.Query("SELECT userid, time, messagetext FROM messages ORDER BY messageid DESC LIMIT 50 OFFSET  ?", offset*50)
+		rows, err := jangle.db.Query("SELECT userid, time, messagetext FROM messages WHERE serverid = ? AND roomid = ? ORDER BY messageid DESC LIMIT 50 OFFSET  ?", user.serverid, user.roomid, offset*50)
 		Check_Error(err);
 		defer rows.Close();
 		//Iterate through the rows
@@ -122,8 +122,8 @@ func Request_Offset_Messages(offset uint) ([]Message, error){
 			//Create a "17" message to send back to user
 			m := Message_Recieve{
 				code: 17,
-				serverid: Int_Converter(0),
-				roomid: Int_Converter(0),
+				serverid: Int_Converter(user.serverid),
+				roomid: Int_Converter(user.roomid),
 				userid: Int_Converter(userid_read),
 				time: Int_Converter(time_read),
 				text: []byte(text_read)};
@@ -274,8 +274,8 @@ func Set_New_Display_Name(serverid uint, userid uint, name []byte) error{
 }
 
 
-func Set_New_Server_Display_Name (serverrid uint, name []byte) error {
-	if (!jangle.no.database) {
+func Set_New_Server_Display_Name (serverid uint, name []byte) error {
+	if (!jangle.no_database) {
 		err := jangle.db.QueryRow("SELECT server_display_name FROM display WHERE serverid = ?", serverid)
 		if (err != nil) {
 			_, e := jangle.db.Exec("UPDATE display SET server_display_name = ? WHERE serverid = ?", string(name), serverid)
@@ -288,8 +288,8 @@ func Set_New_Server_Display_Name (serverrid uint, name []byte) error {
 	return nil
 }
 
-func Set_New_Room_Display_Name (serverrid uint, roomid uint, name []byte) error {
-	if (!jangle.no.database) {
+func Set_New_Room_Display_Name (serverid uint, roomid uint, name []byte) error {
+	if (!jangle.no_database) {
 		err := jangle.db.QueryRow("SELECT room_display_name FROM display WHERE serverid = ? and roomid = ?", serverid, roomid)
 		if (err != nil) {
 			_, e := jangle.db.Exec("UPDATE display SET room_display_name = ? WHERE roomid = ? AND serverid = ?", string(name), roomid, serverid)

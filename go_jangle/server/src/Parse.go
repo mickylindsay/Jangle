@@ -106,9 +106,9 @@ func Message17 (user *User, data []byte) {
 		time: data[13:16],
 		text: data[17:]}
 
-			num1 := Byte_Converter(data[1:4])
-			num2 := Byte_Converter(data[5:8])
-			Send_Broadcast_Server_Room(num1, num2, m)
+		num1 := Byte_Converter(data[1:4])
+		num2 := Byte_Converter(data[5:8])
+		Send_Broadcast_Server_Room(num1, num2, m)
 }
 
 //Requests n message code type 17's, message client recieve, from database 
@@ -120,7 +120,7 @@ func Message32 (user *User, data []byte) {
 		offset: data[1]}
 
 			num := uint(data[1])
-			messages, err := Request_Offset_Messages(num)
+			messages, err := Request_Offset_Messages(user, num)
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
