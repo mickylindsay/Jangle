@@ -258,8 +258,11 @@ public class Client_ParseData implements IPARSER {
 		return null;
 	}
 	
-	
-	//TODO develop this method
+	/**
+	 * Set a new display name for the logged in user
+	 * @param user The name to set the new user as
+	 * @throws IOException If cannot send the data to the server.
+	 */
 	public void setNewDisplayNameOnServer(String user) throws IOException{
 		byte[] toServer = new byte[user.length() + 1];
 		byte[] nameAsByte = user.getBytes();
