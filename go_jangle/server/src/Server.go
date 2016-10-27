@@ -14,6 +14,7 @@ type Jangle struct {
 	address string
 	debug bool
 	no_database bool
+	Messages []func(*User, []byte)
 }
 
 var jangle Jangle;
@@ -21,7 +22,7 @@ var jangle Jangle;
 func main() {
 	Init_Flags();
 	Init_Server();
-
+	
 	Color_Println("red", "JANGLE GO SERVER");
 	fmt.Println("listening on - " + jangle.address);
 	

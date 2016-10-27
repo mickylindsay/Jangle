@@ -249,8 +249,11 @@ func Request_Room_Display_Name(serverid uint, roomid uint) ([]byte,error) {
 func Request_Display_Name(serverid uint, userid uint) ([]byte,error) {
 	if(!jangle.no_database){
 		var temp string;
+		fmt.Println("Attempting Server Unique Display Name.");
 		err := jangle.db.QueryRow("SELECT displayname FROM display WHERE serverid = ? and userid = ?", serverid, userid).Scan(&temp);
-		if(err==nil){
+		if(err!=nil){
+		fmt.Println("Attempting Master Unique Display Name.");
+			
 			err = jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", userid).Scan(&temp);
 		}
 		return []byte(temp), err;
