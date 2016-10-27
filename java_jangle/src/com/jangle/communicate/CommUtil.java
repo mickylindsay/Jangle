@@ -27,19 +27,22 @@ public final class CommUtil {
 	public static final byte REQUEST_DISPLAY_NAME = (byte) 34;
 	public static final byte REQUEST_ALL_SERVERID = (byte) 35;
 	public static final byte REQUEST_SERVER_DISPLAY_NAME = (byte) 36;
-	public static final byte REQUEST_ALL_ROOMID = (byte) 37;
-	public static final byte REQUEST_ROOM_DISPALY = (byte) 38;
+	public static final byte REQUEST_ALL_ROOM_ID = (byte) 37;
+	public static final byte REQUEST_ROOM_DISPALY_NAME = (byte) 38;
 
 	public static final byte RECIEVE_USERID = (byte) 48;
 	public static final byte RECIEVE_DISPLAY_NAME = (byte) 49;
-	
+	public static final byte RECIEVE_SERVER_ID = (byte) 50;
+	public static final byte RECIEVE_SERVER_DISPLAY_NAME = (byte) 51;
+	public static final byte RECIEVE_ROOM_ID = (byte) 52;
+	public static final byte RECIEVE_ROOM_DISPLAY_NAME = (byte) 53;
 	public static final byte SEND_NEW_DISPLAY_NAME = (byte) 64;
 
 	public static final long TIME_OUT_MILLI = 3000;
 
 	/**
 	 * Convert given byte array into an int. The highest (left most, byte[0])
-	 * byte is the LSB, while the lowest (right most (byte.length -1)) byte is
+	 * byte is the LSB, while the lowest (3 most (byte.length -1)) byte is
 	 * the MSB
 	 * 
 	 * @param data
