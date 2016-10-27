@@ -1,5 +1,46 @@
 package main
 
+//TODO
+func Init_Parse () {
+	Messages := make([]func(user *User, data []byte), 255)
+
+	Messages[0] = Message0
+	Messages[1] = Message1
+	Messages[2] = Message2
+	Messages[3] = Message3
+	Messages[4] = Message4
+	Messages[16] = Message16
+	Messages[17] = Message17
+	Messages[32] = Message32
+	Messages[33] = Message33
+	Messages[34] = Message34
+	Messages[35] = Message35
+	Messages[36] = Message36
+	Messages[37] = Message37
+	Messages[38] = Message38
+	Messages[39] = Message39
+	Messages[48] = Message48
+	Messages[49] = Message49
+	Messages[50] = Message50
+	Messages[51] = Message51
+	Messages[52] = Message52
+	Messages[53] = Message53
+	Messages[54] = Message54
+	Messages[64] = Message64
+	Messages[65] = Message65
+	Messages[66] = Message66
+	Messages[67] = Message67
+	Messages[80] = Message80
+	Messages[81] = Message81
+	Messages[82] = Message82
+	Messages[83] = Message83
+	Messages[84] = Message84
+	Messages[85] = Message85
+	Messages[255] = Message255
+
+	jangle.Messages = Messages
+}
+
 //Initializes Message type
 var m Message
 
@@ -106,9 +147,9 @@ func Message17 (user *User, data []byte) {
 		time: data[13:16],
 		text: data[17:]}
 
-		num1 := Byte_Converter(data[1:4])
-		num2 := Byte_Converter(data[5:8])
-		Send_Broadcast_Server_Room(num1, num2, m)
+			num1 := Byte_Converter(data[1:4])
+			num2 := Byte_Converter(data[5:8])
+			Send_Broadcast_Server_Room(num1, num2, m)
 }
 
 //Requests n message code type 17's, message client recieve, from database 
@@ -242,6 +283,25 @@ func Message38 (user *User, data []byte) {
 			Message53(user, new_data)
 }
 
+//TODO
+func Message39 (user *User, data []byte) {
+
+	m = Userid{
+		code: data[0],
+		userid: data[1:4]}
+
+			num := Byte_Converter(data[1:4])
+			requested_master_display_name, err := Request_Master_Display_Name(num)
+			Check_Error(err)
+
+			new_data := make([]byte, len(requested_master_display_name) + 5)
+			new_data[0] = recieve_master_display_name
+			copy(new_data[1:4], data[1:4])
+			copy(new_data[5:], requested_master_display_name)
+
+			Message54(user, new_data)
+}
+
 //Sends message code type 48, recieve userid, to client
 func Message48 (user *User, data []byte) {
 
@@ -304,6 +364,17 @@ func Message53 (user *User, data []byte) {
 		serverid: data[1:4],
 		roomid: data[5:8],
 		room_display_name: data[9:]}
+
+			Send_Message(user, m)
+}
+
+//TODO
+func Message54 (user *User, data []byte) {
+
+	m = Display_Name{
+		code: data[0],
+		userid: data[1:4],
+		display_name: data[5:]}
 
 			Send_Message(user, m)
 }
@@ -377,6 +448,24 @@ func Message66 (user *User, data []byte) {
 }
 
 //TODO
+func Message67 (user *User, data []byte) {
+	m = New_Display_Name{
+		code: data[0],
+		new_display_name: data[1:]}
+
+			err := Set_New_Master_Display_Name(user.id, data[1:])
+			Check_Error(err)
+
+			arr := Int_Converter(user.id)
+			new_m := Display_Name{
+				code: recieve_master_display_name,
+				userid: arr,
+				display_name: data[1:]}
+
+				Send_Broadcast_Friends(user.id, new_m)
+}
+
+//TODO
 func Message80 (user *User, data []byte) {
 
 	m = Status{
@@ -405,7 +494,7 @@ func Message81 (user *User, data []byte) {
 		status: data[5]}
 
 			num := Byte_Converter(data[1:4])
-			Send_Broadcast_View(num, m)
+			Send_Broadcast_Server(num, m)
 }
 
 //TODO
@@ -475,7 +564,9 @@ func Message255 (user *User, data []byte) {
 //and calls the appropiate function based off the code type
 func Parse_Data (user *User, data []byte) {
 
-	if (data[0] == create_user) {
+	jangle.Messages[data[0]](user, data)
+
+	/*if (data[0] == create_user) {
 
 		Message0(user, data)
 	
@@ -595,5 +686,5 @@ func Parse_Data (user *User, data []byte) {
 
 		Message255(user, data)
 		
-	}
+	}*/
 }

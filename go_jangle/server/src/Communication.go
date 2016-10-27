@@ -104,6 +104,6 @@ func Send_Broadcast_Members (serverid uint, message Message) {
 }
 
 //TODO
-func Send_Broadcast_View (userid uint, message Message) {
-	
+func Send_Broadcast_Friends (userid uint, message Message) {
+
 }
