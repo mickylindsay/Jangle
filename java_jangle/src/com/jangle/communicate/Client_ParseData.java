@@ -13,12 +13,11 @@ public class Client_ParseData implements IPARSER {
 	private Client Cl;
 	private Client_Communicator Comm;
 
-	// ints used when recieving data from the server. These are used as
-	// temporary
-	// storage, and are not guaranted to hold any value
+	// Variables used when recieving data from the server. These are used as
+	// temporary   storage, and are not guaranted to hold any value
 	private LoginResult loginResult;
 	private int UserID;
-	private String DislayName;
+	private String DisplayName;
 	private int numMessagesRecieved;
 
 	/**
@@ -85,9 +84,21 @@ public class Client_ParseData implements IPARSER {
 			loginResult = LoginResult.NAME_TAKEN;
 			return;
 		}
+		
+		if (data[0] == CommUtil.RECIEVE_USERID){
+			//yeeeaaaa it need help
+			
+		}
+		
+		if (data[0] == CommUtil.RECIEVE_DISPLAY_NAME){
+			DisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
+			return;
+		}
 
 	}
-
+	
+	
+	//TODO test this with the server
 	/**
 	 * Submits a login request to the server. If the login is a success, the
 	 * user ID of the client that it passed to this parser when initalized will
@@ -137,6 +148,7 @@ public class Client_ParseData implements IPARSER {
 		return loginResult;
 	}
 
+	//TODO need to test with the server
 	/**
 	 * Submits a create user request. If the creation request is a success, the
 	 * userID of the client that is given at this parser instantiation will be set to the userID given by the server
@@ -183,6 +195,7 @@ public class Client_ParseData implements IPARSER {
 		return loginResult;
 	}
 	
+	//TODO Need to test this
 	/**
 	 * Request block of 50 messages from the server
 	 * @param offSet Which block of 50 to 
@@ -200,25 +213,63 @@ public class Client_ParseData implements IPARSER {
 		Comm.sendToServer(test);
 	}
 	
-	public UserRequestResult getAllUsersOnServer(){
+	
+	//TODO Yeeeaaa this one will need to get serious figure out
+	/*
+	 * Example, how will I know when to stop listing?
+	 */
+	public UserRequestResult userIdTiedToServer(){
 
 		
 		return UserRequestResult.TIMEOUT;
 		
 	}
+	
+	
 
-	//Still broke yo, this aint done yet.
-	public String requestDisplayName(User user) {
+	//TODO Need to test this with the server
+	public String requestDisplayName(User user) throws IOException {
 
-		DislayName = "";
+		DisplayName = "";
 
 		byte[] toServer = new byte[5];
 		toServer[0] = CommUtil.REQUEST_DISPLAY_NAME;
+		
+		byte[] idInByte = CommUtil.intToByteArr(user.getId());
+		
+	    for (int i = 0; i < idInByte.length; i++){
+	    	toServer[i + 1] = idInByte[i];
+	    }
 
-		// Comm.sendToServer(Data);
-		return "";
+		Comm.sendToServer(toServer);
+		long oldTime = System.currentTimeMillis();
+		
+		while (!DisplayName.equals("") && System.currentTimeMillis() - oldTime < 3000);
+		
+		return DisplayName;
 
 	}
+	
+	//TODO develop this one
+	public User[] getUsersOnserver(){
+		
+		byte[] toServer = new byte[5];
+		
+		return null;
+	}
+	
+	
+	//TODO develop this method
+	public void setNewDisplayNameOnServer(User user){
+		byte[] toServer = new byte[user.getDisplayName().length() + 1];
+		byte[] nameAsByte = user.getDisplayName().getBytes();
+		toServer[0] = CommUtil.SEND_NEW_DISPLAY_NAME;
+		
+		for (int i = 0; i < nameAsByte.length; i++){
+			toServer[i + 1] = nameAsByte[i];
+		}
+	}
+	
 
 	public Client getClient(){
 		return this.Cl;

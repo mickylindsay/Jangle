@@ -9,46 +9,28 @@ import com.jangle.communicate.CommUtil;
 
 public class Test {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
-	
-		
-		
+		Client Cl = new Client();
+		Client_ParseData Parse = null;
+		TestServer server = new TestServer(9090);
 
-		 Client Cl = new Client();
-		 Client_ParseData Parse = null;
-		// TestServer server = new TestServer(9090);
-		
-		 try {
-		 Parse = new Client_ParseData(Cl, "localhost", 9090);
-		 } catch (IOException e1) {
-		 // TODO Auto-generated catch block
-		 e1.printStackTrace();
-		 }
-		
-		//EDIT BELOW HERE
-		 
-		 
 		try {
-			Parse.request50MessagesWithOffset(0);
-		} catch (IOException e) {
+			Parse = new Client_ParseData(Cl, "localhost", 9090);
+		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
 		}
-		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		for (int i = 0; i < Cl.getMessages().size(); i++){
-			System.out.println(Cl.getMessages().get(i).getMessageContent());
-		}
-		
-		
 
+		// EDIT BELOW HERE
+
+		Cl.setDisplayName("test");
+
+		Message mess = new Message();
+
+		mess.setMessageContent("stuff");
+
+		Parse.sendMessage(mess);
 	}
 
 }

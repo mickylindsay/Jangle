@@ -32,6 +32,8 @@ public final class CommUtil {
 
 	public static final byte RECIEVE_USERID = (byte) 48;
 	public static final byte RECIEVE_DISPLAY_NAME = (byte) 49;
+	
+	public static final byte SEND_NEW_DISPLAY_NAME = (byte) 64;
 
 	public static final long TIME_OUT_MILLI = 3000;
 
