@@ -22,6 +22,7 @@ var jangle Jangle;
 func main() {
 	Init_Flags();
 	Init_Server();
+	Init_Parse();
 	
 	Color_Println("red", "JANGLE GO SERVER");
 	fmt.Println("listening on - " + jangle.address);
