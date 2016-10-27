@@ -6,6 +6,6 @@ import (
 )
 
 type Bot struct {
-
+	serverid uint8
 }
 

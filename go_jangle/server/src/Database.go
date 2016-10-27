@@ -250,7 +250,7 @@ func Request_Display_Name(serverid uint, userid uint) ([]byte,error) {
 	if(!jangle.no_database){
 		var temp string;
 		err := jangle.db.QueryRow("SELECT displayname FROM display WHERE serverid = ? and userid = ?", serverid, userid).Scan(&temp);
-		if(err==nil){
+		if(err != nil){
 			err = jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", userid).Scan(&temp);
 		}
 		return []byte(temp), err;
@@ -300,4 +300,13 @@ func Set_New_Room_Display_Name (serverid uint, roomid uint, name []byte) error {
 		}
 	}
 	return nil
+}
+
+func Get_Server_Owner_Id (serverid uint) (uint, error) {
+	var temp uint;
+	err := jangle.db.QueryRow("SELECT ownerid FROM servers WHERE serverid = ? ", serverid).Scan(&temp);
+	if(err != nil){
+		return 0, err;
+	}
+	return temp, nil;
 }

@@ -12,10 +12,9 @@ type Communicator interface{
 
 //Listens for data in from clients
 func Listen_To_Clients (user *User, e *list.Element) {
-	//Array to store data read from client
-	packet_size := make([]byte, 4);
-	
 	for {
+		//Array to store the size metadata of an incoming packet
+		packet_size := make([]byte, 4);
 		//Read data from client
 		len, err := (*user).Read(packet_size);
 		if (jangle.debug) {
@@ -43,9 +42,7 @@ func Listen_To_Clients (user *User, e *list.Element) {
 			fmt.Println("In: ", read_data[:]);
 		}
 		//Send read array to Message file for parsing and processing
-		
 		Parse_Data(user, read_data[:]);
-		//}
 	}
 }
 
@@ -56,7 +53,6 @@ func Send_Message (user *User, message Message) uint {
 		fmt.Println("OUT: ", write_data);
 	}
 	user.Write(write_data)
-	
 	return 0;
 }
 
@@ -88,7 +84,7 @@ func Send_Broadcast_Server (serverid uint, message Message) {
 func Send_Broadcast_Server_Room (serverid uint, roomid uint, message Message) {
 	write_data := message.Build_Message();
 	if (jangle.debug) {
-		fmt.Println(serverid, ".", roomid, ": OUT: ", write_data);
+		fmt.Println(serverid, "-", roomid, ": OUT: ", write_data);
 	}
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
 		if (e.Value.(*User).serverid == serverid && e.Value.(*User).roomid == roomid) {
