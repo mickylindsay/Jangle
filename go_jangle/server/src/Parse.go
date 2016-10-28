@@ -317,11 +317,10 @@ func Message40 (user *User, data []byte) {
 		code: data[0],
 		userid: data[1:4]}
 
-		arr := byte(user.status)
 		new_m := Userid_Status{
 			code: recieve_status,
 			userid: data[1:4],
-			status: arr}
+			status: user.status}
 		
 			Message55(user, new_m.Build_Message())
 }
@@ -507,9 +506,7 @@ func Message80 (user *User, data []byte) {
 		code: data[0],
 		status: data[1]}
 
-			num := uint(data[1])
-			user.status = num
-
+			user.status = data[1]
 			arr := Int_Converter(user.id)
 			new_m := Userid_Status{
 				code: status_broadcast,
@@ -527,8 +524,7 @@ func Message81 (user *User, data []byte) {
 		userid: data[1:4],
 		status: data[5]}
 
-			num := Byte_Converter(data[1:4])
-			Send_Broadcast_Server(num, m)
+			Send_Broadcast_Server(user.serverid, m)
 }
 
 //TODO
