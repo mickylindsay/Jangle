@@ -11,6 +11,7 @@ type User struct {
 	roomid uint
 	serverid uint
 	logged_in bool
+	status uint
 	permissions uint
 }
 
@@ -23,4 +24,4 @@ func (u *User) Write (write_data []byte) (int, error) {
 	copy(data[:3], Int_Converter(uint(len(write_data))));
 	copy(data[4:], write_data[:]);
 	return (*(*u).c).Write(data);
-}
+} 

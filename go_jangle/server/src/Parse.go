@@ -2,15 +2,17 @@ package main
 
 //TODO
 func Init_Parse () {
-	Messages := make([]func(user *User, data []byte), 255)
+	Messages := make([]func(user *User, data []byte), 256)
 
 	Messages[0] = Message0
 	Messages[1] = Message1
 	Messages[2] = Message2
 	Messages[3] = Message3
 	Messages[4] = Message4
+
 	Messages[16] = Message16
 	Messages[17] = Message17
+
 	Messages[32] = Message32
 	Messages[33] = Message33
 	Messages[34] = Message34
@@ -19,6 +21,7 @@ func Init_Parse () {
 	Messages[37] = Message37
 	Messages[38] = Message38
 	Messages[39] = Message39
+
 	Messages[48] = Message48
 	Messages[49] = Message49
 	Messages[50] = Message50
@@ -26,16 +29,19 @@ func Init_Parse () {
 	Messages[52] = Message52
 	Messages[53] = Message53
 	Messages[54] = Message54
+
 	Messages[64] = Message64
 	Messages[65] = Message65
 	Messages[66] = Message66
 	Messages[67] = Message67
+
 	Messages[80] = Message80
 	Messages[81] = Message81
 	Messages[82] = Message82
 	Messages[83] = Message83
 	Messages[84] = Message84
 	Messages[85] = Message85
+
 	Messages[255] = Message255
 
 	jangle.Messages = Messages
@@ -473,8 +479,7 @@ func Message80 (user *User, data []byte) {
 		status: data[1]}
 
 			num := uint(data[1])
-			err := Set_Status(user.id, num)
-			Check_Error(err)
+			user.status = num
 
 			arr := Int_Converter(user.id)
 			new_m := Userid_Status{
@@ -504,11 +509,16 @@ func Message82 (user *User, data []byte) {
 		code: data[0],
 		serverid: data[1:4]}
 
-			/*num := Byte_Converter(data[1:4])
-			message, err := Set_Server(num, user.id)
-			Check_Error(err)
+			num := Byte_Converter(data[1:4])
+			user.serverid = num
 
-			Parse_Data(user, message.Build_Message())*/
+			arr := Int_Converter(user.id)
+			new_m := Serverid_Userid{
+				code: server_broadcast,
+				serverid: data[1:4],
+				userid: arr}
+
+				Message83(user, new_m.Build_Message())
 }
 
 //TODO
@@ -519,8 +529,8 @@ func Message83 (user *User, data []byte) {
 		serverid: data[1:4],
 		userid: data[5:8]}
 
-			/*num := Byte_Converter(data[1:4])
-			Send_Broadcast_Server(num, m)*/
+			num := Byte_Converter(data[1:4])
+			Send_Broadcast_Server(num, m)
 }
 
 //TODO
@@ -530,11 +540,16 @@ func Message84 (user *User, data []byte) {
 		code: data[0],
 		roomid: data[1:4]}
 
-			/*num := Byte_Converter(data[1:4])
-			message, err := Set_Room(user.serverid,num,user.id)
-			Check_Error(err)
+			num := Byte_Converter(data[1:4])
+			user.roomid = num
 
-			Parse_Data(user, message)*/
+			arr := Int_Converter(user.id)
+			new_m := Roomid_Userid{
+				code: room_broadcast,
+				roomid: data[1:4],
+				userid: arr}
+
+				Message85(user, new_m.Build_Message())
 }
 
 //TODO
@@ -545,7 +560,7 @@ func Message85 (user *User, data []byte) {
 		roomid: data[1:4],
 		userid: data[5:8]}
 
-			//Send_Broadcast(m)
+			Send_Broadcast_Server(user.serverid, m)
 }
 
 //TODO
@@ -554,6 +569,8 @@ func Message255 (user *User, data []byte) {
 	m = Text{
 		code: data[0],
 		text: data[1:]}
+
+			Send_Message(user, m)
 }
 
 //Master function: takes paramaters type User struct and byte array

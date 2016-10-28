@@ -55,6 +55,11 @@ import (
 	//Error type codes
 	var error_check byte = 255
 
+	//Status types
+	var online byte = 1
+	var away byte = 2
+	var offline byte = 3
+
 //Converts byte array to unsigned int 
 func Byte_Converter(data []byte) uint {
 	var i uint
