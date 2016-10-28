@@ -308,6 +308,22 @@ func Message39 (user *User, data []byte) {
 			Message54(user, new_data)
 }
 
+//TODO
+func Message40 (user *User, data []byte) {
+
+	m = Userid{
+		code: data[0],
+		userid: data[1:4]}
+
+		arr := byte(user.status)
+		new_m := Userid_Status{
+			code: recieve_status,
+			userid: data[1:4],
+			status: arr}
+		
+			Message55(user, new_m.Build_Message())
+}
+
 //Sends message code type 48, recieve userid, to client
 func Message48 (user *User, data []byte) {
 
@@ -383,6 +399,18 @@ func Message54 (user *User, data []byte) {
 		display_name: data[5:]}
 
 			Send_Message(user, m)
+}
+
+//TODO
+func Message55 (user *User, data []byte) {
+
+	m = Userid_Status{
+		code: data[0],
+		userid: data[1:4],
+		status: data[5]}
+
+			Send_Message(user, m)
+	}
 }
 
 //Replaces the user's display name with the new display name in message code type 64,
