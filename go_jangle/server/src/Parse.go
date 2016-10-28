@@ -21,6 +21,7 @@ func Init_Parse () {
 	Messages[37] = Message37
 	Messages[38] = Message38
 	Messages[39] = Message39
+	Messages[40] = Message40
 
 	Messages[48] = Message48
 	Messages[49] = Message49
@@ -29,6 +30,7 @@ func Init_Parse () {
 	Messages[52] = Message52
 	Messages[53] = Message53
 	Messages[54] = Message54
+	Messages[55] = Message55
 
 	Messages[64] = Message64
 	Messages[65] = Message65
@@ -410,7 +412,6 @@ func Message55 (user *User, data []byte) {
 		status: data[5]}
 
 			Send_Message(user, m)
-	}
 }
 
 //Replaces the user's display name with the new display name in message code type 64,
