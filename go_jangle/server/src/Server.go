@@ -40,6 +40,7 @@ func main() {
 		Color_Println("green", "User Connected");
 		user := &User{
 			c : &conn,
+			status : 0,
 		};
 		if(jangle.debug){
 			user.roomid = 1;

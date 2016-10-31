@@ -118,7 +118,9 @@ func Request_Offset_Messages(user *User, offset uint) ([]Message, error){
 			//Scan the columns into variables
 			err := rows.Scan(&userid_read, &time_read, &text_read);
 			fmt.Println(text_read);
-			Check_Error(err);
+			if(err != nil){
+				return nil, err;
+			}
 			//Create a "17" message to send back to user
 			m := Message_Recieve{
 				code: 17,
@@ -132,7 +134,7 @@ func Request_Offset_Messages(user *User, offset uint) ([]Message, error){
 			i++;
 		}
 		//Return array of messages
-		return messages, err;
+		return messages[:i], err;
 	}
 	return nil, nil;
 }
@@ -144,24 +146,28 @@ func Request_Userid_Messages(serverid uint) ([]Message, error){
 		i := 0;
 		messages := make([]Message, 50);
 		//Query 50 rows of messages
-		rows, err := jangle.db.Query("SELECT userid FROM users AS u WHERE ? = u.serverid",serverid);
-		Check_Error(err);
+		rows, err := jangle.db.Query("SELECT userid FROM members  WHERE ? = serverid",serverid);
+		if(err != nil){
+			return nil, err;
+		}
 		defer rows.Close();
 		//Iterate through the rows
 		for rows.Next() {
 			//Scan the columns into variables
 			err := rows.Scan(&userid);
-			Check_Error(err);
+			if(err != nil){
+				return nil, err;
+			}
 			//Create a "48" message to send back to user
 			m := Userid{
 				code: 48,
 				userid: Int_Converter(userid)};
 			//Add that message to the array which will be returned
-			messages = append(messages, m);
+			messages[i] = m;
 			i++;
 		}
 		//Return array of messages
-		return messages, err;
+		return messages[:i], err;
 	}
 	return nil, nil;
 }
@@ -174,7 +180,9 @@ func Request_Serverid_Messages(userid uint) ([]Message, error){
 		messages := make([]Message, 50);
 		//Query 50 rows of messages
 		rows, err := jangle.db.Query("SELECT serverid FROM members AS m WHERE ? = m.userid", userid);
-		Check_Error(err);
+		if(err != nil){
+			return nil, err;
+		}
 		defer rows.Close();
 		//Iterate through the rows
 		for rows.Next() {
@@ -187,11 +195,11 @@ func Request_Serverid_Messages(userid uint) ([]Message, error){
 				serverid: Int_Converter(serverid),
 				userid: Int_Converter(userid)};
 			//Add that message to the array which will be returned
-			messages = append(messages, m);
+			messages[i] = m;
 			i++;
 		}
 		//Return array of messages
-		return messages, err;
+		return messages[:i], err;
 	}
 	return nil, nil;
 }
@@ -213,24 +221,28 @@ func Request_Roomid_Messages(serverid uint) ([]Message, error){
 	messages := make([]Message, 50);
 	if(!jangle.no_database){
 		rows, err := jangle.db.Query("SELECT roomid FROM rooms AS r WHERE ? = r.serverid", serverid);
-		Check_Error(err);
+		if(err != nil){
+			return nil, err;
+		}
 		defer rows.Close();
 		//Iterate through the rows
 		for rows.Next() {
 			//Scan the columns into variables
 			err := rows.Scan(&roomid);
-			Check_Error(err);
+			if(err != nil){
+				return nil, err;
+			}
 			//Create a "52" message to send back to user
 			m := Serverid_Userid{
 				code: 52,
 				serverid: Int_Converter(serverid),
 				userid: Int_Converter(roomid)};
 			//Add that message to the array which will be returned
-			messages = append(messages, m);
+			messages[i] = m;
 			i++;
 		}
 		//Return array of messages
-		return messages, err;
+		return messages[:i], err;
 	}
 	return nil, nil;
 }
@@ -239,7 +251,7 @@ func Request_Roomid_Messages(serverid uint) ([]Message, error){
 func Request_Room_Display_Name(serverid uint, roomid uint) ([]byte,error) {
 	if(!jangle.no_database){
 		var temp string;
-		err := jangle.db.QueryRow("SELECT roomname FROM roomss AS r WHERE r.serverid = ? AND r.roomid = ?", serverid, roomid).Scan(&temp);
+		err := jangle.db.QueryRow("SELECT roomname FROM rooms AS r WHERE r.serverid = ? AND r.roomid = ?", serverid, roomid).Scan(&temp);
 		return []byte(temp), err;
 	}
 	return []byte("TEMP"), nil;
@@ -256,7 +268,7 @@ func Request_Display_Name(serverid uint, userid uint) ([]byte,error) {
 
 		fmt.Println("Attempting Master Unique Display Name.");
 			
-			err = jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", userid).Scan(&temp);
+			return Request_Master_Display_Name(userid);
 		}
 		return []byte(temp), err;
 	}
@@ -265,8 +277,9 @@ func Request_Display_Name(serverid uint, userid uint) ([]byte,error) {
 
 //TODO
 func Request_Master_Display_Name (userid uint) ([]byte, error) {
-	temp := "name"
-	return []byte(temp), nil
+	var temp string;
+	err := jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", userid).Scan(&temp);
+	return []byte(temp), err;
 }
 
 //Inserts or update a new server specific display name
@@ -330,6 +343,16 @@ func Get_Server_Owner_Id (serverid uint) (uint, error) {
 		return temp, nil;
 	}
 	return 0,nil;
+}
+
+//Inserts a new user into the database
+//TODO implement Image Path and Password hashing
+func Join_Server(user *User) error {
+	if(!jangle.no_database){
+		_, err := jangle.db.Exec("INSERT INTO members (userid, serverid) VALUES (?,?);",user.id, user.serverid);
+		return err;
+	}
+	return nil;
 }
 
 //TODO
