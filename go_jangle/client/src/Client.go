@@ -38,7 +38,7 @@ func main(){
 	}()
 	//for {
 		
-		write_data := Size_Meta_Data(Message40());
+		write_data := Size_Meta_Data(Message65());
 		if(client.debug){
 			fmt.Println("OUT: ",write_data);
 		}
@@ -139,5 +139,44 @@ func Message40() []byte {
 	write_data := make([]byte, 5);
 	write_data[0] = 40;
 	copy(write_data[1:4], Int_Converter(1));
+	return write_data;
+}
+
+func Message64() []byte {
+	reader := bufio.NewReader(os.Stdin);
+	text, _ := reader.ReadString('\n');
+	write_data := make([]byte, len(text) + 12);
+	write_data[0] = 64;
+	copy(write_data[1:], []byte(text));
+	return write_data;
+}
+
+func Message65() []byte {
+	reader := bufio.NewReader(os.Stdin);
+	text, _ := reader.ReadString('\n');
+	write_data := make([]byte, len(text) + 12);
+	write_data[0] = 65;
+	copy(write_data[1:4], Int_Converter(1));
+	copy(write_data[5:], []byte(text));
+	return write_data;
+}
+
+func Message66() []byte {
+	reader := bufio.NewReader(os.Stdin);
+	text, _ := reader.ReadString('\n');
+	write_data := make([]byte, len(text) + 12);
+	write_data[0] = 66;
+	copy(write_data[1:4], Int_Converter(1));
+	copy(write_data[5:8], Int_Converter(1));
+	copy(write_data[9:], []byte(text));
+	return write_data;
+}
+
+func Message67() []byte {
+	reader := bufio.NewReader(os.Stdin);
+	text, _ := reader.ReadString('\n');
+	write_data := make([]byte, len(text) + 12);
+	write_data[0] = 67;
+	copy(write_data[1:], []byte(text));
 	return write_data;
 }

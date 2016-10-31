@@ -302,14 +302,8 @@ func Set_New_Display_Name(serverid uint, userid uint, name []byte) error{
 
 func Set_New_Server_Display_Name (serverid uint, name []byte) error {
 	if (!jangle.no_database) {
-		err := jangle.db.QueryRow("SELECT serverdisplayname FROM display WHERE serverid = ?", serverid);
-		if (err != nil) {
-			_, e := jangle.db.Exec("UPDATE display SET serverdisplayname = ? WHERE serverid = ?", string(name), serverid);
-			return e;
-		} else {
-			_, e := jangle.db.Exec("INSERT INTO display (serverid, serverdisplayname) VALUES (?,?);", serverid, string(name));
-			return e;
-		}
+		_, e := jangle.db.Exec("UPDATE servers SET servername = ? WHERE serverid = ?", string(name), serverid);
+		return e;
 	}
 	return nil;
 }
@@ -319,18 +313,11 @@ func Set_New_Server_Display_Name (serverid uint, name []byte) error {
 
 func Set_New_Room_Display_Name (serverid uint, roomid uint, name []byte) error {
 	if (!jangle.no_database) {
-		err := jangle.db.QueryRow("SELECT roomdisplayname FROM display WHERE serverid = ? and roomid = ?", serverid, roomid);
-		if (err != nil) {
-			_, e := jangle.db.Exec("UPDATE display SET roomdisplayname = ? WHERE roomid = ? AND serverid = ?", string(name), roomid, serverid);
-			return e;
-		} else {
-			_, e := jangle.db.Exec("INSERT INTO display (serverid, roomid, roomdisplayname) VALUES (?,?,?);", serverid, roomid, string(name));
-			return e;
-		}
+		_, e := jangle.db.Exec("UPDATE rooms SET roomname = ? WHERE roomid = ? AND serverid = ?", string(name), roomid, serverid);
+		return e;
 	}
 	return nil;
 }
-
 
 //Returns the userid of the server owner
 func Get_Server_Owner_Id (serverid uint) (uint, error) {
@@ -346,7 +333,6 @@ func Get_Server_Owner_Id (serverid uint) (uint, error) {
 }
 
 //Inserts a new user into the database
-//TODO implement Image Path and Password hashing
 func Join_Server(user *User) error {
 	if(!jangle.no_database){
 		_, err := jangle.db.Exec("INSERT INTO members (userid, serverid) VALUES (?,?);",user.id, user.serverid);
@@ -355,7 +341,8 @@ func Join_Server(user *User) error {
 	return nil;
 }
 
-//TODO
+//Updates user master display name
 func Set_New_Master_Display_Name (userid uint, name []byte) error {
-	return nil;
+	_, e := jangle.db.Exec("UPDATE user SET displayname = ? WHERE userid = ?", string(name), userid);
+	return e;
 }
