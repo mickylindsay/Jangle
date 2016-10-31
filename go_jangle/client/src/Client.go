@@ -39,18 +39,12 @@ func main(){
 	for {
 		reader := bufio.NewReader(os.Stdin)
 		text, _ := reader.ReadString('\n')
-		write_data := make([]byte, len(text) + 12)
-		write_data[0] = 16;
-		copy(write_data[1:4], Int_Converter(1)); 
+		write_data := make([]byte, len(text) + 12 + 4)
+		write_data[4] = 16;
 		copy(write_data[5:8], Int_Converter(1)); 
 		copy(write_data[9:12], Int_Converter(1)); 
-		copy(write_data[13:], []byte(text));
-		/*write_data := make([]byte, len(text) + 12)
-		write_data[0] = 32;
-		copy(write_data[1:4], Int_Converter(1)); 
-		copy(write_data[5:8], Int_Converter(1)); 
-		copy(write_data[9:12], Int_Converter(1)); 
-		write_data[13] = 0;*/
+		copy(write_data[13:16], Int_Converter(1)); 
+		copy(write_data[17:], []byte(text));
 		if(client.debug){
 			fmt.Println("OUT: ",write_data)
 		}
@@ -81,4 +75,15 @@ func Init_Flags(){
 	flag.Parse();
 
 	client.debug = *debug_flag;
+}
+
+func Message() []byte {
+	reader := bufio.NewReader(os.Stdin)
+	text, _ := reader.ReadString('\n')
+	write_data := make([]byte, len(text) + 12 + 4)
+	write_data[4] = 16;
+	copy(write_data[5:8], Int_Converter(1)); 
+	copy(write_data[9:12], Int_Converter(1)); 
+	copy(write_data[13:16], Int_Converter(1)); 
+	copy(write_data[17:], []byte(text));
 }

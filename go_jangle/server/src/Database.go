@@ -251,13 +251,8 @@ func Request_Display_Name(serverid uint, userid uint) ([]byte,error) {
 		var temp string;
 		fmt.Println("Attempting Server Unique Display Name.");
 		err := jangle.db.QueryRow("SELECT displayname FROM display WHERE serverid = ? and userid = ?", serverid, userid).Scan(&temp);
-<<<<<<< HEAD
 		if(err != nil){
-=======
-		if(err!=nil){
 		fmt.Println("Attempting Master Unique Display Name.");
-			
->>>>>>> 1591f6fe84c610239a6d6580bea6487496b496cd
 			err = jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", userid).Scan(&temp);
 		}
 		return []byte(temp), err;
