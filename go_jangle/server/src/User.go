@@ -15,6 +15,7 @@ type User struct {
 	roomid uint
 	serverid uint
 	logged_in bool
+	status byte
 	permissions uint
 	status uint
 }
