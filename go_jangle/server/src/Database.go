@@ -273,7 +273,7 @@ func Set_New_Display_Name(serverid uint, userid uint, name []byte) error{
 	return nil;
 }
 
-
+//Inserts or update a new server specific server display name
 func Set_New_Server_Display_Name (serverid uint, name []byte) error {
 	if (!jangle.no_database) {
 		err := jangle.db.QueryRow("SELECT server_display_name FROM display WHERE serverid = ?", serverid)
@@ -288,6 +288,7 @@ func Set_New_Server_Display_Name (serverid uint, name []byte) error {
 	return nil
 }
 
+//Inserts or update a new server specific room display name
 func Set_New_Room_Display_Name (serverid uint, roomid uint, name []byte) error {
 	if (!jangle.no_database) {
 		err := jangle.db.QueryRow("SELECT room_display_name FROM display WHERE serverid = ? and roomid = ?", serverid, roomid)
@@ -302,11 +303,15 @@ func Set_New_Room_Display_Name (serverid uint, roomid uint, name []byte) error {
 	return nil
 }
 
+//Returns the userid of the server owner
 func Get_Server_Owner_Id (serverid uint) (uint, error) {
-	var temp uint;
-	err := jangle.db.QueryRow("SELECT ownerid FROM servers WHERE serverid = ? ", serverid).Scan(&temp);
-	if(err != nil){
-		return 0, err;
+	if (!jangle.no_database) {
+		var temp uint;
+		err := jangle.db.QueryRow("SELECT ownerid FROM servers WHERE serverid = ? ", serverid).Scan(&temp);
+		if(err != nil){
+			return 0, err;
+		}
+		return temp, nil;
 	}
-	return temp, nil;
+	return 0,nil;
 }
