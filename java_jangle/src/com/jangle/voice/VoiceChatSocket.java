@@ -3,6 +3,7 @@ package com.jangle.voice;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -21,16 +22,8 @@ public class VoiceChatSocket {
 	 * Creates a communication for communication with the server, which can
 	 * write to the write buffer, and read from the read buffer.
 	 */
-	Socket Java_Socket;
+	DatagramSocket Java_Socket;
 
-	/**
-	 * Object used to write to the socket
-	 */
-	OutputStream Write;
-
-	/**
-	 * Object used to read form the socket
-	 */
 	InputStream Reader;
 
 	/**
@@ -55,7 +48,7 @@ public class VoiceChatSocket {
 		adress = Adress;
 		User = gUser;
 
-		Java_Socket = new Socket(Adress, port);
+		Java_Socket = new DatagramSocket(port);
 
 		// Initialize PrintWriter to write to the output stream
 		Write = Java_Socket.getOutputStream();

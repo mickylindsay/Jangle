@@ -2,6 +2,9 @@ package com.jangle.ConroyTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+
 import javax.sound.sampled.AudioFormat;
 
 import javax.sound.sampled.AudioSystem;
@@ -38,48 +41,26 @@ public class Test {
 		// EDIT BELOW HERE
 
 		// set up the TargetDataLine
-		AudioFormat format = new AudioFormat(8000.0f, 16, 1, true, true);
-		TargetDataLine microphone;
-		SourceDataLine speakers;
-		try {
-			microphone = AudioSystem.getTargetDataLine(format);
-
-			DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-			microphone = (TargetDataLine) AudioSystem.getLine(info);
-			microphone.open(format);
-
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			int numBytesRead;
-			int CHUNK_SIZE = 1024;
-			byte[] data = new byte[microphone.getBufferSize() / 5];
-			microphone.start();
-
-			int bytesRead = 0;
-			DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, format);
-			speakers = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
-			speakers.open(format);
-			speakers.start();
-			
-			
-			
-			
-			
-			while (bytesRead < 100000) {
-				numBytesRead = microphone.read(data, 0, CHUNK_SIZE);
-				bytesRead += numBytesRead;
-				// write the mic data to a stream for use later
-				out.write(data, 0, numBytesRead);
-				// write mic data to stream for immediate playback
-				speakers.write(data, 0, numBytesRead);
-			}
-			
-			//close the various buffers
-			speakers.drain();
-			speakers.close();
-			microphone.close();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-		}
+		
+		UDP_PeerToPeer test2 = new UDP_PeerToPeer();
+		
+		byte[] data = CommUtil.intToByteArr(1);
+		
+		test2.sendData(data);
+		
+		
+		DatagramSocket socket = new DatagramSocket();
+		
+		byte[] buf = new byte[4];
+		DatagramPacket packet = new DatagramPacket(buf, buf.length);
+		System.out.println("test");
+		socket.receive(packet);
+		
+		System.out.println(CommUtil.byteToInt(data));
+		
+		
+		
+		
 
 	}
 
