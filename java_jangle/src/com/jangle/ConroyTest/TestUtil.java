@@ -1,6 +1,7 @@
 package com.jangle.ConroyTest;
 
 import com.jangle.client.Message;
+import com.jangle.client.User;
 
 public final class TestUtil {
 
@@ -20,6 +21,13 @@ public final class TestUtil {
 		ret.setTimeStamp(1);
 		ret.setUserID(1);
 		ret.setMessageContent("Test123456789Test");
+		
+		return ret;
+		
+	}
+	
+	public static User newNathan(){
+		User ret = new User("Nathan", 2);
 		
 		return ret;
 		

@@ -291,14 +291,6 @@ public class Client_ParseData implements IPARSER {
 
 	}
 
-	// TODO develop this one
-	public User[] getUsersOnserver() {
-
-		byte[] toServer = new byte[5];
-
-		return null;
-	}
-
 	/**
 	 * Set a new display name for the logged in user
 	 * 
@@ -331,35 +323,7 @@ public class Client_ParseData implements IPARSER {
 		Comm.sendToServer(toServer);
 	}
 
-	// TODO Need to Test
-	/**
-	 * Request the Display name for a given serverID
-	 * @param serverID the server you want the display name of
-	 * @return the display name
-	 * @throws IOException
-	 */
-	public String requestServerDisplayName(int serverID) throws IOException {
-
-		ServerDisplayName = "";
-
-		byte[] toServer = new byte[5];
-		toServer[0] = CommUtil.REQUEST_SERVER_DISPLAY_NAME;
-
-		byte[] idInByte = CommUtil.intToByteArr(serverID);
-
-		for (int i = 0; i < idInByte.length; i++) {
-			toServer[i + 1] = idInByte[i];
-		}
-
-		Comm.sendToServer(toServer);
-		long oldTime = System.currentTimeMillis();
-
-		while (!ServerDisplayName.equals("") && System.currentTimeMillis() - oldTime < 3000)
-			;
-
-		return ServerDisplayName;
-
-	}
+	
 	
 	//TODO need to test this
 	/**
@@ -368,7 +332,7 @@ public class Client_ParseData implements IPARSER {
 	 * @throws IOException 
 	 */
 	public void getRoomIDInServer(int serverID) throws IOException{
-		byte[] toServer = new byte[4];
+		byte[] toServer = new byte[5];
 		byte[] nameAsByte = CommUtil.intToByteArr(serverID);
 		toServer[0] = CommUtil.REQUEST_ALL_ROOM_ID;
 
