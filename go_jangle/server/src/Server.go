@@ -43,6 +43,7 @@ func main() {
 			status : 0,
 		};
 		if(jangle.debug){
+			fmt.Println("From Address:", user.Get_Remote_Address());
 			user.roomid = 1;
 			user.serverid = 1;
 		}
