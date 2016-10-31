@@ -17,7 +17,6 @@ type User struct {
 	logged_in bool
 	status byte
 	permissions uint
-	status uint
 }
 
 func (u *User) Read (read_data []byte) (int, error) {

@@ -506,14 +506,14 @@ func Message80 (user *User, data []byte) {
 		code: data[0],
 		status: data[1]}
 
-			user.status = data[1]
-			arr := Int_Converter(user.id)
-			new_m := Userid_Status{
-				code: status_broadcast,
-				userid: arr,
-				status: data[1]}
+	user.status = data[1]
+	arr := Int_Converter(user.id)
+	new_m := Userid_Status{
+		code: status_broadcast,
+		userid: arr,
+		status: data[1]}
 
-				Message81(user, new_m.Build_Message())
+	Message81(user, new_m.Build_Message())
 }
 
 //TODO
