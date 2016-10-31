@@ -536,8 +536,9 @@ func Message82 (user *User, data []byte) {
 
 			num := Byte_Converter(data[1:4])
 			user.serverid = num
-
-			arr := Int_Converter(user.id)
+	new_display_name, _ := Request_Display_Name(num, user.id);
+	user.display_name = string(new_display_name);
+	arr := Int_Converter(user.id)
 			new_m := Serverid_Userid{
 				code: server_broadcast,
 				serverid: data[1:4],
