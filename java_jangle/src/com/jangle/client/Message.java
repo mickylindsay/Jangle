@@ -1,5 +1,6 @@
 package com.jangle.client;
 
+import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import com.jangle.communicate.CommUtil;
@@ -165,5 +166,9 @@ public class Message {
 		return ret;
 
 	}
+
+    public boolean isImg() {
+        return messageContent.contains("http://") && (messageContent.contains(".png") || messageContent.contains(".jpg") || messageContent.contains(".gif") || messageContent.contains("jpeg") || messageContent.contains(".bmp"));
+    }
 
 }

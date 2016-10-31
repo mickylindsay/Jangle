@@ -55,9 +55,12 @@ public class messageThread implements Runnable {
 
             else if (mSize < mClient.getMessages().size()){
                 int difference = mClient.getMessages().size() - mSize;
-                for (int i = 0; i < difference; i++) {
+                Message toDisplay = null;
 
-                    messages.add(mClient.getMessages().get(mClient.getMessages().size() - difference + i));
+                for (int i = 0; i < difference; i++) {
+                    toDisplay = mClient.getMessages().get(mClient.getMessages().size() - difference + i);
+
+                    messages.add(toDisplay);
 
                     //Making new UI update thread
                     Platform.runLater(new Runnable() {
