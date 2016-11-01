@@ -46,13 +46,15 @@ import (
 	var send_new_room_display_name byte = 66
 	var send_new_master_display_name byte = 67
 
-	//Status of client type codes
-	var status_change byte = 80
-	var status_broadcast byte = 81
-	var server_change byte = 82
-	var server_broadcast byte = 83
-	var room_change byte = 84
-	var room_broadcast byte = 85
+	//Status change of client type codes
+	var change_status byte = 80
+	var change_server byte = 81
+	var change_room byte = 82
+	
+	//Broadcast type codes
+	var broadcast_status byte = 96
+	var broadcast_server byte = 97
+	var broadcast_server byte = 98
 
 	//Error type codes
 	var error_check byte = 255

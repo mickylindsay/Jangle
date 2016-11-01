@@ -14,7 +14,7 @@ type Jangle struct {
 	address string
 	debug bool
 	no_database bool
-	Messages []func(*User, []byte)
+	Messages []func(*User, []byte) Message
 }
 
 var jangle Jangle;
