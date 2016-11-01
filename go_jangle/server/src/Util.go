@@ -54,7 +54,11 @@ import (
 	//Broadcast type codes
 	var broadcast_status byte = 96
 	var broadcast_server byte = 97
-	var broadcast_server byte = 98
+	var broadcast_room byte = 98
+	var broadcast_display_name byte = 99
+	var broadcast_server_display_name byte = 100
+	var broadcast_room_display_name byte  = 101
+	var broadcast_master_display_name byte = 102
 
 	//Error type codes
 	var error_check byte = 255
