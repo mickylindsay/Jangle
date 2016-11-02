@@ -44,6 +44,10 @@ func Init_Parse () {
 	Messages[96] = Message96
 	Messages[97] = Message97
 	Messages[98] = Message98
+	Messages[99] = Message99
+	Messages[100] = Message100
+	Messages[101] = Message101
+	Messages[102] = Message102
 
 	Messages[255] = Message255
 
@@ -540,7 +544,6 @@ func Message67 (user *User, data []byte) Message {
 
 			Message102(user, data)
 			return m
-			
 }
 
 //TODO
