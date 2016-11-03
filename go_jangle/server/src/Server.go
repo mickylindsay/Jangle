@@ -9,6 +9,7 @@ import (
 )
 
 type Jangle struct {
+	user map[uint]*User
 	userlist *list.List
 	db *sql.DB
 	address string
@@ -17,12 +18,26 @@ type Jangle struct {
 	Messages []func(*User, []byte)
 }
 
+type Server struct {
+	rooms []Room
+	serverid uint
+	name []byte
+	members map[uint]*User
+}
+
+type Room struct {
+	name []byte
+	roomid uint
+}
+
 var jangle Jangle;
 
 func main() {
 	Init_Flags();
 	Init_Server();
 	Init_Parse();
+
+	Load_Server();
 	
 	Color_Println("red", "JANGLE GO SERVER");
 	fmt.Println("listening on - " + jangle.address);
@@ -79,4 +94,8 @@ func Init_Flags(){
 	jangle.address = *address_flag + ":" + *port_flag;
 	jangle.debug = *debug_flag;
 	jangle.no_database = *no_database_flag;
+}
+
+func Load_Server(){
+
 }
