@@ -572,7 +572,6 @@ func Message81 (user *User, data []byte) Message {
 		serverid: data[1:4]}
 
 			user.serverid = Byte_Converter(data[1:4])
-			//the fuck?
 			//new_display_name, _ := Request_Display_Name(num, user.id);
 			//user.display_name = string(new_display_name);
 			data = make([]byte, 9)

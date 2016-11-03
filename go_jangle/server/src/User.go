@@ -21,6 +21,10 @@ type User struct {
 	location *Address
 }
 
+func (u *User) equals(u2 *User) bool{
+	return u.id == u2.id;
+}
+
 func (u *User) User_Initialize() {
 	u.roomid = 1;
 	u.serverid = 1;
@@ -30,6 +34,11 @@ func (u *User) User_Initialize() {
 		roomid : u.roomid,
 		serverid : u.serverid,
 	}
+	data := make([]byte, 6)
+	data[0] = broadcast_status
+	copy(data[1:4], Int_Converter(u.id))
+	data[5] = u.status
+	Message96(u, data)		
 }
 
 func (u *User) Get_Userid() uint{
