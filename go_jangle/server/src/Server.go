@@ -14,6 +14,7 @@ type Jangle struct {
 	address string
 	debug bool
 	no_database bool
+	Messages []func(*User, []byte)
 }
 
 var jangle Jangle;
@@ -21,7 +22,8 @@ var jangle Jangle;
 func main() {
 	Init_Flags();
 	Init_Server();
-
+	Init_Parse();
+	
 	Color_Println("red", "JANGLE GO SERVER");
 	fmt.Println("listening on - " + jangle.address);
 	
@@ -38,8 +40,10 @@ func main() {
 		Color_Println("green", "User Connected");
 		user := &User{
 			c : &conn,
+			status : 0,
 		};
 		if(jangle.debug){
+			fmt.Println("From Address:", user.Get_Remote_Address());
 			user.roomid = 1;
 			user.serverid = 1;
 		}

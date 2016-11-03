@@ -2,8 +2,11 @@ package main
 
 import (
 	"net"
-	"fmt"
 )
+
+const MOVE_USER 			= 0x0001
+const KICK_USER 			= 0x0002
+const DELETE_MESSAGE 	= 0x0004
 
 type User struct {
 	c *net.Conn
@@ -12,6 +15,8 @@ type User struct {
 	roomid uint
 	serverid uint
 	logged_in bool
+	status byte
+	permissions uint
 }
 
 func (u *User) Read (read_data []byte) (int, error) {
@@ -25,18 +30,17 @@ func (u *User) Write (write_data []byte) (int, error) {
 	return (*(*u).c).Write(data);
 }
 
-func (u *User) Printf (format string, a ...interface{}) (int, error) {
-	return fmt.Fprintf((*(*u).c), format, a...);
+//Returns true if user has permission passed into function
+func (u *User) Has_Permission (perm uint) bool {
+	return (u.permissions & perm) != 0;
 }
 
-func (u *User) Scanf (format string, a ...interface{}) (int, error) {
-	return fmt.Fscanf(*(*u).c, format, a...);
+//Returns string representing the ip address of the local side of connection
+func (u *User) Get_Local_Address () string{
+	return (*(*u).c).LocalAddr().String();
 }
 
-func (u *User) Set_Room (roomid uint) {
-	u.roomid = roomid;
-}
-
-func (u *User) Set_Server (serverid uint) {
-	u.serverid = serverid;
+//Returns string representing the ip address of the remote side of connection
+func (u *User) Get_Remote_Address () string{
+	return (*(*u).c).RemoteAddr().String();
 }
