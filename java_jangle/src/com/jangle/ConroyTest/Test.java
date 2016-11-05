@@ -19,6 +19,8 @@ import com.jangle.*;
 import com.jangle.client.*;
 import com.jangle.communicate.Client_ParseData;
 import com.jangle.communicate.CommUtil;
+import com.jangle.voice.Microphone;
+import com.jangle.voice.VoiceChat;
 
 public class Test {
 
@@ -42,21 +44,21 @@ public class Test {
 
 		// set up the TargetDataLine
 		
-		UDP_PeerToPeer test2 = new UDP_PeerToPeer();
+		//Microphone test = new Microphone();
 		
-		byte[] data = CommUtil.intToByteArr(1);
-		
-		test2.sendData(data);
+		VoiceChat test = new VoiceChat(7800);
 		
 		
-		DatagramSocket socket = new DatagramSocket();
+		test.addUserToChat("localhost");
 		
-		byte[] buf = new byte[4];
-		DatagramPacket packet = new DatagramPacket(buf, buf.length);
-		System.out.println("test");
-		socket.receive(packet);
+		test.startBrodcast();
+		test.startSpeakers();
 		
-		System.out.println(CommUtil.byteToInt(data));
+		
+		test.recieveData();
+		
+		while(true){
+		}
 		
 		
 		

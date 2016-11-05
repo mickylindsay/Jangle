@@ -14,10 +14,10 @@ public class UDP_PeerToPeer {
 	private InetAddress Address;
 	private int port;
 
-	public UDP_PeerToPeer(String Address) throws SocketException, UnknownHostException {
-		port = 7800;
+	public UDP_PeerToPeer(String gAddress, int gport) throws SocketException, UnknownHostException {
+		port = gport;
 		socket = new DatagramSocket(port);
-		Address = InetAddress.getByName("localhost");
+		Address = InetAddress.getByName(gAddress);
 		
 	}
 
@@ -28,8 +28,10 @@ public class UDP_PeerToPeer {
 	
 	public byte[] recieveByte() throws IOException{
 		byte[] data = new byte[4];
+		//TODO figure out the byte width for here
 		DatagramPacket packet = new DatagramPacket(data, data.length);
 		socket.receive(packet);
 		return data;
 	}
+	
 }

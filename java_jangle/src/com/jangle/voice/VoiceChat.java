@@ -1,5 +1,13 @@
 package com.jangle.voice;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -7,27 +15,33 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
-public class VoiceChat {
+/**
+ * Handles the creation of the voice chat. The recieving and playing to speakers are handled in this class.
+ * So far, this class will handle the recieving. It can only handle one user at the moment.
+ * 
+ * @author Nathan Conroy
+ *
+ */
+public class VoiceChat implements Runnable {
 
-	private TargetDataLine microphone;
 	private SourceDataLine speakers;
+
 	private AudioFormat format;
-	private byte[] micData;
-	
 	private int dataWidth;
 
-	public VoiceChat() {
+	private int numChatWith;
+	private ArrayList<VoiceChatSocket> connections;
+	private DatagramSocket Recieving;
+	private VoiceBroadcast Madden;
+	
+	private boolean isReceiving;
+
+	private InetAddress Address;
+	private int port;
+
+	public VoiceChat(int gport) throws SocketException {
 		format = new AudioFormat(8000.0f, 16, 1, true, true);
-
 		try {
-
-			// init microphone
-			DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-			microphone = (TargetDataLine) AudioSystem.getLine(info);
-			micData = new byte[microphone.getBufferSize() / 5];
-
-			dataWidth = micData.length;
-			
 			// init speakers
 			DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, format);
 			speakers = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
@@ -35,26 +49,53 @@ public class VoiceChat {
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
 		}
+
+		numChatWith = 0;
+		isReceiving = false;
+		connections = new ArrayList<VoiceChatSocket>();
+		port = gport;
+
+		try {
+			Address = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Madden = new VoiceBroadcast(connections, format);
+		Recieving = new DatagramSocket(gport);
+		dataWidth = Madden.getDataWidth();
+
 	}
 
 	/**
-	 * Start the input for the microphone. Input is whatever the default
-	 * recording device of the operating system is
+	 * Add a user. This adds a VoiceChatSocket. for Testing, you can put in
+	 * local host, and hear yourself
 	 * 
-	 * @throws LineUnavailableException
-	 *             If the mic is not available. Could be because the microphone
-	 *             was removed between now and object instantiation.
+	 * @param IP
+	 *            IP of the user.
 	 */
-	public void startMicInput() throws LineUnavailableException {
-		microphone.open(format);
-		microphone.start();
+	public void addUserToChat(String IP) {
+		try {
+			connections.add(new VoiceChatSocket(IP, port, dataWidth));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		numChatWith++;
 	}
 
-	/**
-	 * Stop recording from mic.
-	 */
-	public void stopMic() {
-		microphone.close();
+	public void closeAllConctions() {
+
+	}
+	
+	public void startBrodcast(){
+		try {
+			Madden.startMicInput();
+		} catch (LineUnavailableException e) {
+			System.out.println("Failed to start mic");
+			e.printStackTrace();
+		}
+		Madden.brodcastToAll();
 	}
 
 	/**
@@ -77,25 +118,40 @@ public class VoiceChat {
 		speakers.drain();
 		speakers.close();
 	}
-	
-	/**
-	 * a test method that will play the recording back to itself
-	 */
-	public void playbackSelf(){
-		int numBytesRead = 0;
-		int bytesRead = 0;
-		byte[] data = new byte[microphone.getBufferSize() / 5];
-		int CHUNK_SIZE = 1024;
-		
-		while (bytesRead < 100000) {
-			
-			
-			numBytesRead = microphone.read(data, 0, CHUNK_SIZE);
-			bytesRead += numBytesRead;
-			// write the mic data to a stream for use later
-			// write mic data to stream for immediate playback
-			speakers.write(data, 0, numBytesRead);
-		}
+
+	public void recieveData() {
+		isReceiving = true;
+		Thread th = new Thread(this);
+		th.start();
 	}
 	
+	public void stopRecieve(){
+		isReceiving = false;
+	}
+
+	@Override
+	public void run() {
+
+		// TODO with code below in a thead from main, this works. Need to put in
+		// differnet code from the voice part. Think about a differnet class.
+		// Also remove SYSO
+		while (true) {
+			byte[] data = new byte[1024];
+			DatagramPacket packet = new DatagramPacket(data, data.length);
+			try {
+				Recieving.receive(packet);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			speakers.write(data, 0, data.length);
+
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 }

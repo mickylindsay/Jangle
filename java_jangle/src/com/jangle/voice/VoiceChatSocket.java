@@ -3,7 +3,9 @@ package com.jangle.voice;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -16,19 +18,14 @@ import com.jangle.client.User;
  * @author Nathan Conroy
  *
  */
-public class VoiceChatSocket {
+public class VoiceChatSocket implements Runnable {
 
-	/**
-	 * Creates a communication for communication with the server, which can
-	 * write to the write buffer, and read from the read buffer.
-	 */
-	DatagramSocket Java_Socket;
-
-	InputStream Reader;
-
-	/**
-	 * The width of the buffer for mic data
-	 */
+	private DatagramSocket socket;
+	private InetAddress Address;
+	private int port;
+	
+	private byte[] Data;
+	
 	private int micDataWidth;
 
 	private User User;
@@ -43,30 +40,36 @@ public class VoiceChatSocket {
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-	public VoiceChatSocket(String Adress, int port, int micDataWidth, User gUser)
+	public VoiceChatSocket(String gAddress, int gport, int gmicDataWidth)
 			throws UnknownHostException, IOException {
-		adress = Adress;
-		User = gUser;
+		port = gport;
+		socket = new DatagramSocket();
+		Address = InetAddress.getByName(gAddress);
 
-		Java_Socket = new DatagramSocket(port);
+		this.micDataWidth = gmicDataWidth;
+		
+		
+	}
+	
+	public void sendVoice(byte[] data){
+		Data = data;
+		Thread th = new Thread(this);
+		th.start();
+	}
+	
 
-		// Initialize PrintWriter to write to the output stream
-		Write = Java_Socket.getOutputStream();
-
-		// Initialize buffer reader to read from the input stream
-		Reader = Java_Socket.getInputStream();
-
-		this.micDataWidth = micDataWidth;
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+		DatagramPacket packet = new DatagramPacket(Data, micDataWidth, Address, port);
+		try {
+			socket.send(packet);
+		} catch (IOException e) {
+			System.out.println("fail");
+			e.printStackTrace();
+		}
+		
 	}
 
-	public byte[] recieveVoice() throws IOException {
-
-		byte[] ret = new byte[micDataWidth];
-		Reader.read(ret);
-		return ret;
-	}
-
-	public void sendMic(byte[] data) throws IOException {
-		Write.write(data);
-	}
 }
