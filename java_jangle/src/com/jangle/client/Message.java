@@ -1,5 +1,6 @@
 package com.jangle.client;
 
+import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import com.jangle.communicate.CommUtil;
@@ -11,17 +12,19 @@ import com.jangle.communicate.CommUtil;
 public class Message {
 
 	private int userID;
+    private int messageID;
 	private String messageContent;
 	private long timeStamp;
 	private int serverID;
 	private int channelID;
 
-	public Message(int userID, String messageContent, long timeStamp, int serverID, int channelID) {
+	public Message(int userID, String messageContent, long timeStamp, int serverID, int channelID, int messageID) {
 		this.channelID = channelID;
 		this.userID = userID;
 		this.messageContent = messageContent;
 		this.timeStamp = timeStamp;
 		this.serverID = serverID;
+        this.messageID = messageID;
 	}
 
 	public Message(int userID, String messageContent, int serverID, int channelID) {
@@ -163,5 +166,9 @@ public class Message {
 		return ret;
 
 	}
+
+    public boolean isImg() {
+        return messageContent.contains("http://") && (messageContent.contains(".png") || messageContent.contains(".jpg") || messageContent.contains(".gif") || messageContent.contains("jpeg") || messageContent.contains(".bmp"));
+    }
 
 }

@@ -76,7 +76,6 @@ public class User {
     	if (this.id == user.getId()){
     		return true;
     	}
-    	
     	else{
     		return false;
     	}
