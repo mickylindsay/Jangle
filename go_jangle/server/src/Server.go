@@ -61,8 +61,6 @@ func main() {
 	Init_Parse();
 	Init_Command();
 	
-
-
 	Load_Server();
 	
 	Color_Println("red", "JANGLE GO SERVER");
@@ -82,6 +80,7 @@ func main() {
 		Color_Println("green", "User Connected");
 		user := &User{
 			c : &conn,
+			muted : 2,
 		};
 		if(jangle.debug){
 			fmt.Println("From Address:", user.Get_Remote_Address());
@@ -92,6 +91,8 @@ func main() {
 		Logln("User Connected from address:", user.Get_Remote_Address());
 		//Add new connection onto the end of connections list
 		elem := jangle.userlist.PushBack(user);
+		defer jangle.log_file.Close()
+		
 		//Recieve data packets from clients
 		go Listen_To_Clients(user, elem);
 	}
@@ -104,7 +105,6 @@ func Init_Server(){
 	jangle.userlist = list.New();
 	//Make connection to Database
 	jangle.db, _ = Connect_Database();
-	defer jangle.log_file.Close()
 }
 
 //Creates command line flags and finds their values
