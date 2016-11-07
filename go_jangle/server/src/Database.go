@@ -276,7 +276,7 @@ func Request_Display_Name(serverid uint, userid uint) ([]byte,error) {
 	return []byte("TEMP_DISPLAY_NAME"), nil;
 }
 
-//TODO
+//Requests a user's master display name
 func Request_Master_Display_Name (userid uint) ([]byte, error) {
 	var temp string;
 	err := jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", userid).Scan(&temp);
@@ -300,7 +300,6 @@ func Set_New_Display_Name(serverid uint, userid uint, name []byte) error{
 
 
 //Inserts or update a new server specific server display name
-
 func Set_New_Server_Display_Name (serverid uint, name []byte) error {
 	if (!jangle.no_database) {
 		_, e := jangle.db.Exec("UPDATE servers SET servername = ? WHERE serverid = ?", string(name), serverid);
@@ -311,7 +310,6 @@ func Set_New_Server_Display_Name (serverid uint, name []byte) error {
 
 
 //Inserts or update a new server specific room display name
-
 func Set_New_Room_Display_Name (serverid uint, roomid uint, name []byte) error {
 	if (!jangle.no_database) {
 		_, e := jangle.db.Exec("UPDATE rooms SET roomname = ? WHERE roomid = ? AND serverid = ?", string(name), roomid, serverid);
