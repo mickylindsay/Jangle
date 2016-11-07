@@ -13,12 +13,12 @@ type Jangle struct {
 	user map[uint]*User
 	userlist *list.List
 	db *sql.DB
+	log_file *os.File
 	address string
 	debug bool
 	no_database bool
 	logging bool
 	logging_warn bool
-	log_file *os.File
 	Messages []func(*User, []byte) Message
 	Commands []func([]string)
 }
@@ -60,12 +60,14 @@ func main() {
 	Init_Server();
 	Init_Parse();
 	Init_Command();
+	
 
 
 	Load_Server();
 	
 	Color_Println("red", "JANGLE GO SERVER");
 	fmt.Println("listening on - " + jangle.address);
+	Logln("Hosting server on address:", jangle.address);
 	
 	listener, e := net.Listen("tcp", jangle.address);
 	Check_Error(e);
@@ -74,8 +76,6 @@ func main() {
 	//go write_stdio_to_clients(jangle.userlist);
 
 	//Listen for new client connection
-	id,err := User_Login([]byte("nathan"), []byte("password"));
-	fmt.Println(id,err);
 	for {
 		conn, _ := listener.Accept();
 		defer conn.Close();
@@ -88,6 +88,8 @@ func main() {
 			user.roomid = 1;
 			user.serverid = 1;
 		}
+		
+		Logln("User Connected from address:", user.Get_Remote_Address());
 		//Add new connection onto the end of connections list
 		elem := jangle.userlist.PushBack(user);
 		//Recieve data packets from clients
@@ -102,10 +104,12 @@ func Init_Server(){
 	jangle.userlist = list.New();
 	//Make connection to Database
 	jangle.db, _ = Connect_Database();
+	defer jangle.log_file.Close()
 }
 
 //Creates command line flags and finds their values
 func Init_Flags(){
+	Log("Initializing Flags.");
 	//String Flags
 	//Creates address flag (defaults to 'localhost')
 	address_flag := flag.String("address", "localhost", "Address of Server");
@@ -131,5 +135,5 @@ func Init_Flags(){
 }
 
 func Load_Server(){
-
+	Log("Loading Server.");
 }
