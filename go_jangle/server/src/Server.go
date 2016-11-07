@@ -17,6 +17,7 @@ type Jangle struct {
 	debug bool
 	no_database bool
 	logging bool
+	logging_warn bool
 	log_file *os.File
 	Messages []func(*User, []byte) Message
 	Commands []func([]string)
@@ -104,14 +105,19 @@ func Init_Flags(){
 	//Boolean Flags
 	debug_flag := flag.Bool("debug", false, "Puts server in debug mode");
 	no_database_flag := flag.Bool("nodb", true, "Turns off connection to database");
-	logging := flag.Bool("nolog", false, "Turns on outputing to logging file");
+	logging := flag.Bool("log", false, "Turns on outputing to logging file");
+	logging_warn := flag.Bool("logwarn", false, "Turns on outputing only warnings to logging file");
 
 	flag.Parse();
 
 	jangle.address = *address_flag + ":" + *port_flag;
 	jangle.debug = *debug_flag;
 	jangle.no_database = !*no_database_flag;
+	jangle.logging_warn = *logging_warn;
 	jangle.logging = *logging;
+	if(jangle.logging_warn){
+		jangle.logging = false;
+	}
 }
 
 func Load_Server(){

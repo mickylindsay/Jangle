@@ -29,8 +29,20 @@ func Log(s string){
 	}
 }
 
-func Logf(a ...interface{}){
+func Logln(a ...interface{}){
 	if(jangle.logging){
+		log.Println(a...);
+	}
+}
+
+func Warn(s string){
+	if(jangle.logging_warn){
+		log.Println(s);
+	}
+}
+
+func Warnln(a ...interface{}){
+	if(jangle.logging_warn){
 		log.Println(a...);
 	}
 }
