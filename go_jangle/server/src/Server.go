@@ -19,6 +19,7 @@ type Jangle struct {
 	no_logging bool
 	log_file *os.File
 	Messages []func(*User, []byte) Message
+	essages []func(string, string)
 }
 
 type Server struct {
@@ -40,6 +41,7 @@ func main() {
 	Init_Server();
 	Init_Parse();
 	Init_Logger();
+	Init_Command();
 
 	Load_Server();
 	
