@@ -6,14 +6,41 @@ import (
 	"net"
 	"container/list"
 	"database/sql"
+	"os"
 )
 
 type Jangle struct {
+	user map[uint]*User
 	userlist *list.List
 	db *sql.DB
 	address string
 	debug bool
 	no_database bool
+	logging bool
+	log_file *os.File
+	Messages []func(*User, []byte) Message
+	Commands []func([]string)
+}
+
+func Get_User_From_Userid(id uint) *User{
+	for e := jangle.userlist.Front(); e != nil; e = e.Next() { 
+		if (e.Value.(*User).id == id) {
+			return e.Value.(*User);
+		}
+	}		
+	return nil;
+}
+
+type Server struct {
+	rooms []Room
+	serverid uint
+	name []byte
+	members map[uint]*User
+}
+
+type Room struct {
+	name []byte
+	roomid uint
 }
 
 var jangle Jangle;
@@ -21,7 +48,12 @@ var jangle Jangle;
 func main() {
 	Init_Flags();
 	Init_Server();
+	Init_Parse();
+	Init_Command();
+	Init_Logger();
 
+	Load_Server();
+	
 	Color_Println("red", "JANGLE GO SERVER");
 	fmt.Println("listening on - " + jangle.address);
 	
@@ -40,6 +72,7 @@ func main() {
 			c : &conn,
 		};
 		if(jangle.debug){
+			fmt.Println("From Address:", user.Get_Remote_Address());
 			user.roomid = 1;
 			user.serverid = 1;
 		}
@@ -68,11 +101,17 @@ func Init_Flags(){
 
 	//Boolean Flags
 	debug_flag := flag.Bool("debug", false, "Puts server in debug mode");
-	no_database_flag := flag.Bool("nodb", false, "Turns off connection to database");
+	no_database_flag := flag.Bool("nodb", true, "Turns off connection to database");
+	logging := flag.Bool("nolog", false, "Turns on outputing to logging file");
 
 	flag.Parse();
 
 	jangle.address = *address_flag + ":" + *port_flag;
 	jangle.debug = *debug_flag;
-	jangle.no_database = *no_database_flag;
+	jangle.no_database = !*no_database_flag;
+	jangle.logging = *logging;
+}
+
+func Load_Server(){
+
 }

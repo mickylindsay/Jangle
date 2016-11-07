@@ -265,12 +265,14 @@ type New_Room_Display_Name struct {
 type Status struct {
 	code byte
 	status byte
+	muted byte
 }
 
  func (m Status) Build_Message() []byte {
-	message := make([]byte, 2)
+	message := make([]byte, 3)
 	message[0] = m.code
 	message[1] = m.status
+	message[2] = m.muted
 	return message
 }
 
@@ -279,6 +281,7 @@ type Userid_Status struct {
 	code byte
 	userid []byte
 	status byte
+	muted byte
 }
 
  func (m Userid_Status) Build_Message() []byte {
@@ -286,6 +289,7 @@ type Userid_Status struct {
 	message[0] = m.code
 	copy(message[1:4], m.userid[:])
 	message[5] = m.status
+	message[6] = m.muted
 	return message
 }
 
