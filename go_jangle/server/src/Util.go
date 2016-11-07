@@ -88,7 +88,7 @@ var offline byte = 3
 
 //Mute values
 var user_muted byte = 1
-var user_unmunted byte = 2
+var user_unmuted byte = 2
 
 //Default value for server, room, and user
 var default_value byte = 1

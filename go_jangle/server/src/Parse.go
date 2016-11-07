@@ -157,7 +157,7 @@ func Message16 (user *User, data []byte) Message {
 		userid: data[9:12],
 		text: data[13:]}
 		
-			if (user.muted == 2) {
+			if (user.muted == user_unmuted) {
 				Check_Command(user, m.text);
 				err := Message_Create(user, data[13:])
 				Check_Error(err)
