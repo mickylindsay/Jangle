@@ -158,7 +158,7 @@ func Message16 (user *User, data []byte) Message {
 			err := Message_Create(user, data[13:])
 			Check_Error(err)
 
-			check := Check_Command(user, string(m.text))
+			check := Check_Command(user, m.text)
 
 			if (check == false) {
 				data[0] = message_client_recieve
@@ -577,8 +577,7 @@ func Message81 (user *User, data []byte) Message {
 		serverid: data[1:4]}
 
 			user.serverid = Byte_Converter(data[1:4])
-			//new_display_name, _ := Request_Display_Name(num, user.id);
-			//user.display_name = string(new_display_name);
+
 			data = make([]byte, 9)
 			data[0] = broadcast_server
 			copy(data[1:4], Int_Converter(user.serverid))
