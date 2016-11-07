@@ -66,6 +66,20 @@ public class User {
     public String toString(){
         return displayName;
     }
+    
+    /**
+     * Used to compare if this user object is the same as the passed in user object
+     * @param user User object to compare equality with
+     * @return true if the same, false if not the same
+     */
+    public boolean equals(User user){
+    	if (this.id == user.getId()){
+    		return true;
+    	}
+    	else{
+    		return false;
+    	}
+    }
 
 }
 

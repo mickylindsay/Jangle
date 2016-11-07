@@ -71,9 +71,10 @@ public class loginController implements Initializable {
 
         //Send login to server
         loadingAnim.setVisible(true);
+
         try {
             mLoginResult = mClient_parseData.submitLogIn(username, password);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -89,6 +90,10 @@ public class loginController implements Initializable {
             loadingAnim.setVisible(false);
             successfulLogin();
         }
+        else {
+            loadingAnim.setVisible(false);
+            loginTimeout.setVisible(true);
+        }
 
         System.out.println("login");
 
@@ -99,6 +104,8 @@ public class loginController implements Initializable {
         String username = usernameField.getText();
         String password = passwordField.getText();
         clearScreen();
+
+
 
         if (username.length() > 20){
             itWontFitSenpai.setVisible(true);
@@ -114,7 +121,7 @@ public class loginController implements Initializable {
         }
 
         // Send the register user to the server
-        loadingAnim.setVisible(true);
+
         try {
            mLoginResult = mClient_parseData.createUserInServer(username, password);
         } catch (IOException e) {
@@ -132,6 +139,10 @@ public class loginController implements Initializable {
         else if (mLoginResult == CommUtil.LoginResult.SUCESS) {
             loadingAnim.setVisible(false);
             successfulLogin();
+        }
+        else {
+            failedLogin.setVisible(true);
+            loadingAnim.setVisible(false);
         }
 
         System.out.println("resgister");
