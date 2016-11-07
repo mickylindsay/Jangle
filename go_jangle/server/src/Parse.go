@@ -489,10 +489,10 @@ func Message56 (user *User, data []byte) Message {
 		userid: data[1:4],
 		display_name: data[5:]}
 		
-	address := m.display_name
+		address := m.display_name
 
-	Send_Message(user, m)
-	return m
+		Send_Message(user, m)
+		return m
 }
 
 //Replaces the user's display name with the new display name in message code type 64,
