@@ -77,8 +77,9 @@ func Next_Messageid() uint{
 //TODO implement Image Path and Password hashing
 func User_Create(u []byte, p []byte) (uint, error) {
 	if(!jangle.no_database){
-		_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);",Next_Userid(), string(u), string(u), "TEMPPATH", string(p), "0000")
-		return Next_Userid(), err
+	i := Next_Userid();
+		_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);",i, string(u), string(u), "TEMPPATH", string(p), "0000")
+		return i, err
 	}
 	return 1, nil
 }
