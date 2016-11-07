@@ -16,13 +16,13 @@ type Jangle struct {
 	address string
 	debug bool
 	no_database bool
-	no_logging bool
+	logging bool
 	log_file *os.File
 	Messages []func(*User, []byte) Message
 	Commands []func([]string)
 }
 
-func(j Jangle)Get_User_From_Userid(id uint) *User{
+func Get_User_From_Userid(id uint) *User{
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() { 
 		if (e.Value.(*User).id == id) {
 			return e.Value.(*User);
@@ -49,8 +49,8 @@ func main() {
 	Init_Flags();
 	Init_Server();
 	Init_Parse();
-	Init_Logger();
 	Init_Command();
+	Init_Logger();
 
 	Load_Server();
 	
@@ -101,15 +101,15 @@ func Init_Flags(){
 
 	//Boolean Flags
 	debug_flag := flag.Bool("debug", false, "Puts server in debug mode");
-	no_database_flag := flag.Bool("nodb", false, "Turns off connection to database");
-	logging := flag.Bool("nolog", false, "Turns off outputing to logging file");
+	no_database_flag := flag.Bool("nodb", true, "Turns off connection to database");
+	logging := flag.Bool("nolog", false, "Turns on outputing to logging file");
 
 	flag.Parse();
 
 	jangle.address = *address_flag + ":" + *port_flag;
 	jangle.debug = *debug_flag;
-	jangle.no_database = *no_database_flag;
-	jangle.no_logging = *logging;
+	jangle.no_database = !*no_database_flag;
+	jangle.logging = *logging;
 }
 
 func Load_Server(){
