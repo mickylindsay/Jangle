@@ -133,7 +133,8 @@ type Unmute struct {
 
 //TODO
 func (c Unmute) Execute() {
-	c.user.muted = 2}
+	c.user.muted = 2
+}
 
 //TODO
 func (c Unmute) Send() {
