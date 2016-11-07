@@ -19,7 +19,7 @@ type Jangle struct {
 	logging bool
 	log_file *os.File
 	Messages []func(*User, []byte) Message
-	essages []func(string, []string)
+	Commands []func([]string)
 }
 
 func Get_User_From_Userid(id uint) *User{
