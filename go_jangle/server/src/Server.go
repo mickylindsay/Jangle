@@ -64,8 +64,6 @@ func main() {
 	//go write_stdio_to_clients(jangle.userlist);
 
 	//Listen for new client connection
-	id,err := User_Login([]byte("nathan"), []byte("password"));
-	fmt.Println(id,err);
 	for {
 		conn, _ := listener.Accept();
 		defer conn.Close();

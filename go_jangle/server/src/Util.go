@@ -177,3 +177,12 @@ func Color_Println (c string, text string) {
 
 	fmt.Println(s)
 }
+
+func Byte_Array_Length(b []byte) uint{
+	for i := 0; i < len(b); i++ {
+		if(b[i] == 0){
+			return uint(i);
+		}
+	}
+	return uint(len(b));
+}

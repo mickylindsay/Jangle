@@ -1,5 +1,5 @@
 package main
-
+import "fmt"
 //TODO
 func Init_Parse () {
 	Messages := make([]func(user *User, data []byte) Message, 256)
@@ -127,7 +127,7 @@ func Message2 (user *User, data []byte) Message {
 
 //Writes to user message code type 3, login fail
 func Message3 (user *User, data []byte) Message {
-
+fmt.Println("Fail");
 	m := Base{
 		code: data[0]}
 
@@ -137,7 +137,7 @@ func Message3 (user *User, data []byte) Message {
 
 //Send message code type 4 to client, login success
 func Message4 (user *User, data []byte) Message {
-
+fmt.Println("Pass");
 	m := Userid{
 		code: data[0],
 		userid: data[1:4]}
