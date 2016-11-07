@@ -7,7 +7,7 @@ import (
 
 //TODO
 func Init_Command () {
-	Commands := make([]func(arg1 string, arg2 string), 3)
+	Commands := make([]func(args []string), 3)
 
 	Commands[0] = Kick_User
 	Commands[1] = Mute_User
@@ -23,7 +23,7 @@ func Check_Command (user *User, data []byte) bool {
 		check = true
 		args := strings.Split(string(data), " ")
 		trigger := Switcher(args[0])
-		jangle.Commands[trigger](args[1], args[2])
+		jangle.Commands[trigger](args[1:])
 	} else {
 		check = false
 	}
@@ -45,17 +45,17 @@ func Switcher (s string) byte {
 }
 
 //TODO
-func Kick_User (agr1 string, arg2 string) {
+func Kick_User (agrs []string) {
 
 }
 
 //TODO
-func Mute_User (arg1 string, arg2 string) {
+func Mute_User (args []string) {
 
 }
 
 //TODO
-func Move_User (arg1 string, arg2 string) {
+func Move_User (args []string) {
 
 }
 
