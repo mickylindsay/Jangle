@@ -93,6 +93,9 @@ public class ConfigUtil {
     }
 
     private boolean isValidIP(String ip) {
+        if (ip.equals("localhost:8080"))
+            return true;
+
         if (ip.contains("[a-zA-Z]+")) {
             return false;
         }

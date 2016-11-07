@@ -7,15 +7,11 @@
 <?import javafx.scene.layout.*?>
 
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: #3e3e3e;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: #3f3f3f;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jangle.UI.settingsController">
    <children>
-      <Label contentDisplay="TOP" prefHeight="30.0" prefWidth="350.0" text="Settings" textFill="#c6c6c6">
-         <font>
-            <Font size="18.0" />
-         </font>
-         <padding>
-            <Insets left="25.0" />
-         </padding>
-      </Label>
+      <Label layoutX="15.0" layoutY="10.0" text="Settings" textFill="WHITE" />
+      <Label layoutX="15.0" layoutY="50.0" text="Background:" textFill="WHITE" />
+      <Label fx:id="pathToBackground" layoutX="85.0" layoutY="50.0" prefHeight="17.0" prefWidth="132.0" text="path" textFill="WHITE" />
+      <Button fx:id="backgroundButton" onAction="#handleBackgroundChange" layoutX="230.0" layoutY="46.0" mnemonicParsing="false" scaleX="0.8" scaleY="0.75" text="Change" />
    </children>
-</VBox>
+</AnchorPane>

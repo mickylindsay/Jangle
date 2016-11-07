@@ -29,6 +29,7 @@ public class Text_UI extends Application {
         VBox mainUI = loader.load();
 		FXMLController controller = loader.getController();
 		controller.setmClientParseData(mClientParseData);
+        controller.setConfigUtil(mConfigUtil);
 
 		return mainUI;
 	}
