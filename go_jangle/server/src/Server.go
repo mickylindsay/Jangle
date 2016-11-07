@@ -21,6 +21,15 @@ type Jangle struct {
 	Messages []func(*User, []byte) Message
 }
 
+func(j Jangle)Get_User_From_Userid(id uint) *User{
+	for e := jangle.userlist.Front(); e != nil; e = e.Next() { 
+		if (e.Value.(*User).id == id) {
+			return e.Value.(*User);
+		}
+	}		
+	return nil;
+}
+
 type Server struct {
 	rooms []Room
 	serverid uint
