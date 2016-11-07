@@ -43,6 +43,7 @@ var request_all_roomid byte = 37
 var request_room_display_name byte = 38
 var request_master_display_name byte = 39
 var request_status byte = 40
+var request_user_ip byte = 41
 
 //Client recieve type codes
 var recieve_userid byte = 48
@@ -53,6 +54,7 @@ var recieve_roomid byte = 52
 var recieve_room_display_name byte = 53
 var recieve_master_display_name byte = 54
 var recieve_status byte = 55
+var recieve_user_ip byte = 56
 
 //Client send type codes
 var send_new_display_name byte = 64
