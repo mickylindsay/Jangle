@@ -92,9 +92,6 @@ type Kick struct {
 
 //TODO
 func (c Kick) Execute() {
-	//b := Bot{}
-	//err := b.Bot_Kick_User(c.user.id, c.user.serverid)
-	//Check_Error(err)
 	c.user.serverid = uint(default_value)
 	c.user.roomid = uint(default_value)
 	Remove_User_From_Userlist(c.user.id);
@@ -116,10 +113,7 @@ type Mute struct {
 
 //TODO
 func (c Mute) Execute() {
-	//b := Bot{}
 	c.user.muted = 1
-	//err := b.Bot_Mute_User(c.user.id, c.user.serverid)
-	//Check_Error(err)
 }
 
 //TODO
@@ -139,11 +133,7 @@ type Unmute struct {
 
 //TODO
 func (c Unmute) Execute() {
-	//b := Bot{}
-	c.user.muted = 2
-	//err := b.Bot_Unmute_User(c.user.id, c.user.serverid)
-	//Check_Error(err)
-}
+	c.user.muted = 2}
 
 //TODO
 func (c Unmute) Send() {
@@ -163,10 +153,7 @@ type Move struct {
 
 //TODO
 func (c Move) Execute() {
-	//b := Bot{}
 	c.user.roomid = c.roomid
-	//err := b.Bot_Move_User(c.user.id, c.user.serverid, c.user.roomid)
-	//Check_Error(err)
 }
 
 //TODO
@@ -177,49 +164,3 @@ func (c Move) Send() {
 		userid: Int_Converter(c.user.id)}
 	Message98(c.user, m.Build_Message())
 }
-/*
-//TODO
-type Bot struct {
-
-}
-
-//TODO
-func (b *Bot) Bot_Kick_User(userid uint, serverid uint) error {
-	Remove_User_From_Userlist(userid);
-}
-
-//TODO
-func (b *Bot) Bot_Mute_User(userid uint, serverid uint) error {
-	return nil
-}
-
-//TODO
-func (b *Bot) Bot_Unmute_User(userid uint, serverid uint) error {
-	return nil
-}
-
-//Bot attempts to move a user from one room to another returns and error if no user with this userid is connected
-func (b *Bot) Bot_Move_User(userid uint, serverid uint, roomid uint) error {
-	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
-		if (e.Value.(*User).id == userid) {
-			e.Value.(*User).serverid = serverid;
-			e.Value.(*User).roomid = roomid;
-			return nil;
-		}
-	}
-	return fmt.Errorf("Bot %d: Unable to Move User %d. No such User", serverid, userid);
-}
-
-//Bot sends message to all users
-func (b *Bot) Bot_Broadcast(text []byte, serverid uint, roomid uint){
-	m := Message_Recieve{
-		code: 17,
-		serverid: Int_Converter(serverid),
-		roomid: Int_Converter(roomid),
-		userid: Int_Converter(1),
-		time: Int_Converter(Milli_Time()),
-		text: text[:],
-	};
-	Send_Broadcast_Server_Room(serverid, roomid, m);
-}
-*/

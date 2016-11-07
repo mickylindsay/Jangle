@@ -156,20 +156,22 @@ func Message16 (user *User, data []byte) Message {
 		roomid: data[5:8],
 		userid: data[9:12],
 		text: data[13:]}
-	
-	Check_Command(user, m.text);
-			err := Message_Create(user, data[13:])
-			Check_Error(err)
+		
+			if (user.muted == 2) {
+				Check_Command(user, m.text);
+				err := Message_Create(user, data[13:])
+				Check_Error(err)
 
-			check := Check_Command(user, m.text)
+				check := Check_Command(user, m.text)
 
-			if (check == false) {
-				data[0] = message_client_recieve
-				data = Time_Stamp(data)
-				Message17(user, data)
+				if (check == false) {
+					data[0] = message_client_recieve
+					data = Time_Stamp(data)
+					Message17(user, data)
+				}
 			}
 
-			return m
+			return m		
 }
 
 //Sends message code type 17, message client recieve,
