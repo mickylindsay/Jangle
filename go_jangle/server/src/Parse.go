@@ -352,7 +352,7 @@ func Message39 (user *User, data []byte) Message {
 			return m
 }
 
-//Requests the local ip address of any user via userid, used for client side voice communication
+//TODO
 func Message40 (user *User, data []byte) Message {
 
 	m := Userid{
@@ -363,26 +363,28 @@ func Message40 (user *User, data []byte) Message {
 			data = make([]byte, 6)
 			data[0] = recieve_user_ip
 			copy(data[1:4], arr)
-			copy(data[1:4], data[5:])
+			data[5] = user.status
 		
-			Message56(user, data)
+			Message55(user, data)
 			return m
 }
-//TODO
+//Requests the local ip address of any user via userid, used for client side voice communication
 func Message41 (user *User, data []byte) Message {
 
 	m := Userid{
 		code: data[0],
 		userid: data[1:4]}
 
-			arr := data[1:4]
-			data = make([]byte, 6)
-			data[0] = recieve_status
-			copy(data[1:4], arr)
-			data[5] = user.status
+	num := Byte_Converter(data[1:4])
+	addr := Get_User_From_Userid(num).Get_Local_Address();
+	arr := data[1:4]
+	data = make([]byte, 5 + len(addr))
+	data[0] = recieve_status
+	copy(data[1:4], arr)
+	copy(data[5:], addr)
 		
-			Message56(user, data)
-			return m
+	Message56(user, data)
+	return m
 }
 
 //Sends message code type 48, recieve userid, to client

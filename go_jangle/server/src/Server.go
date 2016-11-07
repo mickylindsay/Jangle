@@ -22,7 +22,7 @@ type Jangle struct {
 	essages []func(string, string)
 }
 
-func(j Jangle)Get_User_From_Userid(id uint) *User{
+func Get_User_From_Userid(id uint) *User{
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() { 
 		if (e.Value.(*User).id == id) {
 			return e.Value.(*User);
