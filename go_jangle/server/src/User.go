@@ -4,8 +4,8 @@ import (
 	"net"
 )
 
-const MOVE_USER 			= 0x0001
-const KICK_USER 			= 0x0002
+const MOVE_USER 	= 0x0001
+const KICK_USER 	= 0x0002
 const DELETE_MESSAGE 	= 0x0004
 
 type User struct {
@@ -15,8 +15,54 @@ type User struct {
 	roomid uint
 	serverid uint
 	logged_in bool
+	muted bool
 	status byte
 	permissions uint
+	location *Address
+}
+
+func (u *User) equals(u2 *User) bool{
+	return u.id == u2.id;
+}
+
+func (u *User) User_Initialize() {
+	u.roomid = 1;
+	u.serverid = 1;
+	u.status = online;
+	u.location = &Address{
+		userid : u.id,
+		roomid : u.roomid,
+		serverid : u.serverid,
+	}
+	data := make([]byte, 6)
+	data[0] = broadcast_status
+	copy(data[1:4], Int_Converter(u.id))
+	data[5] = u.status
+	Message96(u, data)		
+}
+
+func (u *User) Get_Userid() uint{
+	return u.id;
+}
+
+func (u *User) Get_Serverid() uint{
+	return u.serverid;
+}
+
+func (u *User) Get_Roomid() uint{
+	return u.roomid;
+}
+
+func (u *User) Set_Userid(id uint) {
+	u.id = id;
+}
+
+func (u *User) Set_Roomid(id uint) {
+	u.roomid = id;
+}
+
+func (u *User) Set_Serverid(id uint) {
+	u.serverid = id;
 }
 
 func (u *User) Read (read_data []byte) (int, error) {
