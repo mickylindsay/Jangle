@@ -6,61 +6,92 @@ import (
 	"log"
 )
 
+type Comparable interface {
+	equals(interface{}) bool
+}
+
+type Address struct {
+	serverid uint
+	roomid uint
+	userid uint
+}
+
+func (a *Address) equals(b Address) bool {
+	return a.serverid == b.serverid && a.roomid == b.roomid && a.userid == b.userid;
+}
+
 //Initializes all code cases
 
-	//Login type codes
-	var create_user byte = 0
-	var create_user_fail byte = 1
-	var login byte = 2
-	var login_fail byte = 3
-	var login_success byte = 4
+//Login type codes
+var create_user byte = 0
+var create_user_fail byte = 1
+var login byte = 2
+var login_fail byte = 3
+var login_success byte = 4
 
-	//Message type codes
-	var message_client_send byte = 16
-	var message_client_recieve byte = 17
+//Message type codes
+var message_client_send byte = 16
+var message_client_recieve byte = 17
 
-	//Request from client type codes
-	var request_n_messages byte = 32
-	var request_all_userid byte = 33
-	var request_display_name byte = 34
-	var request_all_serverid byte = 35
-	var request_server_display_name byte = 36
-	var request_all_roomid byte = 37
-	var request_room_display_name byte = 38
-	var request_master_display_name byte = 39
-	var request_status byte = 40
+//Request from client type codes
+var request_n_messages byte = 32
+var request_all_userid byte = 33
+var request_display_name byte = 34
+var request_all_serverid byte = 35
+var request_server_display_name byte = 36
+var request_all_roomid byte = 37
+var request_room_display_name byte = 38
+var request_master_display_name byte = 39
+var request_status byte = 40
+var request_user_ip byte = 41
 
-	//Client recieve type codes
-	var recieve_userid byte = 48
-	var recieve_display_name byte = 49
-	var recieve_serverid byte = 50
-	var recieve_server_display_name byte = 51
-	var recieve_roomid byte = 52
-	var recieve_room_display_name byte = 53
-	var recieve_master_display_name byte = 54
-	var recieve_status byte = 55
+//Client recieve type codes
+var recieve_userid byte = 48
+var recieve_display_name byte = 49
+var recieve_serverid byte = 50
+var recieve_server_display_name byte = 51
+var recieve_roomid byte = 52
+var recieve_room_display_name byte = 53
+var recieve_master_display_name byte = 54
+var recieve_status byte = 55
+var recieve_user_ip byte = 56
 
-	//Client send type codes
-	var send_new_display_name byte = 64
-	var send_new_server_display_name byte = 65
-	var send_new_room_display_name byte = 66
-	var send_new_master_display_name byte = 67
+//Client send type codes
+var send_new_display_name byte = 64
+var send_new_server_display_name byte = 65
+var send_new_room_display_name byte = 66
+var send_new_master_display_name byte = 67
 
-	//Status of client type codes
-	var status_change byte = 80
-	var status_broadcast byte = 81
-	var server_change byte = 82
-	var server_broadcast byte = 83
-	var room_change byte = 84
-	var room_broadcast byte = 85
+//Status of client type codes
+var status_change byte = 80
+var status_broadcast byte = 81
+var server_change byte = 82
+var server_broadcast byte = 83
+var room_change byte = 84
+var room_broadcast byte = 85
 
-	//Error type codes
-	var error_check byte = 255
+var broadcast_status byte = 96
+var broadcast_server byte = 97
+var broadcast_room byte = 98
+var broadcast_display_name byte = 99
+var broadcast_server_display_name byte = 100
+var broadcast_room_display_name byte = 101
+var broadcast_master_display_name byte = 102
 
-	//Status types
-	var online byte = 1
-	var away byte = 2
-	var offline byte = 3
+//Error type codes
+var error_check byte = 255
+
+//Status types
+var online byte = 1
+var away byte = 2
+var offline byte = 3
+
+//Mute values
+var user_muted byte = 1
+var user_unmunted byte = 2
+
+//Default value for server, room, and user
+var default_value byte = 1
 
 //Converts byte array to unsigned int 
 func Byte_Converter(data []byte) uint {
