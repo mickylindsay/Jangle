@@ -49,8 +49,8 @@ func main() {
 	Init_Flags();
 	Init_Server();
 	Init_Parse();
-	Init_Logger();
 	Init_Command();
+	Init_Logger();
 
 	Load_Server();
 	

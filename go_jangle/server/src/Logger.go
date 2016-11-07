@@ -3,11 +3,16 @@ package main
 import(
 	"log"
 	"os"
+	"time"
+	"fmt"
 )
 
 func Init_Logger(){
 	if(!jangle.no_logging){
-		f, err := os.OpenFile("testlogfile", os.O_CREATE | os.O_APPEND, 0666)
+	var s string;
+		t := time.Now();
+		fmt.Sprint(&s, t);
+		f, err := os.OpenFile("s", os.O_CREATE | os.O_APPEND, 0666)
 		jangle.log_file = f;
 		if err != nil {
 				log.Fatalf("error opening file: %v", err)
