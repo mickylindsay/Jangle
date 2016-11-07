@@ -5,47 +5,49 @@ import(
 	"os"
 	"time"
 	"path/filepath"
+	"strings"
 )
 
 func Init_Logger(){
 	if(jangle.logging){
+	var err error;
 		t := time.Now();
 		dir, _ := filepath.Abs(filepath.Dir(os.Args[0]));
-		dir = dir + "/" + t.Format(time.UnixDate);
-		f, err := os.OpenFile(dir, os.O_CREATE | os.O_APPEND, 0666)
-		jangle.log_file = f;
+		dir = dir + "/" + t.Format(time.ANSIC);
+		dir = strings.Replace(dir, " ", "_", -1);
+		dir = strings.Replace(dir, ":", "_", -1);
+		dir = strings.Replace(dir, "__", "_", -1);
+		jangle.log_file, err = os.OpenFile(dir, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 		if err != nil {
 				log.Fatalf("error opening file: %v", err)
 		}
-		log.SetOutput(f)
-		defer f.Close()
+		
+		log.SetOutput(jangle.log_file)
 	}
 	
 }
 
 func Log(s string){
 	if(jangle.logging){
-		log.Println(time.Now().Format(time.UnixDate), s);
+		log.Println(s);
 	}
 }
 
 func Logln(a ...interface{}){
 	if(jangle.logging){
-		log.Print(time.Now().Format(time.UnixDate));
 		log.Println(a...);
 	}
 }
 
 func Warn(s string){
 	if(jangle.logging_warn){
-		log.Println(time.Now().Format(time.UnixDate), s);
+		log.Panicln(s);
 	}
 }
 
 func Warnln(a ...interface{}){
 	if(jangle.logging_warn){
-		log.Print(time.Now().Format(time.UnixDate));
-		log.Println(a...);
+		log.Panicln(a...);
 	}
 }
 
@@ -55,7 +57,7 @@ func Fatal(s string){
 	}
 }
 
-func Fatalf(a ...interface{}){
+func Fatalln(a ...interface{}){
 	if(jangle.logging){
 		log.Fatalln(a...);
 	}
