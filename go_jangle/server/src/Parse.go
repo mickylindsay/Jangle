@@ -488,8 +488,6 @@ func Message56 (user *User, data []byte) Message {
 		code: data[0],
 		userid: data[1:4],
 		display_name: data[5:]}
-		
-	address := m.display_name
 
 	Send_Message(user, m)
 	return m

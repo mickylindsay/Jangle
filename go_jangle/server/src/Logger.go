@@ -8,7 +8,7 @@ import(
 )
 
 func Init_Logger(){
-	if(!jangle.no_logging){
+	if(jangle.logging){
 	var s string;
 		t := time.Now();
 		fmt.Sprint(&s, t);
@@ -24,25 +24,25 @@ func Init_Logger(){
 }
 
 func Log(s string){
-	if(!jangle.no_logging){
+	if(jangle.logging){
 		log.Println(s);
 	}
 }
 
 func Logf(a ...interface{}){
-	if(!jangle.no_logging){
+	if(jangle.logging){
 		log.Println(a...);
 	}
 }
 
 func Fatal(s string){
-	if(!jangle.no_logging){
+	if(jangle.logging){
 		log.Fatalln(s);
 	}
 }
 
 func Fatalf(a ...interface{}){
-	if(!jangle.no_logging){
+	if(jangle.logging){
 		log.Fatalln(a...);
 	}
 }
