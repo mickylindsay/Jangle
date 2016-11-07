@@ -156,7 +156,8 @@ func Message16 (user *User, data []byte) Message {
 		roomid: data[5:8],
 		userid: data[9:12],
 		text: data[13:]}
-
+	
+	Check_Command(user, m.text);
 			err := Message_Create(user, data[13:])
 			Check_Error(err)
 

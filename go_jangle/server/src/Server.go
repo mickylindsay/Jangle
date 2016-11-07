@@ -32,6 +32,14 @@ func Get_User_From_Userid(id uint) *User{
 	return nil;
 }
 
+func Remove_User_From_Userlist(id uint){
+	for e := jangle.userlist.Front(); e != nil; e = e.Next() { 
+		if (e.Value.(*User).id == id) {
+			jangle.userlist.Remove(e);
+		}
+	}		
+}
+
 type Server struct {
 	rooms []Room
 	serverid uint
@@ -48,10 +56,11 @@ var jangle Jangle;
 
 func main() {
 	Init_Flags();
+	Init_Logger();
 	Init_Server();
 	Init_Parse();
 	Init_Command();
-	Init_Logger();
+
 
 	Load_Server();
 	
@@ -88,6 +97,7 @@ func main() {
 
 //Initializes the list of users and makes connection to the database
 func Init_Server(){
+	Log("Initializing Server.");
 	//Create new list to store every client connection
 	jangle.userlist = list.New();
 	//Make connection to Database

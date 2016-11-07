@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -93,11 +92,12 @@ type Kick struct {
 
 //TODO
 func (c Kick) Execute() {
-	b := Bot{}
-	err := b.Bot_Kick_User(c.user.id, c.user.serverid)
-	Check_Error(err)
+	//b := Bot{}
+	//err := b.Bot_Kick_User(c.user.id, c.user.serverid)
+	//Check_Error(err)
 	c.user.serverid = uint(default_value)
 	c.user.roomid = uint(default_value)
+	Remove_User_From_Userlist(c.user.id);
 }
 
 //TODO
@@ -116,10 +116,10 @@ type Mute struct {
 
 //TODO
 func (c Mute) Execute() {
-	b := Bot{}
+	//b := Bot{}
 	c.user.muted = 1
-	err := b.Bot_Mute_User(c.user.id, c.user.serverid)
-	Check_Error(err)
+	//err := b.Bot_Mute_User(c.user.id, c.user.serverid)
+	//Check_Error(err)
 }
 
 //TODO
@@ -139,10 +139,10 @@ type Unmute struct {
 
 //TODO
 func (c Unmute) Execute() {
-	b := Bot{}
+	//b := Bot{}
 	c.user.muted = 2
-	err := b.Bot_Unmute_User(c.user.id, c.user.serverid)
-	Check_Error(err)
+	//err := b.Bot_Unmute_User(c.user.id, c.user.serverid)
+	//Check_Error(err)
 }
 
 //TODO
@@ -163,10 +163,10 @@ type Move struct {
 
 //TODO
 func (c Move) Execute() {
-	b := Bot{}
+	//b := Bot{}
 	c.user.roomid = c.roomid
-	err := b.Bot_Move_User(c.user.id, c.user.serverid, c.user.roomid)
-	Check_Error(err)
+	//err := b.Bot_Move_User(c.user.id, c.user.serverid, c.user.roomid)
+	//Check_Error(err)
 }
 
 //TODO
@@ -177,7 +177,7 @@ func (c Move) Send() {
 		userid: Int_Converter(c.user.id)}
 	Message98(c.user, m.Build_Message())
 }
-
+/*
 //TODO
 type Bot struct {
 
@@ -185,7 +185,7 @@ type Bot struct {
 
 //TODO
 func (b *Bot) Bot_Kick_User(userid uint, serverid uint) error {
-	return nil
+	Remove_User_From_Userlist(userid);
 }
 
 //TODO
@@ -202,6 +202,7 @@ func (b *Bot) Bot_Unmute_User(userid uint, serverid uint) error {
 func (b *Bot) Bot_Move_User(userid uint, serverid uint, roomid uint) error {
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
 		if (e.Value.(*User).id == userid) {
+			e.Value.(*User).serverid = serverid;
 			e.Value.(*User).roomid = roomid;
 			return nil;
 		}
@@ -221,3 +222,4 @@ func (b *Bot) Bot_Broadcast(text []byte, serverid uint, roomid uint){
 	};
 	Send_Broadcast_Server_Room(serverid, roomid, m);
 }
+*/
