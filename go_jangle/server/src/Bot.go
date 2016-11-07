@@ -116,10 +116,7 @@ type Mute struct {
 
 //TODO
 func (c Mute) Execute() {
-	b := Bot{}
 	c.user.muted = 1
-	err := b.Bot_Mute_User(c.user.id, c.user.serverid)
-	Check_Error(err)
 }
 
 //TODO
@@ -139,10 +136,7 @@ type Unmute struct {
 
 //TODO
 func (c Unmute) Execute() {
-	b := Bot{}
 	c.user.muted = 2
-	err := b.Bot_Unmute_User(c.user.id, c.user.serverid)
-	Check_Error(err)
 }
 
 //TODO
@@ -185,16 +179,6 @@ type Bot struct {
 
 //TODO
 func (b *Bot) Bot_Kick_User(userid uint, serverid uint) error {
-	return nil
-}
-
-//TODO
-func (b *Bot) Bot_Mute_User(userid uint, serverid uint) error {
-	return nil
-}
-
-//TODO
-func (b *Bot) Bot_Unmute_User(userid uint, serverid uint) error {
 	return nil
 }
 
