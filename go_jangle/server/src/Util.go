@@ -86,6 +86,13 @@ var online byte = 1
 var away byte = 2
 var offline byte = 3
 
+//Mute values
+var user_muted byte = 1
+var user_unmunted byte = 2
+
+//Default value for server, room, and user
+var default_value byte = 1
+
 //Converts byte array to unsigned int 
 func Byte_Converter(data []byte) uint {
 	var i uint

@@ -19,7 +19,7 @@ type Jangle struct {
 	no_logging bool
 	log_file *os.File
 	Messages []func(*User, []byte) Message
-	Commands []func(string, string)
+	Commands []func([]string)
 }
 
 func(j Jangle)Get_User_From_Userid(id uint) *User{

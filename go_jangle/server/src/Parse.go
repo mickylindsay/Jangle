@@ -352,24 +352,8 @@ func Message39 (user *User, data []byte) Message {
 			return m
 }
 
-//Requests the local ip address of any user via userid, used for client side voice communication
-func Message40 (user *User, data []byte) Message {
-
-	m := Userid{
-		code: data[0],
-		userid: data[1:4]}
-
-			arr := data[1:4]
-			data = make([]byte, 6)
-			data[0] = recieve_user_ip
-			copy(data[1:4], arr)
-			copy(data[1:4], data[5:])
-		
-			Message56(user, data)
-			return m
-}
 //TODO
-func Message41 (user *User, data []byte) Message {
+func Message40 (user *User, data []byte) Message {
 
 	m := Userid{
 		code: data[0],
@@ -380,6 +364,24 @@ func Message41 (user *User, data []byte) Message {
 			data[0] = recieve_status
 			copy(data[1:4], arr)
 			data[5] = user.status
+			data[6] = user.muted
+		
+			Message55(user, data)
+			return m
+}
+
+//Requests the local ip address of any user via userid, used for client side voice communication
+func Message41 (user *User, data []byte) Message {
+
+	m := Userid{
+		code: data[0],
+		userid: data[1:4]}
+
+			arr := data[1:4]
+			data = make([]byte, 6)
+			data[0] = recieve_user_ip
+			copy(data[1:4], arr)
+			copy(data[1:4], data[5:])
 		
 			Message56(user, data)
 			return m
@@ -475,7 +477,8 @@ func Message55 (user *User, data []byte) Message {
 	m := Userid_Status{
 		code: data[0],
 		userid: data[1:4],
-		status: data[5]}
+		status: data[5],
+		muted: data[6]}
 
 			Send_Message(user, m)
 			return m
@@ -588,14 +591,17 @@ func Message80 (user *User, data []byte) Message {
 
 	m := Status{
 		code: data[0],
-		status: data[1]}
+		status: data[1],
+		muted: data[2]}
 
 			user.status = data[1]
+			user.muted = data[2]
 
 			data = make([]byte, 6)
 			data[0] = broadcast_status
 			copy(data[1:4], Int_Converter(user.id))
 			data[5] = user.status
+			data[6] = user.muted
 
 			Message96(user, data)
 			return m
@@ -643,7 +649,8 @@ func Message96 (user *User, data []byte) Message {
 	m := Userid_Status{
 		code: data[0],
 		userid: data[1:4],
-		status: data[5]}
+		status: data[5],
+		muted: data[6]}
 
 			Send_Broadcast_Server(user.serverid, m)
 			return m

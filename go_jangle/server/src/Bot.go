@@ -7,11 +7,12 @@ import (
 
 //TODO
 func Init_Command () {
-	Commands := make([]func(args []string), 3)
+	Commands := make([]func(args []string), 4)
 
 	Commands[0] = Kick_User
 	Commands[1] = Mute_User
-	Commands[2] = Move_User
+	Commands[2] = Unmute_User
+	Commands[3] = Move_User
 
 	jangle.Commands = Commands
 }
@@ -38,8 +39,10 @@ func Switcher (s string) byte {
 			switcher = 0
 		case s == "mute":
 			switcher = 1
-		case s == "move":
+		case s == "unmute":
 			switcher = 2
+		case s == "move":
+			switcher = 3
 	}
 	return switcher
 }
@@ -55,13 +58,18 @@ func Mute_User (args []string) {
 }
 
 //TODO
+func Unmute_User (args []string) {
+
+}
+
+//TODO
 func Move_User (args []string) {
 
 }
 
 //TODO
 type Command interface {
-	Execute()
+	Execute([]string)
 	Send()
 }
 
@@ -71,8 +79,10 @@ type Kick struct {
 }
 
 //TODO
-func (c Kick) Execute() {
-
+func (c Kick) Execute(args []string) {
+	user := Get_User_From_Userid(Byte_Converter([]byte(args[1])))
+	user.serverid = default_value
+	user.roomid = default_value
 }
 
 //TODO
@@ -86,12 +96,29 @@ type Mute struct {
 }
 
 //TODO
-func (c Mute) Execute() {
-
+func (c Mute) Execute(args []string) {
+	user := Get_User_From_Userid(Byte_Converter([]byte(args[1])))
+	user.muted = 1
 }
 
 //TODO
 func (c Mute) Send() {
+
+}
+
+//TODO
+type Unmute struct {
+
+}
+
+//TODO
+func (c Unmute) Execute(args []string) {
+	user := Get_User_From_Userid(Byte_Converter([]byte(args[1])))
+	user.muted = 2
+}
+
+//TODO
+func (c Unmute) Send() {
 
 }
 
@@ -101,8 +128,9 @@ type Move struct {
 }
 
 //TODO
-func (c Move) Execute() {
-
+func (c Move) Execute(args []string) {
+	user := Get_User_From_Userid(Byte_Converter([]byte(args[1])))
+	user.roomid = Byte_Converter([]byte(args[1]))
 }
 
 //TODO
