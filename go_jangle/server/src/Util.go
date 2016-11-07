@@ -91,7 +91,7 @@ var user_muted byte = 1
 var user_unmuted byte = 2
 
 //Default value for server, room, and user
-var default_value byte = 1
+var default_value []byte = []byte{1,0,0,0}
 
 //Converts byte array to unsigned int 
 func Byte_Converter(data []byte) uint {

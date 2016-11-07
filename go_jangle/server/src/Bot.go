@@ -96,7 +96,17 @@ func Move_User (args []string) {
 
 //TODO
 func Prune_N_Messages (args []string) {
-
+	var u *User
+	if (len(args) > 2) {
+		u = Get_User_From_Userid(Byte_Converter([]byte(args[2])))
+	} else {
+		u = nil
+	}
+	c := Prune{
+		user: u,
+		num_messages: Byte_Converter([]byte(args[1]))}
+	c.Execute()
+	c.Send()
 }
 
 //Constructs generic Command type
@@ -113,8 +123,8 @@ type Kick struct {
 //Sets the user's severid and roomid to the default value and removes the user from
 //the user list
 func (c Kick) Execute() {
-	c.user.serverid = uint(default_value)
-	c.user.roomid = uint(default_value)
+	c.user.serverid = Byte_Converter(default_value)
+	c.user.roomid = Byte_Converter(default_value)
 	Remove_User_From_Userlist(c.user.id);
 }
 
@@ -190,6 +200,7 @@ func (c Move) Send() {
 //TODO
 type Prune struct {
 	user *User
+	num_messages uint
 }
 
 //TODO
