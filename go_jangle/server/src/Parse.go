@@ -377,16 +377,16 @@ func Message41 (user *User, data []byte) Message {
 		code: data[0],
 		userid: data[1:4]}
 
-	num := Byte_Converter(data[1:4])
-	addr := Get_User_From_Userid(num).Get_Local_Address();
-	arr := data[1:4]
-	data = make([]byte, 5 + len(addr))
-	data[0] = recieve_status
-	copy(data[1:4], arr)
-	copy(data[5:], addr)
+			num := Byte_Converter(data[1:4])
+			addr := Get_User_From_Userid(num).Get_Local_Address();
+			arr := data[1:4]
+			data = make([]byte, 5 + len(addr))
+			data[0] = recieve_status
+			copy(data[1:4], arr)
+			copy(data[5:], addr)
 		
-	Message56(user, data)
-	return m
+			Message56(user, data)
+			return m
 }
 
 //Sends message code type 48, recieve userid, to client
@@ -494,8 +494,8 @@ func Message56 (user *User, data []byte) Message {
 		userid: data[1:4],
 		display_name: data[5:]}
 
-		Send_Message(user, m)
-		return m
+			Send_Message(user, m)
+			return m
 }
 
 //Replaces the user's display name with the new display name in message code type 64,
