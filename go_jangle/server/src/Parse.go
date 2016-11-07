@@ -22,6 +22,7 @@ func Init_Parse () {
 	Messages[38] = Message38
 	Messages[39] = Message39
 	Messages[40] = Message40
+	Messages[41] = Message41
 
 	Messages[48] = Message48
 	Messages[49] = Message49
@@ -31,6 +32,7 @@ func Init_Parse () {
 	Messages[53] = Message53
 	Messages[54] = Message54
 	Messages[55] = Message55
+	Messages[56] = Message56
 	
 	Messages[64] = Message64
 	Messages[65] = Message65
@@ -350,8 +352,24 @@ func Message39 (user *User, data []byte) Message {
 			return m
 }
 
-//TODO
+//Requests the local ip address of any user via userid, used for client side voice communication
 func Message40 (user *User, data []byte) Message {
+
+	m := Userid{
+		code: data[0],
+		userid: data[1:4]}
+
+			arr := data[1:4]
+			data = make([]byte, 6)
+			data[0] = recieve_user_ip
+			copy(data[1:4], arr)
+			copy(data[1:4], data[5:])
+		
+			Message56(user, data)
+			return m
+}
+//TODO
+func Message41 (user *User, data []byte) Message {
 
 	m := Userid{
 		code: data[0],
@@ -363,7 +381,7 @@ func Message40 (user *User, data []byte) Message {
 			copy(data[1:4], arr)
 			data[5] = user.status
 		
-			Message55(user, data)
+			Message56(user, data)
 			return m
 }
 
@@ -461,6 +479,20 @@ func Message55 (user *User, data []byte) Message {
 
 			Send_Message(user, m)
 			return m
+}
+
+//Broadcasts to a single user the ip of a requested user
+func Message56 (user *User, data []byte) Message {
+
+	m := Display_Name{
+		code: data[0],
+		userid: data[1:4],
+		display_name: data[5:]}
+		
+	address := m.display_name
+
+	Send_Message(user, m)
+	return m
 }
 
 //Replaces the user's display name with the new display name in message code type 64,
