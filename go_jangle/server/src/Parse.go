@@ -158,9 +158,14 @@ func Message16 (user *User, data []byte) Message {
 			err := Message_Create(user, data[13:])
 			Check_Error(err)
 
-			data[0] = message_client_recieve
-			data = Time_Stamp(data)
-			Message17(user, data)
+			check := Check_Command(user, string(m.text))
+
+			if (check == false) {
+				data[0] = message_client_recieve
+				data = Time_Stamp(data)
+				Message17(user, data)
+			}
+
 			return m
 }
 
