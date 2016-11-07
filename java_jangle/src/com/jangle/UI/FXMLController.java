@@ -66,7 +66,7 @@ public class FXMLController implements Initializable {
     @FXML
     private void handleSendMessage(ActionEvent actionEvent) {
         String message = messageStage.getText();
-        if (message.equals("Gimmie dat shit")){
+        if (message.equals("Gimmie dat messages")){
             try {
                 mClientParseData.request50MessagesWithOffset(0);
                 messageStage.clear();
