@@ -7,7 +7,7 @@ import com.jangle.communicate.CommUtil;
 public class Client_Communicator implements Runnable {
 
 	/**
-	 * Creates a communication for the module, which can write to the write
+	 * Creates a communication for communication with the server, which can write to the write
 	 * buffer, and read from the read buffer.
 	 */
 

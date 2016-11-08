@@ -38,7 +38,7 @@ func main(){
 	}()
 	//for {
 		
-		write_data := Size_Meta_Data(Message65());
+		write_data := Size_Meta_Data(Message2());
 		if(client.debug){
 			fmt.Println("OUT: ",write_data);
 		}
@@ -83,6 +83,14 @@ func Message() []byte {
 	copy(write_data[9:12], Int_Converter(1)); 
 	copy(write_data[13:16], Int_Converter(1)); 
 	copy(write_data[17:], []byte(text));
+	return write_data;
+}
+
+func Message2() []byte {
+	write_data := make([]byte, 29);
+	write_data[0] = 2;
+	copy(write_data[1:20], []byte("nathan"));
+	copy(write_data[21:], []byte("password"));
 	return write_data;
 }
 

@@ -10,8 +10,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 
 import javafx.event.ActionEvent;
@@ -20,8 +23,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import javax.print.DocFlavor;
 import java.awt.*;
@@ -41,8 +46,7 @@ public class FXMLController implements Initializable {
     private Client_ParseData mClientParseData;
     private Client mClient;
     private messageThread messageThread;
-    //TODO: Phase out userThread
-    //private userThread userThread;
+    private ConfigUtil mConfigUtil;
     private ObservableList<Message> testlist;
 
     @FXML
@@ -53,11 +57,16 @@ public class FXMLController implements Initializable {
     private ListView<User> users;
     @FXML
     private Button attachButton;
+    @FXML
+    private Button settingsButton;
+    @FXML
+    protected ImageView chatBackground;
+
 
     @FXML
     private void handleSendMessage(ActionEvent actionEvent) {
         String message = messageStage.getText();
-        if (message.equals("Gimmie dat shit")){
+        if (message.equals("Gimmie dat messages")){
             try {
                 mClientParseData.request50MessagesWithOffset(0);
                 messageStage.clear();
@@ -128,6 +137,13 @@ public class FXMLController implements Initializable {
         }
     }
 
+    @FXML
+    private void handleSettings(ActionEvent actionEvent) {
+        Stage settingsStage = new Stage();
+        settingsStage.setScene(new Scene(createSettingsDialog()));
+        settingsStage.showAndWait();
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         testlist = FXCollections.observableArrayList();
@@ -156,6 +172,7 @@ public class FXMLController implements Initializable {
             }
         });
         initializeListViewEventHandler();
+
     }
 
     public void updateMessages(ObservableList messages) {
@@ -170,6 +187,12 @@ public class FXMLController implements Initializable {
         this.mClientParseData = clientParseData;
         this.mClient = mClientParseData.getClient();
         this.messageThread = new messageThread(mClient, this);
+    }
+
+    public void setConfigUtil(ConfigUtil configUtil){
+        this.mConfigUtil = configUtil;
+        if (mConfigUtil.getBackgroundPath() != null)
+            chatBackground.setImage(new Image(new File(mConfigUtil.getBackgroundPath()).toURI().toString()));
     }
 
     private void initializeListViewEventHandler(){
@@ -187,5 +210,20 @@ public class FXMLController implements Initializable {
                 }
             }
         });
+    }
+
+    private Parent createSettingsDialog() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/settings.fxml"));
+        AnchorPane dialog = null;
+        try {
+            dialog = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        settingsController mSettings = loader.getController();
+        mSettings.setConfigUtil(mConfigUtil);
+        mSettings.setBackgroundImageView(chatBackground);
+
+        return dialog;
     }
 }
