@@ -1,12 +1,10 @@
 package main
-<<<<<<< HEAD
+
+
+import "fmt"
 
 //Initializes function array that contains all the functions necessary to handle every
 //message code
-=======
-import "fmt"
-//TODO
->>>>>>> adc562a61f29c920ddd1a97fd9f4637802b9d53e
 func Init_Parse () {
 	Messages := make([]func(user *User, data []byte) Message, 256)
 
