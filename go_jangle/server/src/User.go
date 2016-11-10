@@ -15,8 +15,8 @@ type User struct {
 	roomid uint
 	serverid uint
 	logged_in bool
-	muted byte
-	status byte
+	muted uint
+	status uint
 	permissions uint
 	location *Address
 }
@@ -28,7 +28,7 @@ func (u *User) equals(u2 *User) bool{
 func (u *User) User_Initialize() {
 	u.roomid = 1;
 	u.serverid = 1;
-	u.status = online;
+	u.status = uint(online);
 	u.location = &Address{
 		userid : u.id,
 		roomid : u.roomid,
@@ -37,7 +37,7 @@ func (u *User) User_Initialize() {
 	data := make([]byte, 6)
 	data[0] = broadcast_status
 	copy(data[1:4], Int_Converter(u.id))
-	data[5] = u.status
+	data[5] = byte(u.status)
 	Message96(u, data)		
 }
 

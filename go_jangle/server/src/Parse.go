@@ -158,7 +158,7 @@ func Message16 (user *User, data []byte) Message {
 		userid: data[9:12],
 		text: data[13:]}
 		
-			if (user.muted == user_unmuted) {
+			if (user.muted != 1) {
 				Check_Command(user, m.text);
 				err := Message_Create(user, data[13:])
 				Check_Error(err)
@@ -206,7 +206,7 @@ func Message32 (user *User, data []byte) Message {
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
-				Message17(user, messages[i].Build_Message())
+				Send_Message(user, messages[i])
 			}
 
 			return m
@@ -371,8 +371,8 @@ func Message40 (user *User, data []byte) Message {
 			data = make([]byte, 6)
 			data[0] = recieve_status
 			copy(data[1:4], arr)
-			data[5] = user.status
-			data[6] = user.muted
+			data[5] = byte(user.status)
+			data[6] = byte(user.muted)
 		
 			Message55(user, data)
 			return m
@@ -605,14 +605,14 @@ func Message80 (user *User, data []byte) Message {
 		status: data[1],
 		muted: data[2]}
 
-			user.status = data[1]
-			user.muted = data[2]
+			user.status = uint(m.status)
+			user.muted = uint(m.muted)
 
 			data = make([]byte, 6)
 			data[0] = broadcast_status
 			copy(data[1:4], Int_Converter(user.id))
-			data[5] = user.status
-			data[6] = user.muted
+			data[5] = byte(user.status)
+			data[6] = byte(user.muted)
 
 			Message96(user, data)
 			return m

@@ -144,7 +144,7 @@ type Mute struct {
 
 //Changes the user's muted to status to muted
 func (c Mute) Execute() {
-	c.user.muted = user_muted
+	c.user.muted = uint(user_muted)
 }
 
 //Builds a message code type 96, broadcast status
@@ -152,8 +152,8 @@ func (c Mute) Send() {
 	m := Userid_Status{
 		code: broadcast_status,
 		userid: Int_Converter(c.user.id),
-		status: c.user.status,
-		muted: c.user.muted}
+		status: byte(c.user.status),
+		muted: byte(c.user.muted)}
 	Message96(c.user, m.Build_Message())
 }
 
@@ -164,7 +164,7 @@ type Unmute struct {
 
 //Changes the user's muted status to unmuted
 func (c Unmute) Execute() {
-	c.user.muted = user_unmuted
+	c.user.muted = uint(user_unmuted)
 }
 
 //Builds a message code type 96, broadcast status
@@ -172,8 +172,8 @@ func (c Unmute) Send() {
 	m := Userid_Status{
 		code: broadcast_status,
 		userid: Int_Converter(c.user.id),
-		status: c.user.status,
-		muted: c.user.muted}
+		status: byte(c.user.status),
+		muted: byte(c.user.muted)}
 	Message96(c.user, m.Build_Message())
 }
 

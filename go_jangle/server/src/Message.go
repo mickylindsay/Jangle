@@ -14,7 +14,7 @@ type Base struct {
  func (m Base) Build_Message() []byte {
 	message := make([]byte, 1)
 	message[0] = m.code
-	return message[:]
+	return message
 }
 
 //[code:1,username:20,password:]
