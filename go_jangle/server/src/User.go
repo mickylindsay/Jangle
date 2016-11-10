@@ -7,10 +7,12 @@ import (
 const MOVE_USER 	= 0x0001
 const KICK_USER 	= 0x0002
 const DELETE_MESSAGE 	= 0x0004
+const EDIT_MESSAGE      = 0x0008
+const PERM_5            = 0x0010
 
 type User struct {
 	c *net.Conn
-	display_name string
+	display_name []byte
 	id uint
 	roomid uint
 	serverid uint
@@ -25,7 +27,7 @@ func (u *User) equals(u2 *User) bool{
 	return u.id == u2.id;
 }
 
-func (u *User) User_Initialize() {
+func (u *User) User_Initialize() err{
 	u.roomid = 1;
 	u.serverid = 1;
 	u.status = online;
@@ -34,11 +36,17 @@ func (u *User) User_Initialize() {
 		roomid : u.roomid,
 		serverid : u.serverid,
 	}
-	data := make([]byte, 6)
-	data[0] = broadcast_status
-	copy(data[1:4], Int_Converter(u.id))
-	data[5] = u.status
-	Message96(u, data)		
+	display, err := Request_Display_Name(u.serverid, u.id);
+	if(err != nil) {
+		return err;
+	}
+	u.display_name = display;
+	data := make([]byte, 6);
+	data[0] = broadcast_status;
+	copy(data[1:4], Int_Converter(u.id));
+	data[5] = u.status;
+	Message96(u, data);
+	return nil;
 }
 
 func (u *User) Get_Userid() uint{
