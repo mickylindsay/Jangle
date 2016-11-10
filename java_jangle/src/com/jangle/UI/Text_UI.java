@@ -35,8 +35,7 @@ public class Text_UI extends Application {
 	}
 
 	private Parent createLoginDialog() throws IOException {
-        //serverIP = mConfigUtil.getFormattedServerIP();
-        serverIP = new String[]{"localhost", "9090"};
+        serverIP = mConfigUtil.getFormattedServerIP();
 		this.mClient = new Client();
 		try {
 			this.mClientParseData = new Client_ParseData(mClient, serverIP[0], new Integer(serverIP[1]));
