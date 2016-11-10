@@ -47,7 +47,8 @@ func Connect_Database() (*sql.DB, error){
 func User_Login(u []byte, p []byte) (uint, error) {
 	if(!jangle.no_database){
 		var userid uint;
-		err := jangle.db.QueryRow("SELECT userid FROM users WHERE username =? AND passwordhash=?",string(u), string(p)).Scan(&userid);
+		err := jangle.db.QueryRow("SELECT userid FROM users WHERE username =? AND passwordhash=?",string(u[:Byte_Array_Length(u)]), string(p)).Scan(&userid);
+		fmt.Println("IM HERE", userid);
 		return userid, err;
 	}
 	return 1, nil;
@@ -78,7 +79,7 @@ func Next_Messageid() uint{
 func User_Create(u []byte, p []byte) (uint, error) {
 	if(!jangle.no_database){
 	i := Next_Userid();
-		_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);",i, string(u), string(u), "TEMPPATH", string(p), "0000")
+		_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);",i, string(u[:Byte_Array_Length(u)]), string(u), "TEMPPATH", string(p), "0000")
 		return i, err
 	}
 	return 1, nil
