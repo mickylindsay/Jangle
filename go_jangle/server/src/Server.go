@@ -45,6 +45,7 @@ type Server struct {
 	serverid uint
 	name []byte
 	members map[uint]*User
+	icon_url []byte;
 }
 
 type Room struct {
@@ -136,4 +137,5 @@ func Init_Flags(){
 
 func Load_Server(){
 	Log("Loading Server.");
+	
 }

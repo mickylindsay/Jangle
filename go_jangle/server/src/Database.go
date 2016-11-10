@@ -78,7 +78,7 @@ func Next_Messageid() uint{
 //TODO implement Image Path and Password hashing
 func User_Create(u []byte, p []byte) (uint, error) {
 	if(!jangle.no_database){
-	i := Next_Userid();
+		i := Next_Userid();
 		_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);",i, string(u[:Byte_Array_Length(u)]), string(u), "TEMPPATH", string(p), "0000")
 		return i, err
 	}
@@ -87,17 +87,14 @@ func User_Create(u []byte, p []byte) (uint, error) {
 
 //Inserts a new Message into the database
 //TODO implement roomid and serverid
-func Message_Create(user *User, messagetext []byte) error{
+func Message_Create(user *User, messagetext []byte) (uint, error){
 	if(!jangle.no_database){
+		i := Next_Messageid();
 		var err error
-		if(user.id == 0){
-			_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", 1, Milli_Time(), Next_Messageid(), string(messagetext), 1, 1);
-		}else{
-			_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", user.id, Milli_Time(), Next_Messageid(), string(messagetext), user.serverid, user.roomid);
-		}
-		return err;
+		_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", 1, Milli_Time(), i, string(messagetext), 1, 1);
+		return i, err;
 	}
-	return nil;
+	return i, nil;
 }
 
 
