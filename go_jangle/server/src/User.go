@@ -27,7 +27,7 @@ func (u *User) equals(u2 *User) bool{
 	return u.id == u2.id;
 }
 
-func (u *User) User_Initialize() err{
+func (u *User) User_Initialize() error{
 	u.roomid = 1;
 	u.serverid = 1;
 	u.status = online;
