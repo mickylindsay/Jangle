@@ -40,7 +40,6 @@ func Connect_Database() (*sql.DB, error){
 	}
 	fmt.Println("Running in 'no_database' mode.")
 	return nil, nil;
-	
 }
 
 //Returns userid from database when correct username and password(hash) is given
@@ -88,6 +87,7 @@ func User_Create(u []byte, p []byte) (uint, error) {
 //Inserts a new Message into the database
 //TODO implement roomid and serverid
 func Message_Create(user *User, messagetext []byte) (uint, error){
+	var i uint
 	if(!jangle.no_database){
 		i := Next_Messageid();
 		var err error
@@ -97,9 +97,21 @@ func Message_Create(user *User, messagetext []byte) (uint, error){
 	return i, nil;
 }
 
+//Returns the userid of the server owner
+func Get_Server_Owner_Id (serverid uint) (uint, error) {
+	if (!jangle.no_database) {
+		var temp uint;
+		err := jangle.db.QueryRow("SELECT ownerid FROM servers WHERE serverid = ? ", serverid).Scan(&temp);
+		if(err != nil){
+			return 0, err;
+		}
+		return temp, nil;
+	}
+	return 0,nil;
+}
 
 //Request chunks of 50 messages offset by (offset*50) and returns them as array of message objects
-func Request_Offset_Messages(user *User, offset uint) ([]Message, error){
+func Get_Offset_Messages(user *User, offset uint) ([]Message, error){
 	if(!jangle.no_database){
 		i := 0;
 		messages := make([]Message,50);
@@ -139,7 +151,7 @@ func Request_Offset_Messages(user *User, offset uint) ([]Message, error){
 }
 
 //Requests all userids with same serverid as user
-func Request_Userid_Messages(serverid uint) ([]Message, error){
+func Get_Userid_Messages(serverid uint) ([]Message, error){
 	if(!jangle.no_database){
 		var userid uint;
 		i := 0;
@@ -172,7 +184,7 @@ func Request_Userid_Messages(serverid uint) ([]Message, error){
 }
 
 //Request all serverids which a userid is in
-func Request_Serverid_Messages(userid uint) ([]Message, error){
+func Get_Serverid_Messages(userid uint) ([]Message, error){
 	if(!jangle.no_database){
 		var serverid uint;
 		i := 0;
@@ -203,18 +215,8 @@ func Request_Serverid_Messages(userid uint) ([]Message, error){
 	return nil, nil;
 }
 
-//Request the Name of a server by serverid
-func Request_Server_Display_Name(serverid uint) ([]byte,error) {
-	if(!jangle.no_database){
-		var temp string;
-		err := jangle.db.QueryRow("SELECT servername FROM servers AS s WHERE s.serverid = ?", serverid).Scan(&temp);
-		return []byte(temp), err;
-	}
-	return []byte("TEMP"), nil;
-}
-
 //Request all Roomids a server contains
-func Request_Roomid_Messages(serverid uint) ([]Message, error){
+func Get_Roomid_Messages(serverid uint) ([]Message, error){
 	var roomid uint;
 	i := 0;
 	messages := make([]Message, 50);
@@ -246,8 +248,18 @@ func Request_Roomid_Messages(serverid uint) ([]Message, error){
 	return nil, nil;
 }
 
+//Request the Name of a server by serverid
+func Get_Server_Display_Name(serverid uint) ([]byte,error) {
+	if(!jangle.no_database){
+		var temp string;
+		err := jangle.db.QueryRow("SELECT servername FROM servers AS s WHERE s.serverid = ?", serverid).Scan(&temp);
+		return []byte(temp), err;
+	}
+	return []byte("TEMP"), nil;
+}
+
 //Request the name of the Room by serverid and roomid
-func Request_Room_Display_Name(serverid uint, roomid uint) ([]byte,error) {
+func Get_Room_Display_Name(serverid uint, roomid uint) ([]byte,error) {
 	if(!jangle.no_database){
 		var temp string;
 		err := jangle.db.QueryRow("SELECT roomname FROM rooms AS r WHERE r.serverid = ? AND r.roomid = ?", serverid, roomid).Scan(&temp);
@@ -257,7 +269,7 @@ func Request_Room_Display_Name(serverid uint, roomid uint) ([]byte,error) {
 }
 
 //Request the Name of a server by serverid
-func Request_Display_Name(serverid uint, userid uint) ([]byte,error) {
+func Get_Display_Name(serverid uint, userid uint) ([]byte,error) {
 	if(!jangle.no_database){
 		var temp string;
 		fmt.Println("Attempting Server Unique Display Name.");
@@ -267,7 +279,7 @@ func Request_Display_Name(serverid uint, userid uint) ([]byte,error) {
 
 		fmt.Println("Attempting Master Unique Display Name.");
 			
-			return Request_Master_Display_Name(userid);
+			return Get_Master_Display_Name(userid);
 		}
 		return []byte(temp), err;
 	}
@@ -275,7 +287,7 @@ func Request_Display_Name(serverid uint, userid uint) ([]byte,error) {
 }
 
 //Requests a user's master display name
-func Request_Master_Display_Name (userid uint) ([]byte, error) {
+func Get_Master_Display_Name (userid uint) ([]byte, error) {
 	var temp string;
 	err := jangle.db.QueryRow("SELECT displayname FROM users WHERE userid = ?", userid).Scan(&temp);
 	return []byte(temp), err;
@@ -296,7 +308,6 @@ func Set_New_Display_Name(serverid uint, userid uint, name []byte) error{
 	return nil;
 }
 
-
 //Inserts or update a new server specific server display name
 func Set_New_Server_Display_Name (serverid uint, name []byte) error {
 	if (!jangle.no_database) {
@@ -306,6 +317,11 @@ func Set_New_Server_Display_Name (serverid uint, name []byte) error {
 	return nil;
 }
 
+//Updates user master display name
+func Set_New_Master_Display_Name (userid uint, name []byte) error {
+	_, e := jangle.db.Exec("UPDATE user SET displayname = ? WHERE userid = ?", string(name), userid);
+	return e;
+}
 
 //Inserts or update a new server specific room display name
 func Set_New_Room_Display_Name (serverid uint, roomid uint, name []byte) error {
@@ -316,19 +332,6 @@ func Set_New_Room_Display_Name (serverid uint, roomid uint, name []byte) error {
 	return nil;
 }
 
-//Returns the userid of the server owner
-func Get_Server_Owner_Id (serverid uint) (uint, error) {
-	if (!jangle.no_database) {
-		var temp uint;
-		err := jangle.db.QueryRow("SELECT ownerid FROM servers WHERE serverid = ? ", serverid).Scan(&temp);
-		if(err != nil){
-			return 0, err;
-		}
-		return temp, nil;
-	}
-	return 0,nil;
-}
-
 //Inserts a new user into the database
 func Join_Server(user *User) error {
 	if(!jangle.no_database){
@@ -336,10 +339,4 @@ func Join_Server(user *User) error {
 		return err;
 	}
 	return nil;
-}
-
-//Updates user master display name
-func Set_New_Master_Display_Name (userid uint, name []byte) error {
-	_, e := jangle.db.Exec("UPDATE user SET displayname = ? WHERE userid = ?", string(name), userid);
-	return e;
 }
