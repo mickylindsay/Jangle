@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 //Initializes function array that contains all the functions necessary to handle every
 //message code
 func Init_Parse () {
@@ -137,7 +139,7 @@ func Message2 (user *User, data []byte) Message {
 
 //Writes to user message code type 3, login fail
 func Message3 (user *User, data []byte) Message {
-
+fmt.Println("Fail");
 	m := Base{
 		code: data[0]}
 
@@ -147,7 +149,7 @@ func Message3 (user *User, data []byte) Message {
 
 //Send message code type 4 to client, login success
 func Message4 (user *User, data []byte) Message {
-
+fmt.Println("Pass");
 	m := Userid{
 		code: data[0],
 		userid: data[1:4]}
@@ -169,7 +171,7 @@ func Message16 (user *User, data []byte) Message {
 		
 			if (user.muted != 1) {
 				Check_Command(user, m.text);
-				err := Message_Create(user, data[13:])
+				messageid, err := Message_Create(user, data[13:])
 				Check_Error(err)
 
 				check := Check_Command(user, m.text)
@@ -212,7 +214,7 @@ func Message32 (user *User, data []byte) Message {
 		offset: data[1]}
 
 			num := uint(data[1])
-			messages, err := Request_Offset_Messages(user, num)
+			messages, err := Get_Offset_Messages(user, num)
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
@@ -229,7 +231,7 @@ func Message33 (user *User, data []byte) Message {
 	m := Base{
 		code: data[0]}
 
-			messages, err := Request_Userid_Messages(user.serverid)
+			messages, err := Get_Userid_Messages(user.serverid)
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
@@ -249,7 +251,7 @@ func Message34 (user *User, data []byte) Message {
 		userid: data[1:4]}
 
 			num := Byte_Converter(data[1:4])
-			requested_display_name, err := Request_Display_Name(user.serverid, num)
+			requested_display_name, err := Get_Display_Name(user.serverid, num)
 			Check_Error(err)
 
 			data = make([]byte, len(requested_display_name) + 5)
@@ -270,7 +272,7 @@ func Message35 (user *User, data []byte) Message {
 		userid: data[1:4]}
 
 			num := Byte_Converter(data[1:4])
-			messages, err := Request_Serverid_Messages(num)
+			messages, err := Get_Serverid_Messages(num)
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
@@ -290,7 +292,7 @@ func Message36 (user *User, data []byte) Message {
 		serverid: data[1:4]}
 
 			num := Byte_Converter(data[1:4])
-			requested_server_display_name, err := Request_Server_Display_Name(num)
+			requested_server_display_name, err := Get_Server_Display_Name(num)
 			Check_Error(err)
 
 			data = make([]byte, len(requested_server_display_name) + 5)
@@ -311,7 +313,7 @@ func Message37 (user *User, data []byte) Message {
 		serverid: data[1:4]}
 
 			num := Byte_Converter(data[1:4])
-			messages, err := Request_Roomid_Messages(num)
+			messages, err := Get_Roomid_Messages(num)
 			Check_Error(err)
 
 			for i := 0; i < len(messages); i++ {
@@ -333,7 +335,7 @@ func Message38 (user *User, data []byte) Message {
 
 			num1 := Byte_Converter(data[1:4])
 			num2 := Byte_Converter(data[5:8])
-			requested_room_display_name, err := Request_Room_Display_Name(num1, num2)
+			requested_room_display_name, err := Get_Room_Display_Name(num1, num2)
 			Check_Error(err)
 
 			data = make([]byte, len(requested_room_display_name) + 9)
@@ -356,7 +358,7 @@ func Message39 (user *User, data []byte) Message {
 		userid: data[1:4]}
 
 			num := Byte_Converter(data[1:4])
-			requested_master_display_name, err := Request_Master_Display_Name(num)
+			requested_master_display_name, err := Get_Master_Display_Name(num)
 			Check_Error(err)
 
 			data = make([]byte, len(requested_master_display_name) + 5)

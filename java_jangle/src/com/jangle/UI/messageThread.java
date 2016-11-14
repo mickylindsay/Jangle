@@ -2,6 +2,7 @@ package com.jangle.UI;
 
 import com.jangle.client.Client;
 import com.jangle.client.Message;
+import com.jangle.client.User;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -20,6 +21,8 @@ public class messageThread implements Runnable {
     private FXMLController ui;
     private ObservableList<Message> messageList;
     private ArrayList<Message> messages;
+    private ArrayList<User> mUsers;
+    private ObservableList<User> mUserList;
 
 
     public messageThread(Client client, FXMLController ui){
@@ -27,16 +30,22 @@ public class messageThread implements Runnable {
         this.ui = ui;
         this.messageList = FXCollections.observableArrayList();
         this.messages = new ArrayList<>();
+        this.mUserList = FXCollections.observableArrayList();
+        this.mUsers = new ArrayList<>();
         Thread t = new Thread(this);
         t.start();
     }
 
     @Override
     public void run() {
-        int size = 0;
+        //Messages size
+        int mSize = 0;
+        //Users Size
+        int uSize = 0;
+
         while(true) {
 
-            if (size == mClient.getMessages().size()){
+            if (mSize == mClient.getMessages().size()){
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
@@ -44,11 +53,14 @@ public class messageThread implements Runnable {
                 }
             }
 
-            else if (size < mClient.getMessages().size()){
-                int difference = mClient.getMessages().size() - size;
-                for (int i = 0; i < difference; i++) {
+            else if (mSize < mClient.getMessages().size()){
+                int difference = mClient.getMessages().size() - mSize;
+                Message toDisplay = null;
 
-                    messages.add(mClient.getMessages().get(mClient.getMessages().size() - difference + i));
+                for (int i = 0; i < difference; i++) {
+                    toDisplay = mClient.getMessages().get(mClient.getMessages().size() - difference + i);
+
+                    messages.add(toDisplay);
 
                     //Making new UI update thread
                     Platform.runLater(new Runnable() {
@@ -59,7 +71,25 @@ public class messageThread implements Runnable {
                         }
                     });
                 }
-                size = mClient.getMessages().size();
+                mSize = mClient.getMessages().size();
+            }
+
+
+            //Handling user listening
+            if (uSize < mClient.getUsers().size()){
+                int difference = mClient.getUsers().size() - uSize;
+                for (int i = 0; i < difference; i++) {
+                    mUsers.add(mClient.getUsers().get(mClient.getUsers().size() - difference + i));
+                    //TODO: Display name updates and caching
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            mUserList = FXCollections.observableArrayList(mUsers);
+                            ui.updateUsers(mUserList);
+                        }
+                    });
+                }
+                uSize = mClient.getUsers().size();
             }
 
         }

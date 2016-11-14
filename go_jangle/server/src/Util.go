@@ -6,16 +6,19 @@ import (
 	"log"
 )
 
+//Comparable interface used to determine the equality of two structs
 type Comparable interface {
 	equals(interface{}) bool
 }
 
+//Holds a serverid, roomid, and userid. Acts as the "position in a server"
 type Address struct {
 	serverid uint
 	roomid uint
 	userid uint
 }
 
+//Compares the equality of two Addresses
 func (a *Address) equals(b Address) bool {
 	return a.serverid == b.serverid && a.roomid == b.roomid && a.userid == b.userid;
 }
@@ -147,6 +150,7 @@ func Check_Error(e error){
 	}
 }
 
+//Appends terminal color escape codes to text to print in color
 func Color_Println (c string, text string) {
 	var s string;
 	if (c == "red") {
@@ -176,4 +180,14 @@ func Color_Println (c string, text string) {
 	s +="\x1b[0;0m"
 
 	fmt.Println(s)
+}
+
+//Returns the first index of value 0 in byte array
+func Byte_Array_Length(b []byte) uint{
+	for i := 0; i < len(b); i++ {
+		if(b[i] == 0){
+			return uint(i);
+		}
+	}
+	return uint(len(b));
 }

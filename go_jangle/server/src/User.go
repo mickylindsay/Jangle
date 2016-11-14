@@ -1,5 +1,4 @@
 package main
-
 import (
 	"net"
 )
@@ -55,7 +54,6 @@ func (u *User) Get_Roomid() uint{
 
 func (u *User) Set_Userid(id uint) {
 	u.id = id;
-	
 }
 
 func (u *User) Set_Roomid(id uint) {

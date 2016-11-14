@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: #3f3f3f;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jangle.UI.settingsController">
+   <children>
+      <Label layoutX="15.0" layoutY="10.0" text="Settings" textFill="WHITE" />
+      <Label layoutX="15.0" layoutY="50.0" text="Background:" textFill="WHITE" />
+      <Label fx:id="pathToBackground" layoutX="85.0" layoutY="50.0" prefHeight="17.0" prefWidth="132.0" text="path" textFill="WHITE" />
+      <Button fx:id="backgroundButton" onAction="#handleBackgroundChange" layoutX="230.0" layoutY="46.0" mnemonicParsing="false" scaleX="0.8" scaleY="0.75" text="Change" />
+   </children>
+</AnchorPane>
