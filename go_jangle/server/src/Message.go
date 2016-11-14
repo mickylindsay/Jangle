@@ -141,18 +141,20 @@ type Message_Recieve struct {
 	serverid []byte
 	roomid []byte
 	userid []byte
+	messageid []byte
 	time []byte
 	text []byte
 }
 
  func (m Message_Recieve) Build_Message() []byte {
-	message := make([]byte, 17 + len(m.text))
+	message := make([]byte, 21 + len(m.text))
 	message[0] = m.code
 	copy(message[1:4], m.serverid[:])
 	copy(message[5:8], m.roomid[:])
 	copy(message[9:12], m.userid[:])
-	copy(message[13:16], m.time[:])
-	copy(message[17:], m.text[:])
+	copy(message[13:16], m.messageid[:])
+	copy(message[17:20], m.time[:])
+	copy(message[21:], m.text[:])
 	return message
 }
 

@@ -24,6 +24,8 @@ func Init_Parse () {
 	Messages[39] = Message39
 	Messages[40] = Message40
 	Messages[41] = Message41
+	Messages[43] = Message43
+	Messages[44] = Message44
 
 	Messages[48] = Message48
 	Messages[49] = Message49
@@ -34,11 +36,15 @@ func Init_Parse () {
 	Messages[54] = Message54
 	Messages[55] = Message55
 	Messages[56] = Message56
+	Messages[57] = Message57
+	Messages[58] = Message58
 	
 	Messages[64] = Message64
 	Messages[65] = Message65
 	Messages[66] = Message66
 	Messages[67] = Message67
+	Messages[68] = Message68
+	Messages[70] = Message70
 
 	Messages[80] = Message80
 	Messages[81] = Message81
@@ -51,6 +57,9 @@ func Init_Parse () {
 	Messages[100] = Message100
 	Messages[101] = Message101
 	Messages[102] = Message102
+
+	Messages[112] = Message112
+	Messages[113] = Message113
 
 	Messages[255] = Message255
 
@@ -184,8 +193,9 @@ func Message17 (user *User, data []byte) Message {
 		serverid: data[1:4],
 		roomid: data[5:8],
 		userid: data[9:12],
-		time: data[13:16],
-		text: data[17:]}
+		messageid: data[13:16],
+		time: data[17:20],
+		text: data[21:]}
 
 			num1 := Byte_Converter(data[1:4])
 			num2 := Byte_Converter(data[5:8])
