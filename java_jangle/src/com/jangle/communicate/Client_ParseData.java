@@ -71,28 +71,28 @@ public class Client_ParseData implements IPARSER {
 			return;
 		}
 
-		if (data[0] == CommUtil.LOGIN_SUCCESS) {
+		else if (data[0] == CommUtil.LOGIN_SUCCESS) {
 			loginResult = LoginResult.SUCESS;
 			UserID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
 			return;
 		}
 
-		if (data[0] == CommUtil.LOGIN_FAIL) {
+		else if (data[0] == CommUtil.LOGIN_FAIL) {
 			loginResult = LoginResult.FAIL;
 			return;
 		}
 
-		if (data[0] == CommUtil.CREATE_USER_FAIL) {
+		else if (data[0] == CommUtil.CREATE_USER_FAIL) {
 			loginResult = LoginResult.NAME_TAKEN;
 			return;
 		}
 
-		if (data[0] == CommUtil.RECIEVE_DISPLAY_NAME) {
+		else if (data[0] == CommUtil.RECIEVE_DISPLAY_NAME) {
 			DisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
 			return;
 		}
 
-		if (data[0] == CommUtil.RECIEVE_USERID) {
+		else if (data[0] == CommUtil.RECIEVE_USERID) {
 
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
 			User tmp = new User("", id);
@@ -109,21 +109,21 @@ public class Client_ParseData implements IPARSER {
 			}
 		}
 
-		if (data[0] == CommUtil.RECIEVE_SERVER_ID) {
+		else if (data[0] == CommUtil.RECIEVE_SERVER_ID) {
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
 			//IMPLEMENT THIS LATER
 		}
 		
-		if (data[0] == CommUtil.RECIEVE_SERVER_DISPLAY_NAME){
+		else if (data[0] == CommUtil.RECIEVE_SERVER_DISPLAY_NAME){
 			ServerDisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
 		}
 		
-		if (data[0] == CommUtil.RECIEVE_ROOM_ID){
+		else if (data[0] == CommUtil.RECIEVE_ROOM_ID){
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
 			// implement it later
 		}
 		
-		if (data[0] == CommUtil.RECIEVE_ROOM_DISPLAY_NAME){
+		else if (data[0] == CommUtil.RECIEVE_ROOM_DISPLAY_NAME){
 			RoomDisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
 			return;
 		}
