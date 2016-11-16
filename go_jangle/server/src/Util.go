@@ -35,6 +35,9 @@ var login_success byte = 4
 //Message type codes
 var message_client_send byte = 16
 var message_client_recieve byte = 17
+var message_edit byte = 18
+var message_delete byte = 19
+var message_remove byte = 20
 
 //Request from client type codes
 var request_n_messages byte = 32
@@ -47,6 +50,8 @@ var request_room_display_name byte = 38
 var request_master_display_name byte = 39
 var request_status byte = 40
 var request_user_ip byte = 41
+var request_user_icon byte = 43
+var request_server_icon byte = 44
 
 //Client recieve type codes
 var recieve_userid byte = 48
@@ -58,20 +63,21 @@ var recieve_room_display_name byte = 53
 var recieve_master_display_name byte = 54
 var recieve_status byte = 55
 var recieve_user_ip byte = 56
+var recieve_user_icon byte = 57
+var recieve_server_icon byte = 58
 
 //Client send type codes
 var send_new_display_name byte = 64
 var send_new_server_display_name byte = 65
 var send_new_room_display_name byte = 66
 var send_new_master_display_name byte = 67
+var send_new_user_icon byte = 68
+var send_new_server_icon byte = 70
 
 //Status of client type codes
 var status_change byte = 80
 var status_broadcast byte = 81
 var server_change byte = 82
-var server_broadcast byte = 83
-var room_change byte = 84
-var room_broadcast byte = 85
 
 var broadcast_status byte = 96
 var broadcast_server byte = 97
