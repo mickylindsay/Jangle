@@ -157,32 +157,34 @@ public class FXMLController implements Initializable {
     }
 
     private void setServerListCellFactory() {
-        users.setCellFactory(listView -> new ListCell<User>() {
-            private ImageView imageView = new ImageView();
-            @Override
-            public void updateItem(User user, boolean empty) {
-                super.updateItem(user, empty);
-                if (empty) {
-                    setText(null);
-                    setGraphic(null);
-                }
-                else {
-                    Image image = new Image(user.getAvatarURL());
-                    imageView.setImage(image);
-                    imageView.setPreserveRatio(true);
-                    imageView.setFitWidth(20);
-                    setGraphic(imageView);
-                    setContentDisplay(ContentDisplay.BOTTOM);
-                    setAlignment(Pos.CENTER_LEFT);
-                    //setTextAlignment(TextAlignment.LEFT);
-                }
-                setText(user.getDisplayName());
-            }
-        });
+        //TODO: make server list factory
     }
 
     private void setUserListCellFactory() {
-
+        {
+            users.setCellFactory(listView -> new ListCell<User>() {
+                private ImageView imageView = new ImageView();
+                @Override
+                public void updateItem(User user, boolean empty) {
+                    super.updateItem(user, empty);
+                    if (empty) {
+                        setText(null);
+                        setGraphic(null);
+                    }
+                    else {
+                        Image image = new Image(user.getAvatarURL());
+                        imageView.setImage(image);
+                        imageView.setPreserveRatio(true);
+                        imageView.setFitWidth(20);
+                        setGraphic(imageView);
+                        setContentDisplay(ContentDisplay.LEFT);
+                        setAlignment(Pos.CENTER_LEFT);
+                        //setTextAlignment(TextAlignment.LEFT);
+                    }
+                    setText(user.getDisplayName());
+                }
+            });
+        }
     }
 
     private void setMessageAreaCellFactory() {
