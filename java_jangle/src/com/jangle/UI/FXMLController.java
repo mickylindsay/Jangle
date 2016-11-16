@@ -54,7 +54,7 @@ public class FXMLController implements Initializable {
     @FXML
     private TextField messageStage;
     @FXML
-    private ListView<User> users;
+    private ListView<User> userList;
     @FXML
     private Button attachButton;
     @FXML
@@ -162,7 +162,7 @@ public class FXMLController implements Initializable {
 
     private void setUserListCellFactory() {
         {
-            users.setCellFactory(listView -> new ListCell<User>() {
+            userList.setCellFactory(listView -> new ListCell<User>() {
                 private ImageView imageView = new ImageView();
                 @Override
                 public void updateItem(User user, boolean empty) {
@@ -170,6 +170,22 @@ public class FXMLController implements Initializable {
                     if (empty) {
                         setText(null);
                         setGraphic(null);
+                    }
+                    if(user.getDisplayName() == null) {
+                        try {
+                            String newDisplayName = mClientParseData.requestDisplayName(user);
+                            String newAvatarURL = mClientParseData.requestAvatarURL(user);
+
+                            if(newDisplayName != null) {
+                                user.setDisplayName(newDisplayName);
+                            }
+                            if(newAvatarURL != null) {
+                                user.setAvatar(newAvatarURL);
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                     else {
                         Image image = new Image(user.getAvatarURL());
@@ -218,7 +234,7 @@ public class FXMLController implements Initializable {
     }
 
     public void updateUsers(ObservableList userList){
-        this.users.setItems(userList);
+        this.userList.setItems(userList);
     }
 
     public void setmClientParseData(Client_ParseData clientParseData){
