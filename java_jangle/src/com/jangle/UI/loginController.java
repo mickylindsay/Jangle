@@ -105,8 +105,6 @@ public class loginController implements Initializable {
         String password = passwordField.getText();
         clearScreen();
 
-
-
         if (username.length() > 20){
             itWontFitSenpai.setVisible(true);
             return;
