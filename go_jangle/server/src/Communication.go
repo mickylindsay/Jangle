@@ -24,6 +24,8 @@ func Listen_To_Clients (user *User, e *list.Element) {
 		if err != nil {
 			jangle.userlist.Remove(e);
 			Color_Println("orange", "User Disconnected");
+			
+			Logln("User Disconncete from address:", user.Get_Remote_Address());
 			break;
 		}
 

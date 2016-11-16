@@ -71,31 +71,31 @@ public class Client_ParseData implements IPARSER {
 			return;
 		}
 
-		if (data[0] == CommUtil.LOGIN_SUCCESS) {
+		else if (data[0] == CommUtil.LOGIN_SUCCESS) {
 			loginResult = LoginResult.SUCESS;
 			UserID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
 			return;
 		}
 
-		if (data[0] == CommUtil.LOGIN_FAIL) {
+		else if (data[0] == CommUtil.LOGIN_FAIL) {
 			loginResult = LoginResult.FAIL;
 			return;
 		}
 
-		if (data[0] == CommUtil.CREATE_USER_FAIL) {
+		else if (data[0] == CommUtil.CREATE_USER_FAIL) {
 			loginResult = LoginResult.NAME_TAKEN;
 			return;
 		}
 
-		if (data[0] == CommUtil.RECIEVE_DISPLAY_NAME) {
+		else if (data[0] == CommUtil.RECIEVE_DISPLAY_NAME) {
 			DisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
 			return;
 		}
 
-		if (data[0] == CommUtil.RECIEVE_USERID) {
+		else if (data[0] == CommUtil.RECIEVE_USERID) {
 
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
-			User tmp = new User("", id);
+			User tmp = new User(null, id);
 			// make sure the user is not in the list
 			if (Cl.getUsers().contains(tmp) == false) {
 
@@ -109,24 +109,26 @@ public class Client_ParseData implements IPARSER {
 			}
 		}
 
-		if (data[0] == CommUtil.RECIEVE_SERVER_ID) {
+		else if (data[0] == CommUtil.RECIEVE_SERVER_ID) {
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
 			//IMPLEMENT THIS LATER
 		}
 		
-		if (data[0] == CommUtil.RECIEVE_SERVER_DISPLAY_NAME){
+		else if (data[0] == CommUtil.RECIEVE_SERVER_DISPLAY_NAME){
 			ServerDisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
 		}
 		
-		if (data[0] == CommUtil.RECIEVE_ROOM_ID){
+		else if (data[0] == CommUtil.RECIEVE_ROOM_ID){
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
 			// implement it later
 		}
 		
-		if (data[0] == CommUtil.RECIEVE_ROOM_DISPLAY_NAME){
+		else if (data[0] == CommUtil.RECIEVE_ROOM_DISPLAY_NAME){
 			RoomDisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
 			return;
 		}
+
+
 		
 		
 
@@ -171,6 +173,7 @@ public class Client_ParseData implements IPARSER {
 
 		while ((loginResult == LoginResult.TIMEOUT)
 				&& (System.currentTimeMillis() - startTime < CommUtil.TIME_OUT_MILLI)) {
+            
 		}
 
 		if (loginResult == LoginResult.SUCESS) {
@@ -270,7 +273,7 @@ public class Client_ParseData implements IPARSER {
 	// TODO SQL error?? preety sure my code is right
 	public String requestDisplayName(User user) throws IOException {
 
-		DisplayName = "";
+		DisplayName = null;
 
 		byte[] toServer = new byte[5];
 		toServer[0] = CommUtil.REQUEST_DISPLAY_NAME;
@@ -284,7 +287,7 @@ public class Client_ParseData implements IPARSER {
 		Comm.sendToServer(toServer);
 		long oldTime = System.currentTimeMillis();
 
-		while (!DisplayName.equals("") && System.currentTimeMillis() - oldTime < 3000)
+		while (DisplayName == null && System.currentTimeMillis() - oldTime < 3000)
 			;
 
 		return DisplayName;
@@ -376,7 +379,30 @@ public class Client_ParseData implements IPARSER {
 
 	}
 
+    public String requestAvatarURL(User user) throws IOException {
+
+        String avatar = null;
+
+        byte[] toServer = new byte[5];
+        toServer[0] = CommUtil.REQUEST_USER_ICON;
+        byte[] idInByte = CommUtil.intToByteArr(user.getId());
+
+        for (int i = 0; i < idInByte.length; i++) {
+            toServer[i + 1] = idInByte[i];
+        }
+
+        Comm.sendToServer(toServer);
+        long oldTime = System.currentTimeMillis();
+
+        while (avatar == null && System.currentTimeMillis() - oldTime < 3000){
+
+        }
+        return avatar;
+    }
+
 	public Client getClient() {
 		return this.Cl;
 	}
+
+
 }

@@ -29,6 +29,7 @@ public final class CommUtil {
 	public static final byte REQUEST_SERVER_DISPLAY_NAME = (byte) 36;
 	public static final byte REQUEST_ALL_ROOM_ID = (byte) 37;
 	public static final byte REQUEST_ROOM_DISPALY_NAME = (byte) 38;
+    public static final byte REQUEST_USER_ICON = (byte) 43;
 
 	public static final byte RECIEVE_USERID = (byte) 48;
 	public static final byte RECIEVE_DISPLAY_NAME = (byte) 49;
