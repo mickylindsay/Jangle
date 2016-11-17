@@ -26,43 +26,30 @@ public class Test {
 
 	public static void main(String[] args) throws IOException, InterruptedException, LineUnavailableException {
 
-		// Client Cl = new Client();
-		// Client_ParseData Parse = null;
-		// // TestServer server = new TestServer(9090);
-		//
-		// try {
-		// Parse = new Client_ParseData(Cl, "localhost", 9090);
-		// System.out.println("generated client");
-		// } catch (IOException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
-		//
-		// Thread.sleep(1000);
+		Client Cl = new Client();
+		Client_ParseData Parse = null;
+		// TestServer server = new TestServer(9090);
 
-		// EDIT BELOW HERE
-
-		// set up the TargetDataLine
-		
-		//Microphone test = new Microphone();
-		
-		VoiceChat test = new VoiceChat(7800);
-		
-		
-		test.addUserToChat("localhost");
-		
-		test.startBrodcast();
-		test.startSpeakers();
-		
-		
-		test.recieveData();
-		
-		while(true){
+		try {
+			Parse = new Client_ParseData(Cl, "localhost", 9090);
+			//System.out.println("generated client");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		
 		
+		User Nate =  TestUtil.newNathan();
 		
+		//LOGIN
 		
+		Nate.setId(4);
+		
+		System.out.println(Parse.requestDisplayName(Nate));
+		
+	  while(true){ }
+		  
+		 
 
 	}
 

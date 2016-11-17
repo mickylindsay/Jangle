@@ -15,6 +15,8 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
+import com.jangle.client.User;
+
 /**
  * Handles the creation of the voice chat. The recieving and playing to speakers are handled in this class.
  * So far, this class will handle the recieving. It can only handle one user at the moment.
@@ -27,20 +29,19 @@ public class VoiceChat implements Runnable {
 	private SourceDataLine speakers;
 
 	private AudioFormat format;
-	private int dataWidth;
-
-	private int numChatWith;
 	private ArrayList<VoiceChatSocket> connections;
 	private DatagramSocket Recieving;
 	private VoiceBroadcast Madden;
+	
+	private ArrayList Users;
 	
 	private boolean isReceiving;
 
 	private InetAddress Address;
 	private int port;
 
-	public VoiceChat(int gport) throws SocketException {
-		format = new AudioFormat(8000.0f, 16, 1, true, true);
+	public VoiceChat(int gport, ArrayList<User> gUsers) throws SocketException {
+		format = VoiceUtil.genFormat();
 		try {
 			// init speakers
 			DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, format);
@@ -49,11 +50,11 @@ public class VoiceChat implements Runnable {
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
 		}
-
-		numChatWith = 0;
+		
 		isReceiving = false;
 		connections = new ArrayList<VoiceChatSocket>();
 		port = gport;
+		Users = gUsers;
 
 		try {
 			Address = InetAddress.getLocalHost();
@@ -64,7 +65,6 @@ public class VoiceChat implements Runnable {
 		
 		Madden = new VoiceBroadcast(connections, format);
 		Recieving = new DatagramSocket(gport);
-		dataWidth = Madden.getDataWidth();
 
 	}
 
@@ -74,14 +74,11 @@ public class VoiceChat implements Runnable {
 	 * 
 	 * @param IP
 	 *            IP of the user.
+	 * @throws IOException 
+	 * @throws UnknownHostException 
 	 */
-	public void addUserToChat(String IP) {
-		try {
-			connections.add(new VoiceChatSocket(IP, port, dataWidth));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		numChatWith++;
+	private void addUserToChat(User gUser) throws UnknownHostException, IOException {
+		connections.add(new VoiceChatSocket(gUser, port));
 	}
 
 	public void closeAllConctions() {
@@ -131,10 +128,6 @@ public class VoiceChat implements Runnable {
 
 	@Override
 	public void run() {
-
-		// TODO with code below in a thead from main, this works. Need to put in
-		// differnet code from the voice part. Think about a differnet class.
-		// Also remove SYSO
 		while (true) {
 			byte[] data = new byte[1024];
 			DatagramPacket packet = new DatagramPacket(data, data.length);

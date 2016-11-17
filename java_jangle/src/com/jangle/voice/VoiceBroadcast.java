@@ -30,23 +30,13 @@ public class VoiceBroadcast implements Runnable {
 			// init microphone
 			DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 			microphone = (TargetDataLine) AudioSystem.getLine(info);
-			micData = new byte[1024];
-
-			dataWidth = micData.length;
-
-			// init speakers
-			DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, format);
+			micData = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
 
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
 		}
 
 	}
-	
-	public int getDataWidth(){
-		return dataWidth;
-	}
-
 	/**
 	 * Start the input for the microphone. Input is whatever the default
 	 * recording device of the operating system is

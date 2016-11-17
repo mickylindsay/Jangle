@@ -1,5 +1,7 @@
 package com.jangle.ConroyTest;
 
+import java.util.ArrayList;
+
 import com.jangle.client.Message;
 import com.jangle.client.User;
 
@@ -27,7 +29,36 @@ public final class TestUtil {
 	}
 	
 	public static User newNathan(){
-		User ret = new User("Nathan", 2);
+		User ret = new User("nathan", 5);
+		return ret;
+	}
+	
+	public static User newMicky(){
+		User ret = new User("micky", 3);
+		return ret;
+	}
+	
+	public static User newJess(){
+		User ret = new User("jess", 4);
+		return ret;
+	}
+	
+	public static User newTom(){
+		User ret = new User("tom", 5);
+		return ret;
+		
+	}
+	
+	
+	
+	
+	public static ArrayList<User> genUserList(){
+		ArrayList<User> ret = new ArrayList<User>();
+		
+		ret.add(newNathan());
+		ret.add(newMicky());
+		ret.add(newTom());
+		ret.add(newJess());
 		
 		return ret;
 		
