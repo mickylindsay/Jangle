@@ -111,26 +111,22 @@ public class Client_ParseData implements IPARSER {
 
 		else if (data[0] == CommUtil.RECIEVE_SERVER_ID) {
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
-			//IMPLEMENT THIS LATER
+			// IMPLEMENT THIS LATER
 		}
-		
-		else if (data[0] == CommUtil.RECIEVE_SERVER_DISPLAY_NAME){
+
+		else if (data[0] == CommUtil.RECIEVE_SERVER_DISPLAY_NAME) {
 			ServerDisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
 		}
-		
-		else if (data[0] == CommUtil.RECIEVE_ROOM_ID){
+
+		else if (data[0] == CommUtil.RECIEVE_ROOM_ID) {
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
 			// implement it later
 		}
-		
-		else if (data[0] == CommUtil.RECIEVE_ROOM_DISPLAY_NAME){
+
+		else if (data[0] == CommUtil.RECIEVE_ROOM_DISPLAY_NAME) {
 			RoomDisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
 			return;
 		}
-
-
-		
-		
 
 	}
 
@@ -173,7 +169,7 @@ public class Client_ParseData implements IPARSER {
 
 		while ((loginResult == LoginResult.TIMEOUT)
 				&& (System.currentTimeMillis() - startTime < CommUtil.TIME_OUT_MILLI)) {
-            
+
 		}
 
 		if (loginResult == LoginResult.SUCESS) {
@@ -273,7 +269,7 @@ public class Client_ParseData implements IPARSER {
 	// TODO SQL error?? preety sure my code is right
 	public String requestDisplayName(User user) throws IOException {
 
-		DisplayName = null;
+		DisplayName = new String();
 
 		byte[] toServer = new byte[5];
 		toServer[0] = CommUtil.REQUEST_DISPLAY_NAME;
@@ -287,9 +283,14 @@ public class Client_ParseData implements IPARSER {
 		Comm.sendToServer(toServer);
 		long oldTime = System.currentTimeMillis();
 
-		while (DisplayName == null && System.currentTimeMillis() - oldTime < 3000)
-			;
-
+		while (DisplayName.isEmpty() && System.currentTimeMillis() - oldTime < 3000) {
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return DisplayName;
 
 	}
@@ -326,15 +327,14 @@ public class Client_ParseData implements IPARSER {
 		Comm.sendToServer(toServer);
 	}
 
-	
-	
-	//TODO need to test this
+	// TODO need to test this
 	/**
 	 * get a list of all of the room IDs in the room
+	 * 
 	 * @param serverID
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public void getRoomIDInServer(int serverID) throws IOException{
+	public void getRoomIDInServer(int serverID) throws IOException {
 		byte[] toServer = new byte[5];
 		byte[] nameAsByte = CommUtil.intToByteArr(serverID);
 		toServer[0] = CommUtil.REQUEST_ALL_ROOM_ID;
@@ -345,10 +345,11 @@ public class Client_ParseData implements IPARSER {
 
 		Comm.sendToServer(toServer);
 	}
-	
-	//TODO test this 
+
+	// TODO test this
 	/**
-	 * Request 
+	 * Request
+	 * 
 	 * @param serverID
 	 * @param roomID
 	 * @return
@@ -379,30 +380,29 @@ public class Client_ParseData implements IPARSER {
 
 	}
 
-    public String requestAvatarURL(User user) throws IOException {
+	public String requestAvatarURL(User user) throws IOException {
 
-        String avatar = null;
+		String avatar = null;
 
-        byte[] toServer = new byte[5];
-        toServer[0] = CommUtil.REQUEST_USER_ICON;
-        byte[] idInByte = CommUtil.intToByteArr(user.getId());
+		byte[] toServer = new byte[5];
+		toServer[0] = CommUtil.REQUEST_USER_ICON;
+		byte[] idInByte = CommUtil.intToByteArr(user.getId());
 
-        for (int i = 0; i < idInByte.length; i++) {
-            toServer[i + 1] = idInByte[i];
-        }
+		for (int i = 0; i < idInByte.length; i++) {
+			toServer[i + 1] = idInByte[i];
+		}
 
-        Comm.sendToServer(toServer);
-        long oldTime = System.currentTimeMillis();
+		Comm.sendToServer(toServer);
+		long oldTime = System.currentTimeMillis();
 
-        while (avatar == null && System.currentTimeMillis() - oldTime < 3000){
+		while (avatar == null && System.currentTimeMillis() - oldTime < 3000) {
 
-        }
-        return avatar;
-    }
+		}
+		return avatar;
+	}
 
 	public Client getClient() {
 		return this.Cl;
 	}
-
 
 }

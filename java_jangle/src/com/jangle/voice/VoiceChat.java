@@ -74,13 +74,11 @@ public class VoiceChat implements Runnable {
 	 * 
 	 * @param IP
 	 *            IP of the user.
+	 * @throws IOException 
+	 * @throws UnknownHostException 
 	 */
-	private void addUserToChat(User gUser) {
-		try {
-			connections.add(new VoiceChatSocket(gUser, port));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private void addUserToChat(User gUser) throws UnknownHostException, IOException {
+		connections.add(new VoiceChatSocket(gUser, port));
 	}
 
 	public void closeAllConctions() {

@@ -10,10 +10,8 @@ public class testSelfVoice {
 
 	public static void main(String[] args) throws SocketException, LineUnavailableException {
 
-		VoiceChat test = new VoiceChat(7800);
+		VoiceChat test = new VoiceChat(7800, TestUtil.genUserList());
 		  
-		  
-		  test.addUserToChat("localhost");
 		  
 		  test.startBrodcast();
 		  test.startSpeakers();

@@ -40,12 +40,13 @@ public class VoiceChatSocket implements Runnable {
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-	public VoiceChatSocket(User gUser, int gport,)
+	public VoiceChatSocket(User gUser, int gport)
 			throws UnknownHostException, IOException {
+		User = gUser;
 		port = gport;
 		socket = new DatagramSocket();
-		Address = InetAddress.getByName(gAddress);
-		User = gUser;
+		Address = InetAddress.getByName(User.getIP());
+		
 	}
 	
 	public void sendVoice(byte[] data){
