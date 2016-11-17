@@ -133,7 +133,7 @@ func Get_Offset_Messages(user *User, offset uint) ([]Message, error){
 				return nil, err;
 			}
 			//Create a "17" message to send back to user
-			m := Message_Recieve{
+			m := Master {
 				code: 17,
 				serverid: Int_Converter(user.serverid),
 				roomid: Int_Converter(user.roomid),
@@ -170,7 +170,7 @@ func Get_Userid_Messages(serverid uint) ([]Message, error){
 				return nil, err;
 			}
 			//Create a "48" message to send back to user
-			m := Userid{
+			m := Master {
 				code: 48,
 				userid: Int_Converter(userid)};
 			//Add that message to the array which will be returned
@@ -201,7 +201,7 @@ func Get_Serverid_Messages(userid uint) ([]Message, error){
 			err := rows.Scan(&serverid);
 			Check_Error(err);
 			//Create a "50" message to send back to user
-			m := Serverid_Userid{
+			m := Master {
 				code: 50,
 				serverid: Int_Converter(serverid),
 				userid: Int_Converter(userid)};
@@ -234,7 +234,7 @@ func Get_Roomid_Messages(serverid uint) ([]Message, error){
 				return nil, err;
 			}
 			//Create a "52" message to send back to user
-			m := Serverid_Userid{
+			m := Master {
 				code: 52,
 				serverid: Int_Converter(serverid),
 				userid: Int_Converter(roomid)};

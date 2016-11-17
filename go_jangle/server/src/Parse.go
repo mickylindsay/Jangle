@@ -5,67 +5,64 @@ import "fmt"
 //Initializes function array that contains all the functions necessary to handle every
 //message code
 func Init_Parse () {
-	Messages := make([]func(user *User, data []byte) Message, 256)
+	Parsers := make([]func(user *User, data []byte) Message, 256)
 
-	Messages[0] = Message0
-	Messages[1] = Message1
-	Messages[2] = Message2
-	Messages[3] = Message3
-	Messages[4] = Message4
+	Parsers[0] = Message0
+	Parsers[1] = Message1
+	Parsers[2] = Message2
+	Parsers[3] = Message3
+	Parsers[4] = Message4
 
-	Messages[16] = Message16
-	Messages[17] = Message17
+	Parsers[16] = Message16
+	Parsers[17] = Message17
 
-	Messages[32] = Message32
-	Messages[33] = Message33
-	Messages[34] = Message34
-	Messages[35] = Message35
-	Messages[36] = Message36
-	Messages[37] = Message37
-	Messages[38] = Message38
-	Messages[39] = Message39
-	Messages[40] = Message40
-	Messages[41] = Message41
-	Messages[43] = Message43
-	Messages[44] = Message44
+	Parsers[32] = Message32
+	Parsers[33] = Message33
+	Parsers[34] = Message34
+	Parsers[35] = Message35
+	Parsers[36] = Message36
+	Parsers[37] = Message37
+	Parsers[38] = Message38
+	Parsers[39] = Message39
+	Parsers[40] = Message40
+	Parsers[41] = Message41
+	Parsers[43] = Message43
+	Parsers[44] = Message44
 
-	Messages[48] = Message48
-	Messages[49] = Message49
-	Messages[50] = Message50
-	Messages[51] = Message51
-	Messages[52] = Message52
-	Messages[53] = Message53
-	Messages[54] = Message54
-	Messages[55] = Message55
-	Messages[56] = Message56
-	Messages[57] = Message57
-	Messages[58] = Message58
+	Parsers[48] = Message48
+	Parsers[49] = Message49
+	Parsers[50] = Message50
+	Parsers[51] = Message51
+	Parsers[52] = Message52
+	Parsers[53] = Message53
+	Parsers[54] = Message54
+	Parsers[55] = Message55
+	Parsers[56] = Message56
+	Parsers[57] = Message57
+	Parsers[58] = Message58
 	
-	Messages[64] = Message64
-	Messages[65] = Message65
-	Messages[66] = Message66
-	Messages[67] = Message67
-	Messages[68] = Message68
-	Messages[70] = Message70
+	Parsers[64] = Message64
+	Parsers[65] = Message65
+	Parsers[66] = Message66
+	Parsers[67] = Message67
+	Parsers[68] = Message68
+	Parsers[70] = Message70
 
-	Messages[80] = Message80
-	Messages[81] = Message81
-	Messages[82] = Message82
+	Parsers[80] = Message80
+	Parsers[81] = Message81
+	Parsers[82] = Message82
 
-	Messages[96] = Message96
-	Messages[97] = Message97
-	Messages[98] = Message98
-	Messages[99] = Message99
-	Messages[100] = Message100
-	Messages[101] = Message101
-	Messages[102] = Message102
+	Parsers[96] = Message96
+	Parsers[97] = Message97
+	Parsers[98] = Message98
+	Parsers[99] = Message99
+	Parsers[100] = Message100
+	Parsers[101] = Message101
+	Parsers[102] = Message102
 
-	Messages[112] = Message112
-	Messages[113] = Message113
+	Parsers[255] = Message255
 
-	Messages[255] = Message255
-
-	jangle.Messages = Messages
+	jangle.Parsers = Parsers
 }
 
 //Master function: takes paramaters type User struct and byte array
@@ -76,14 +73,14 @@ func Init_Parse () {
 //and calls the appropriate function based off the code type
 func Parse_Data (user *User, data []byte) {
 
-	jangle.Messages[data[0]](user, data)
+	jangle.Parsers[data[0]](user, data)
 }
 
 //If create user successful, convert message to code type 4
 //If create user fail, convert message to code type 1
 func Message0 (user *User, data []byte) Message {
 
-	m := Username_Password{
+	m := Master {
 		code: data[0],
 		username: data[1:20],
 		password: data[21:]}
@@ -106,7 +103,7 @@ func Message0 (user *User, data []byte) Message {
 //Writes to user message code type 1, create user fail
 func Message1 (user *User, data []byte) Message {
 
-	m := Base{
+	m := Master {
 		code: data[0]}
 
 			user.Write(m.Build_Message())
@@ -117,7 +114,7 @@ func Message1 (user *User, data []byte) Message {
 //If login fail, convert message to code type 3
 func Message2 (user *User, data []byte) Message {
 
-	m := Username_Password{
+	m := Master {
 		code: data[0],
 		username: data[1:20],
 		password: data[21:]}
@@ -140,7 +137,7 @@ func Message2 (user *User, data []byte) Message {
 //Writes to user message code type 3, login fail
 func Message3 (user *User, data []byte) Message {
 fmt.Println("Fail");
-	m := Base{
+	m := Master {
 		code: data[0]}
 
 			user.Write(m.Build_Message())
@@ -150,7 +147,7 @@ fmt.Println("Fail");
 //Send message code type 4 to client, login success
 func Message4 (user *User, data []byte) Message {
 fmt.Println("Pass");
-	m := Userid{
+	m := Master {
 		code: data[0],
 		userid: data[1:4]}
 
@@ -162,7 +159,7 @@ fmt.Println("Pass");
 //to message code type 17, message client recieve
 func Message16 (user *User, data []byte) Message {
 
-	m := Message_Send{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4],
 		roomid: data[5:8],
@@ -190,7 +187,7 @@ func Message16 (user *User, data []byte) Message {
 //to a chat room on a specific server
 func Message17 (user *User, data []byte) Message {
 
-	m := Message_Recieve{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4],
 		roomid: data[5:8],
@@ -209,7 +206,7 @@ func Message17 (user *User, data []byte) Message {
 //dependent on offset value from message code type 32, request n messages
 func Message32 (user *User, data []byte) Message {
 
-	m := Multi_Message{
+	m := Master {
 		code: data[0],
 		offset: data[1]}
 
@@ -228,7 +225,7 @@ func Message32 (user *User, data []byte) Message {
 //which consists of all userids conected to a specific server
 func Message33 (user *User, data []byte) Message {
 
-	m := Base{
+	m := Master {
 		code: data[0]}
 
 			messages, err := Get_Userid_Messages(user.serverid)
@@ -246,7 +243,7 @@ func Message33 (user *User, data []byte) Message {
 //builds a new byte array in the format of message code type 49, recieve display name
 func Message34 (user *User, data []byte) Message {
 
-	m := Userid{
+	m := Master {
 		code: data[0],
 		userid: data[1:4]}
 
@@ -267,7 +264,7 @@ func Message34 (user *User, data []byte) Message {
 //that a specific user is connected to from message code type 35, request all serverid
 func Message35 (user *User, data []byte) Message {
 
-	m := Userid{
+	m := Master {
 		code: data[0],
 		userid: data[1:4]}
 
@@ -287,7 +284,7 @@ func Message35 (user *User, data []byte) Message {
 //new byte array in the format of message code type 51, recieve server display name
 func Message36 (user *User, data []byte) Message {
 
-	m := Serverid{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4]}
 
@@ -308,7 +305,7 @@ func Message36 (user *User, data []byte) Message {
 //on a specific server from the serverid in message code type 37, request all roomid
 func Message37 (user *User, data []byte) Message {
 
-	m := Serverid{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4]}
 
@@ -328,7 +325,7 @@ func Message37 (user *User, data []byte) Message {
 //a new byte array in the format of message code type 53, recieve room display name
 func Message38 (user *User, data []byte) Message {
 
-	m := Serverid_Roomid{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4],
 		roomid: data[5:8]}
@@ -353,7 +350,7 @@ func Message38 (user *User, data []byte) Message {
 //in the format of message code type 54, recieve master display name
 func Message39 (user *User, data []byte) Message {
 
-	m := Userid{
+	m := Master {
 		code: data[0],
 		userid: data[1:4]}
 
@@ -375,7 +372,7 @@ func Message39 (user *User, data []byte) Message {
 //type 55, recieve status
 func Message40 (user *User, data []byte) Message {
 
-	m := Userid{
+	m := Master {
 		code: data[0],
 		userid: data[1:4]}
 
@@ -393,7 +390,7 @@ func Message40 (user *User, data []byte) Message {
 //Requests the local ip address of any user via userid, used for client side voice communication
 func Message41 (user *User, data []byte) Message {
 
-	m := Userid{
+	m := Master {
 		code: data[0],
 		userid: data[1:4]}
 
@@ -409,10 +406,28 @@ func Message41 (user *User, data []byte) Message {
 			return m
 }
 
+//TODO
+func Message43 (user *User, data []byte) Message {
+
+	m := Master {
+
+	}
+	return m
+}
+
+//TODO
+func Message44 (user *User, data []byte) Message {
+
+	m := Master {
+
+	}
+	return m
+}
+
 //Sends message code type 48, recieve userid, to client
 func Message48 (user *User, data []byte) Message {
 
-	m := Userid{
+	m := Master {
 		code: data[0],
 		userid: data[1:4]}
 
@@ -423,7 +438,7 @@ func Message48 (user *User, data []byte) Message {
 //Sends message code type 49, recieve display name, to client
 func Message49 (user *User, data []byte) Message {
 
-	m := Display_Name{
+	m := Master {
 		code: data[0],
 		userid: data[1:4],
 		display_name: data[5:]}
@@ -435,7 +450,7 @@ func Message49 (user *User, data []byte) Message {
 //Sends message code type 50, recieve serverid, to client
 func Message50 (user *User, data []byte) Message {
 
-	m := Serverid_Userid{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4],
 		userid: data[5:8]}
@@ -447,7 +462,7 @@ func Message50 (user *User, data []byte) Message {
 //Sends message code type 51, recieve server display name, to client
 func Message51 (user *User, data []byte) Message {
 
-	m := Server_Display_Name{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4],
 		server_display_name: data[5:]}
@@ -459,7 +474,7 @@ func Message51 (user *User, data []byte) Message {
 //Sends message code type 52, recieve roomid, to client
 func Message52 (user *User, data []byte) Message {
 
-	m := Serverid_Roomid{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4],
 		roomid: data[5:8]}
@@ -471,7 +486,7 @@ func Message52 (user *User, data []byte) Message {
 //Sends message code type 53, recieve room display name, to client
 func Message53 (user *User, data []byte) Message {
 
-	m := Room_Display_Name{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4],
 		roomid: data[5:8],
@@ -484,7 +499,7 @@ func Message53 (user *User, data []byte) Message {
 //Sends message code type 54, recieve master display name, to client
 func Message54 (user *User, data []byte) Message {
 
-	m := Display_Name{
+	m := Master {
 		code: data[0],
 		userid: data[1:4],
 		display_name: data[5:]}
@@ -496,7 +511,7 @@ func Message54 (user *User, data []byte) Message {
 //Sends message code type 55, recieve status, to client
 func Message55 (user *User, data []byte) Message {
 
-	m := Userid_Status{
+	m := Master {
 		code: data[0],
 		userid: data[1:4],
 		status: data[5],
@@ -509,7 +524,7 @@ func Message55 (user *User, data []byte) Message {
 //Broadcasts to a single user the ip of a requested user
 func Message56 (user *User, data []byte) Message {
 
-	m := Display_Name{
+	m := Master {
 		code: data[0],
 		userid: data[1:4],
 		display_name: data[5:]}
@@ -518,22 +533,41 @@ func Message56 (user *User, data []byte) Message {
 			return m
 }
 
+//TODO
+func Message57 (user *User, data []byte) Message {
+
+	m := Master {
+
+	}
+	return m
+}
+
+//TODO
+func Message58 (user *User, data []byte) Message {
+
+	m := Master {
+
+	}
+	return m
+
+}
+
 //Replaces the user's display name with the new display name in message code type 64,
 //send new display name, then sends message code type 99, broadcast display name, to
 //all users on the user's connected server
 func Message64 (user *User, data []byte) Message {
 
-	m := New_Display_Name{
+	m := Master {
 		code: data[0],
-		new_display_name: data[1:]}
+		display_name: data[1:]}
 
 			err := Set_New_Display_Name(user.serverid, user.id, data[1:])
 			Check_Error(err)
 
-			data = make([]byte, len(m.new_display_name) + 5)
+			data = make([]byte, len(m.display_name) + 5)
 			data[0] = broadcast_display_name
 			copy(data[1:4], Int_Converter(user.id))
-			copy(data[5:], m.new_display_name)
+			copy(data[5:], m.display_name)
 
 			Message99(user, data)
 			return m
@@ -544,19 +578,19 @@ func Message64 (user *User, data []byte) Message {
 //broadcast server display name, to all users that are members of the server
 func Message65 (user *User, data []byte) Message {
 
-	m := New_Server_Display_Name{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4],
-		new_server_display_name: data[5:]}
+		server_display_name: data[5:]}
 
 			num := Byte_Converter(data[1:4])
 			err := Set_New_Server_Display_Name(num, data[5:])
 			Check_Error(err)
 
-			data = make([]byte, len(m.new_server_display_name) + 5)
+			data = make([]byte, len(m.server_display_name) + 5)
 			data[0] = broadcast_server_display_name
 			copy(data[1:4], m.serverid)
-			copy(data[5:], m.new_server_display_name)
+			copy(data[5:], m.server_display_name)
 
 			Message100(user, data)
 			return m
@@ -567,22 +601,22 @@ func Message65 (user *User, data []byte) Message {
 //broadcast room display name, to all users on that are connected to the server
 func Message66 (user *User, data []byte) Message {
 
-	m := New_Room_Display_Name{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4],
 		roomid: data[5:8],
-		new_room_display_name: data[9:]}
+		room_display_name: data[9:]}
 
 			num1 := Byte_Converter(data[1:4])
 			num2 := Byte_Converter(data[5:8])
 			err := Set_New_Room_Display_Name(num1, num2, data[9:])
 			Check_Error(err)
 
-			data = make([]byte, len(m.new_room_display_name) + 9)
+			data = make([]byte, len(m.room_display_name) + 9)
 			data[0] = broadcast_room_display_name
 			copy(data[1:4], m.serverid)
 			copy(data[5:8], m.roomid)
-			copy(data[9:], m.new_room_display_name)
+			copy(data[9:], m.room_display_name)
 
 			Message101(user, data)
 			return m	
@@ -592,27 +626,46 @@ func Message66 (user *User, data []byte) Message {
 //code type 67, send new master display name, then sends message code type 102,
 //broadcast master display name, to all of the user's friends
 func Message67 (user *User, data []byte) Message {
-	m := New_Display_Name{
+	m := Master {
 		code: data[0],
-		new_display_name: data[1:]}
+		display_name: data[1:]}
 
 			err := Set_New_Master_Display_Name(user.id, data[1:])
 			Check_Error(err)
 
-			data = make([]byte, len(m.new_display_name) + 5)
+			data = make([]byte, len(m.display_name) + 5)
 			data[0] = broadcast_master_display_name
 			copy(data[1:4], Int_Converter(user.id))
-			copy(data[5:], m.new_display_name)
+			copy(data[5:], m.display_name)
 
 			Message102(user, data)
 			return m
+}
+
+//TODO
+func Message68 (user *User, data []byte) Message {
+
+	m := Master {
+
+	}
+	return m
+}
+
+//TODO
+func Message70 (user *User, data []byte) Message {
+
+	m := Master {
+
+	}
+	return m
+
 }
 
 //Changes the user's status to the new status in message code type 80, change status,
 //then builds a new byte array in the format of message code type 96, broadcast status
 func Message80 (user *User, data []byte) Message {
 
-	m := Status{
+	m := Master {
 		code: data[0],
 		status: data[1],
 		muted: data[2]}
@@ -634,7 +687,7 @@ func Message80 (user *User, data []byte) Message {
 //then builds a new byte array in the format of message code type 97, broadcast server
 func Message81 (user *User, data []byte) Message {
 
-	m := Serverid{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4]}
 
@@ -653,7 +706,7 @@ func Message81 (user *User, data []byte) Message {
 //builds a new byte array in the format of message code type 98, broadcast room
 func Message82 (user *User, data []byte)  Message {
 
-	m := Roomid{
+	m := Master {
 		code: data[0],
 		roomid: data[1:4]}
 
@@ -672,7 +725,7 @@ func Message82 (user *User, data []byte)  Message {
 //server
 func Message96 (user *User, data []byte) Message {
 
-	m := Userid_Status{
+	m := Master {
 		code: data[0],
 		userid: data[1:4],
 		status: data[5],
@@ -685,7 +738,7 @@ func Message96 (user *User, data []byte) Message {
 //Sends message code type 97, broadcast server, to all users on the specified server
 func Message97 (user *User, data []byte) Message {
 
-	m := Serverid_Userid{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4],
 		userid: data[5:8]}
@@ -698,7 +751,7 @@ func Message97 (user *User, data []byte) Message {
 //server
 func Message98 (user *User, data []byte) Message {
 
-	m := Roomid_Userid{
+	m := Master {
 		code: data[0],
 		roomid: data[1:4],
 		userid: data[5:8]}
@@ -711,7 +764,7 @@ func Message98 (user *User, data []byte) Message {
 //connected server
 func Message99 (user *User, data []byte) Message {
 
-	m := Display_Name{
+	m := Master {
 		code: data[0],
 		userid: data[1:4],
 		display_name: data[5:]}
@@ -724,7 +777,7 @@ func Message99 (user *User, data []byte) Message {
 //members of the specified server
 func Message100 (user *User, data []byte) Message {
 
-	m := Server_Display_Name{
+	m := Master {
 		code: recieve_server_display_name,
 		serverid: data[1:4],
 		server_display_name: data[5:]}
@@ -737,7 +790,7 @@ func Message100 (user *User, data []byte) Message {
 //specified server
 func Message101 (user *User, data []byte) Message {
 
-	m := Room_Display_Name{
+	m := Master {
 		code: data[0],
 		serverid: data[1:4],
 		roomid: data[5:8],
@@ -751,7 +804,7 @@ func Message101 (user *User, data []byte) Message {
 //the user's friends
 func Message102 (user *User, data []byte) Message {
 
-	m := Display_Name{
+	m := Master {
 		code: data[0],
 		userid: data[1:4],
 		display_name: data[5:]}
@@ -763,7 +816,7 @@ func Message102 (user *User, data []byte) Message {
 //Sends message code type 255, error check, to client
 func Message255 (user *User, data []byte) Message {
 	
-	m := Text{
+	m := Master {
 		code: data[0],
 		text: data[1:]}
 
