@@ -123,17 +123,14 @@ type Kick struct {
 //Sets the user's severid and roomid to the default value and removes the user from
 //the user list
 func (c Kick) Execute() {
-	c.user.serverid = Byte_Converter(default_value)
-	c.user.roomid = Byte_Converter(default_value)
+	c.user.serverid = Byte_Converter(default_id)
+	c.user.roomid = Byte_Converter(default_id)
 	Remove_User_From_Userlist(c.user.id);
 }
 
 //Builds a message code type 97, broadcast server
 func (c Kick) Send() {
-	m := Serverid_Userid{
-		code: broadcast_server,
-		serverid: Int_Converter(c.user.serverid),
-		userid: Int_Converter(c.user.id)}
+	m := Create_Message(broadcast_server, Int_Converter(c.user.serverid), Int_Converter(c.user.id))
 	Message97(c.user, m.Build_Message())
 }
 
@@ -149,7 +146,7 @@ func (c Mute) Execute() {
 
 //Builds a message code type 96, broadcast status
 func (c Mute) Send() {
-	m := Userid_Status{
+	m := Master {
 		code: broadcast_status,
 		userid: Int_Converter(c.user.id),
 		status: byte(c.user.status),
@@ -169,7 +166,7 @@ func (c Unmute) Execute() {
 
 //Builds a message code type 96, broadcast status
 func (c Unmute) Send() {
-	m := Userid_Status{
+	m := Master {
 		code: broadcast_status,
 		userid: Int_Converter(c.user.id),
 		status: byte(c.user.status),
@@ -190,7 +187,7 @@ func (c Move) Execute() {
 
 //Builds a message code type 98, broadcast room
 func (c Move) Send() {
-	m := Roomid_Userid{
+	m := Master {
 		code: broadcast_room,
 		roomid: Int_Converter(c.user.roomid),
 		userid: Int_Converter(c.user.id)}

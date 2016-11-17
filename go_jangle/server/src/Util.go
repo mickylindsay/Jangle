@@ -75,9 +75,9 @@ var send_new_user_icon byte = 68
 var send_new_server_icon byte = 70
 
 //Status of client type codes
-var status_change byte = 80
-var status_broadcast byte = 81
-var server_change byte = 82
+var change_status byte = 80
+var change_server byte = 81
+var change_room byte = 82
 
 var broadcast_status byte = 96
 var broadcast_server byte = 97
@@ -91,40 +91,38 @@ var broadcast_master_display_name byte = 102
 var error_check byte = 255
 
 //Status types
+var offline byte = 0
 var online byte = 1
 var away byte = 2
-var offline byte = 3
 
 //Mute values
 var user_unmuted byte = 0
 var user_muted byte = 1
 
-//Default value for server, room, and user
-var default_value []byte = []byte{1,0,0,0}
+//Default and invalid value for server, room, and user
+var invalid_id []byte = []byte{0,0,0,0}
+var default_id []byte = []byte{1,0,0,0}
+
 
 //Converts byte array to unsigned int 
 func Byte_Converter(data []byte) uint {
 	var i uint
 	var sum uint
-
 	for i = 0; int(i) < len(data); i++ {
 		//Preforms little endian bit shifting and adds int value to sum for each byte
 		sum += uint(data[i]) << (8 * i)
 	}
-
 	return sum
 }
 
 //Converts unsigned int to byte array
 func Int_Converter(num uint) []byte {
 	data := make([]byte, 4)
-
 	for i := 0; i < 4; i++ {
 		mod := num % 256
 		data[i] = byte(mod)
 		num /= 256
 	}
-
 	return data
 }
 
@@ -139,11 +137,9 @@ func Milli_Time() uint {
 func Time_Stamp (data []byte) []byte {
 	new_data := make([]byte, len(data) + 4)
 	copy(new_data[0:12], data[0:12])
-
 	for i := 13; i < len(data); i++ {
 		new_data[i + 4] = data[i]
 	}
-
 	copy(new_data[13:16], Int_Converter(Milli_Time()))
 	return new_data
 }
@@ -161,30 +157,22 @@ func Color_Println (c string, text string) {
 	var s string;
 	if (c == "red") {
 		s = "\x1b[0;31m"
-
 	} else if (c == "green") {
 		s = "\x1b[0;32m"
-
 	} else if (c == "orange") {
 		s = "\x1b[0;33m"
-
 	} else if (c == "blue") {
 		s = "\x1b[0;34m"
-
 	} else if (c == "purple") {
 		s = "\x1b[0;35m"
-
 	} else if (c == "cyan") {
 		s = "\x1b[0;36m"
-
 	} else {
 		//Default
 		s = "\x1b[0;0m"
 	}
-	
 	s += text
 	s +="\x1b[0;0m"
-
 	fmt.Println(s)
 }
 

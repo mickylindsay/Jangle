@@ -19,7 +19,8 @@ type Jangle struct {
 	no_database bool
 	logging bool
 	logging_warn bool
-	Messages []func(*User, []byte) Message
+	Messages []func(...interface{}) Message
+	Parsers []func(*User, []byte) Message
 	Commands []func([]string)
 }
 
@@ -59,6 +60,7 @@ func main() {
 	Init_Flags();
 	Init_Logger();
 	Init_Server();
+	Init_Message();
 	Init_Parse();
 	Init_Command();
 	
