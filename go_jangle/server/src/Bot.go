@@ -6,7 +6,7 @@ import (
 
 //Initializes function array that contains all the functions necessary to handle all
 //the bot commands
-func Init_Command () {
+func Init_Command() {
 	Commands := make([]func(args []string), 5)
 
 	Commands[0] = Kick_User
@@ -18,22 +18,22 @@ func Init_Command () {
 	jangle.Commands = Commands
 }
 
-//Checks if the text part of the byte array from a message code type 16, message 
+//Checks if the text part of the byte array from a message code type 16, message
 //client send, is a bot command
 //If the text is bot command, the appropiate function is called from the function array
 //that will execute the bot command properly
 //If the text is not a bot command, the message code type 16 is handled normally
-func Check_Command (user *User, data []byte) bool {
+func Check_Command(user *User, data []byte) bool {
 	var check bool
-	if (string(data[0]) == "/") {
+	if string(data[0]) == "/" {
 		args := strings.Split(string(data), " ")
 		trigger := Switcher(args[0])
-		if (trigger != 255) {
+		if trigger != 255 {
 			check = true
 			jangle.Commands[trigger](args[1:])
 		} else {
 			check = false
-		}	
+		}
 	} else {
 		check = false
 	}
@@ -42,27 +42,27 @@ func Check_Command (user *User, data []byte) bool {
 
 //Changes the trigger word from the bot command to its corresponding byte value to
 //reference the funciton array
-func Switcher (s string) byte {
+func Switcher(s string) byte {
 	var switcher byte
 	switch {
-		case s == "kick":
-			switcher = 0
-		case s == "mute":
-			switcher = 1
-		case s == "unmute":
-			switcher = 2
-		case s == "move":
-			switcher = 3
-		case s == "prune":
-			switcher = 4
-		default:
-			switcher = 255
+	case s == "kick":
+		switcher = 0
+	case s == "mute":
+		switcher = 1
+	case s == "unmute":
+		switcher = 2
+	case s == "move":
+		switcher = 3
+	case s == "prune":
+		switcher = 4
+	default:
+		switcher = 255
 	}
 	return switcher
 }
 
 //Kicks the user from the server
-func Kick_User (args []string) {
+func Kick_User(args []string) {
 	c := Kick{
 		user: Get_User_From_Userid(Byte_Converter([]byte(args[1])))}
 	c.Execute()
@@ -70,7 +70,7 @@ func Kick_User (args []string) {
 }
 
 //Mutes the user
-func Mute_User (args []string) {
+func Mute_User(args []string) {
 	c := Mute{
 		user: Get_User_From_Userid(Byte_Converter([]byte(args[1])))}
 	c.Execute()
@@ -78,7 +78,7 @@ func Mute_User (args []string) {
 }
 
 //Unmutes the user
-func Unmute_User (args []string) {
+func Unmute_User(args []string) {
 	c := Unmute{
 		user: Get_User_From_Userid(Byte_Converter([]byte(args[1])))}
 	c.Execute()
@@ -86,24 +86,24 @@ func Unmute_User (args []string) {
 }
 
 //Moves the user to a different room
-func Move_User (args []string) {
+func Move_User(args []string) {
 	c := Move{
-		user: Get_User_From_Userid(Byte_Converter([]byte(args[1]))),
+		user:   Get_User_From_Userid(Byte_Converter([]byte(args[1]))),
 		roomid: Byte_Converter([]byte(args[2]))}
 	c.Execute()
 	c.Send()
 }
 
 //TODO
-func Prune_N_Messages (args []string) {
+func Prune_N_Messages(args []string) {
 	var u *User
-	if (len(args) > 2) {
+	if len(args) > 2 {
 		u = Get_User_From_Userid(Byte_Converter([]byte(args[2])))
 	} else {
 		u = nil
 	}
 	c := Prune{
-		user: u,
+		user:         u,
 		num_messages: Byte_Converter([]byte(args[1]))}
 	c.Execute()
 	c.Send()
@@ -125,7 +125,7 @@ type Kick struct {
 func (c Kick) Execute() {
 	c.user.serverid = Byte_Converter(default_id)
 	c.user.roomid = Byte_Converter(default_id)
-	Remove_User_From_Userlist(c.user.id);
+	Remove_User_From_Userlist(c.user.id)
 }
 
 //Builds a message code type 97, broadcast server
@@ -146,11 +146,7 @@ func (c Mute) Execute() {
 
 //Builds a message code type 96, broadcast status
 func (c Mute) Send() {
-	m := Master {
-		code: broadcast_status,
-		userid: Int_Converter(c.user.id),
-		status: byte(c.user.status),
-		muted: byte(c.user.muted)}
+	m := Create_Message(broadcast_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
 	Message96(c.user, m.Build_Message())
 }
 
@@ -166,17 +162,13 @@ func (c Unmute) Execute() {
 
 //Builds a message code type 96, broadcast status
 func (c Unmute) Send() {
-	m := Master {
-		code: broadcast_status,
-		userid: Int_Converter(c.user.id),
-		status: byte(c.user.status),
-		muted: byte(c.user.muted)}
+	m := Create_Message(broadcast_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
 	Message96(c.user, m.Build_Message())
 }
 
 //Creates Move struct with param User type and roomid as an uint
 type Move struct {
-	user *User
+	user   *User
 	roomid uint
 }
 
@@ -187,16 +179,13 @@ func (c Move) Execute() {
 
 //Builds a message code type 98, broadcast room
 func (c Move) Send() {
-	m := Master {
-		code: broadcast_room,
-		roomid: Int_Converter(c.user.roomid),
-		userid: Int_Converter(c.user.id)}
+	m := Create_Message(broadcast_room, Int_Converter(c.user.roomid), Int_Converter(c.user.id))
 	Message98(c.user, m.Build_Message())
 }
 
 //TODO
 type Prune struct {
-	user *User
+	user         *User
 	num_messages uint
 }
 

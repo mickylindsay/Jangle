@@ -1,74 +1,83 @@
 package main
 
 //TODO
-type Message interface {
-	Create_Message(...interface{}) Message
-	Build_Message() []byte
-}
-
-//TODO
-type Master struct {
-	code byte
-	username []byte
-	password []byte
-	serverid []byte
-	roomid []byte
-	userid []byte
-	messageid []byte
-	time []byte
+type Message struct {
+	code                byte
+	username            []byte
+	password            []byte
+	serverid            []byte
+	roomid              []byte
+	userid              []byte
+	messageid           []byte
+	time                []byte
 	server_display_name []byte
-	room_display_name []byte
+	room_display_name   []byte
 	master_display_name []byte
-	display_name []byte
-	text []byte
-	address []byte
-	url []byte
-	offset byte
-	status byte
-	muted byte
+	display_name        []byte
+	text                []byte
+	address             []byte
+	url                 []byte
+	offset              byte
+	status              byte
+	muted               byte
 }
 
 //TODO
-func (m Master) Create_Message(args ...interface{}) Message {
-	message := jangle.Messages[args[0].(byte)](args)
+func Create_Message(args ...interface{}) Message {
+	message := jangle.Messages[args[0].(byte)](args...)
 	return message
 }
 
 //TODO
-func (m Master) Build_Message() []byte {
+func (m Message) Build_Message() []byte {
 	var message []byte = []byte{m.code}
-	if (m.username != nil) {
+	if m.username != nil {
 		message = append(message, m.username...)
-	} else if (m.password != nil) {
+	}
+	if m.password != nil {
 		message = append(message, m.password...)
-	} else if (m.serverid != nil) {
+	}
+	if m.serverid != nil {
 		message = append(message, m.serverid...)
-	} else if (m.roomid != nil) {
+	}
+	if m.roomid != nil {
 		message = append(message, m.roomid...)
-	} else if (m.userid != nil) {
+	}
+	if m.userid != nil {
 		message = append(message, m.userid...)
-	} else if (m.messageid != nil) {
+	}
+	if m.messageid != nil {
 		message = append(message, m.messageid...)
-	} else if (m.time != nil) {
+	}
+	if m.time != nil {
 		message = append(message, m.time...)
-	} else if (m.server_display_name != nil) {
+	}
+	if m.server_display_name != nil {
 		message = append(message, m.server_display_name...)
-	} else if (m.room_display_name != nil) {
+	}
+	if m.room_display_name != nil {
 		message = append(message, m.room_display_name...)
-	} else if (m.master_display_name != nil) {
+	}
+	if m.master_display_name != nil {
 		message = append(message, m.master_display_name...)
-	} else if (m.display_name != nil) {
+	}
+	if m.display_name != nil {
 		message = append(message, m.display_name...)
-	} else if (m.text != nil) {
+	}
+	if m.text != nil {
 		message = append(message, m.text...)
-	} else if (m.address != nil) {
+	}
+	if m.address != nil {
 		message = append(message, m.address...)
-	} else if (m.url != nil) {
+	}
+	if m.url != nil {
 		message = append(message, m.url...)
-	} else if (m.offset != 0) {
+	}
+	if m.offset != 0 {
 		var temp1 []byte = []byte{m.offset}
 		message = append(message, temp1...)
-	} else if (m.code == (change_status | recieve_status)) {
+	}
+	if m.code == (change_status | recieve_status) {
 		var temp2 []byte = []byte{m.status}
 		message = append(message, temp2...)
 		var temp3 []byte = []byte{m.muted}
@@ -78,7 +87,7 @@ func (m Master) Build_Message() []byte {
 }
 
 //TODO
-func Init_Message () {
+func Init_Message() {
 	Messages := make([]func(args ...interface{}) Message, 256)
 
 	Messages[0] = Username_Password
@@ -117,7 +126,7 @@ func Init_Message () {
 	Messages[56] = Userid_Address
 	Messages[57] = Userid_Url
 	Messages[58] = Serverid_Url
-	
+
 	Messages[64] = Display_Name
 	Messages[65] = Server_Display_Name
 	Messages[66] = Room_Display_Name
@@ -143,231 +152,231 @@ func Init_Message () {
 }
 
 //TODO
-func Base (args ...interface{}) Message {
-	m := Master {
+func Base(args ...interface{}) Message {
+	m := Message{
 		code: args[0].(byte)}
 	return m
 }
 
 //TODO
-func Username_Password (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Username_Password(args ...interface{}) Message {
+	m := Message{
+		code:     args[0].(byte),
 		username: args[1].([]byte),
 		password: args[2].([]byte)}
 	return m
 }
 
 //TODO
-func Serverid (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Serverid(args ...interface{}) Message {
+	m := Message{
+		code:     args[0].(byte),
 		serverid: args[1].([]byte)}
 	return m
 }
 
 //TODO
-func Roomid (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Roomid(args ...interface{}) Message {
+	m := Message{
+		code:   args[0].(byte),
 		roomid: args[1].([]byte)}
 	return m
 }
 
 //TODO
-func Userid (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Userid(args ...interface{}) Message {
+	m := Message{
+		code:   args[0].(byte),
 		userid: args[1].([]byte)}
 	return m
 }
 
 //TODO
-func Messageid (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Messageid(args ...interface{}) Message {
+	m := Message{
+		code:      args[0].(byte),
 		messageid: args[1].([]byte)}
 	return m
 }
 
 //TODO
-func Messageid_Text (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Messageid_Text(args ...interface{}) Message {
+	m := Message{
+		code:      args[0].(byte),
 		messageid: args[1].([]byte),
-		text: args[2].([]byte)}
+		text:      args[2].([]byte)}
 	return m
 }
 
 //TODO
-func Serverid_Roomid (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Serverid_Roomid(args ...interface{}) Message {
+	m := Message{
+		code:     args[0].(byte),
 		serverid: args[1].([]byte),
-		roomid: args[2].([]byte)}
+		roomid:   args[2].([]byte)}
 	return m
 }
 
 //TODO
-func Serverid_Userid (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Serverid_Userid(args ...interface{}) Message {
+	m := Message{
+		code:     args[0].(byte),
 		serverid: args[1].([]byte),
-		userid: args[2].([]byte)}
+		userid:   args[2].([]byte)}
 	return m
 }
 
 //TODO
-func Roomid_Userid (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Roomid_Userid(args ...interface{}) Message {
+	m := Message{
+		code:   args[0].(byte),
 		roomid: args[1].([]byte),
 		userid: args[2].([]byte)}
 	return m
 }
 
 //TODO
-func Server_Display_Name (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
-		serverid: args[1].([]byte),
+func Server_Display_Name(args ...interface{}) Message {
+	m := Message{
+		code:                args[0].(byte),
+		serverid:            args[1].([]byte),
 		server_display_name: args[2].([]byte)}
 	return m
 }
 
 //TODO
-func Room_Display_Name (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
-		serverid: args[1].([]byte),
-		roomid: args[2].([]byte),
+func Room_Display_Name(args ...interface{}) Message {
+	m := Message{
+		code:              args[0].(byte),
+		serverid:          args[1].([]byte),
+		roomid:            args[2].([]byte),
 		room_display_name: args[3].([]byte)}
 	return m
 }
 
 //TODO
-func Master_Display_Name (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Master_Display_Name(args ...interface{}) Message {
+	m := Message{
+		code:                args[0].(byte),
 		master_display_name: args[1].([]byte)}
 	return m
 }
 
 //TODO
-func Userid_Master_Display_Name (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
-		userid: args[1].([]byte),
+func Userid_Master_Display_Name(args ...interface{}) Message {
+	m := Message{
+		code:                args[0].(byte),
+		userid:              args[1].([]byte),
 		master_display_name: args[2].([]byte)}
 	return m
 }
 
 //TODO
-func Display_Name (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Display_Name(args ...interface{}) Message {
+	m := Message{
+		code:         args[0].(byte),
 		display_name: args[1].([]byte)}
 	return m
 }
 
 //TODO
-func Userid_Display_Name (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
-		userid: args[1].([]byte),
+func Userid_Display_Name(args ...interface{}) Message {
+	m := Message{
+		code:         args[0].(byte),
+		userid:       args[1].([]byte),
 		display_name: args[2].([]byte)}
 	return m
 }
 
 //TODO
-func Message_Send (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Message_Send(args ...interface{}) Message {
+	m := Message{
+		code:     args[0].(byte),
 		serverid: args[1].([]byte),
-		roomid: args[2].([]byte),
-		userid: args[3].([]byte),
-		text: args[4].([]byte)}
+		roomid:   args[2].([]byte),
+		userid:   args[3].([]byte),
+		text:     args[4].([]byte)}
 	return m
 }
 
 //TODO
-func Message_Recieve (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
-		serverid: args[1].([]byte),
-		roomid: args[2].([]byte),
-		userid: args[3].([]byte),
+func Message_Recieve(args ...interface{}) Message {
+	m := Message{
+		code:      args[0].(byte),
+		serverid:  args[1].([]byte),
+		roomid:    args[2].([]byte),
+		userid:    args[3].([]byte),
 		messageid: args[4].([]byte),
-		time: args[5].([]byte),
-		text: args[6].([]byte)}
+		time:      args[5].([]byte),
+		text:      args[6].([]byte)}
 	return m
 }
 
 //TODO
-func Multi_Message (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Multi_Message(args ...interface{}) Message {
+	m := Message{
+		code:   args[0].(byte),
 		offset: args[1].(byte)}
 	return m
 }
 
 //TODO
-func Status (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Status(args ...interface{}) Message {
+	m := Message{
+		code:   args[0].(byte),
 		status: args[1].(byte),
-		muted: args[2].(byte)}
+		muted:  args[2].(byte)}
 	return m
 }
 
 //TODO
-func Userid_Status (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Userid_Status(args ...interface{}) Message {
+	m := Message{
+		code:   args[0].(byte),
 		userid: args[1].([]byte),
 		status: args[2].(byte),
-		muted: args[3].(byte)}
+		muted:  args[3].(byte)}
 	return m
 }
 
 //TODO
-func Userid_Address (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
-		userid: args[1].([]byte),
+func Userid_Address(args ...interface{}) Message {
+	m := Message{
+		code:    args[0].(byte),
+		userid:  args[1].([]byte),
 		address: args[2].([]byte)}
 	return m
 }
 
 //TODO
-func Url (args ...interface{}) Message {
-	m := Master {
+func Url(args ...interface{}) Message {
+	m := Message{
 		code: args[0].(byte),
-		url: args[1].([]byte)}
+		url:  args[1].([]byte)}
 	return m
 }
 
 //TODO
-func Serverid_Url (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Serverid_Url(args ...interface{}) Message {
+	m := Message{
+		code:     args[0].(byte),
 		serverid: args[1].([]byte),
-		url: args[2].([]byte)}
+		url:      args[2].([]byte)}
 	return m
 }
 
 //TODO
-func Userid_Url (args ...interface{}) Message {
-	m := Master {
-		code: args[0].(byte),
+func Userid_Url(args ...interface{}) Message {
+	m := Message{
+		code:   args[0].(byte),
 		userid: args[1].([]byte),
-		url: args[2].([]byte)}
+		url:    args[2].([]byte)}
 	return m
 }
 
 //TODO
-func Text (args ...interface{}) Message {
-	m := Master {
+func Text(args ...interface{}) Message {
+	m := Message{
 		code: args[0].(byte),
 		text: args[1].([]byte)}
 	return m

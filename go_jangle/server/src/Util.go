@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"time"
 	"log"
+	"time"
 )
 
 //Comparable interface used to determine the equality of two structs
@@ -14,13 +14,13 @@ type Comparable interface {
 //Holds a serverid, roomid, and userid. Acts as the "position in a server"
 type Address struct {
 	serverid uint
-	roomid uint
-	userid uint
+	roomid   uint
+	userid   uint
 }
 
 //Compares the equality of two Addresses
 func (a *Address) equals(b Address) bool {
-	return a.serverid == b.serverid && a.roomid == b.roomid && a.userid == b.userid;
+	return a.serverid == b.serverid && a.roomid == b.roomid && a.userid == b.userid
 }
 
 //Initializes all code cases
@@ -100,11 +100,10 @@ var user_unmuted byte = 0
 var user_muted byte = 1
 
 //Default and invalid value for server, room, and user
-var invalid_id []byte = []byte{0,0,0,0}
-var default_id []byte = []byte{1,0,0,0}
+var invalid_id []byte = []byte{0, 0, 0, 0}
+var default_id []byte = []byte{1, 0, 0, 0}
 
-
-//Converts byte array to unsigned int 
+//Converts byte array to unsigned int
 func Byte_Converter(data []byte) uint {
 	var i uint
 	var sum uint
@@ -134,54 +133,54 @@ func Milli_Time() uint {
 //Used for time stamping code type 16 messages
 //Takes in a byte array and creates a 4 byte space from byte 13 to 16
 //Places 4 byte time stamp in space
-func Time_Stamp (data []byte) []byte {
-	new_data := make([]byte, len(data) + 4)
+func Time_Stamp(data []byte) []byte {
+	new_data := make([]byte, len(data)+4)
 	copy(new_data[0:12], data[0:12])
 	for i := 13; i < len(data); i++ {
-		new_data[i + 4] = data[i]
+		new_data[i+4] = data[i]
 	}
 	copy(new_data[13:16], Int_Converter(Milli_Time()))
 	return new_data
 }
 
-//Checks if error has occured and ends program after logging. 
+//Checks if error has occured and ends program after logging.
 //Only use for Fatal errors
-func Check_Error(e error){
-	if(e != nil){
+func Check_Error(e error) {
+	if e != nil {
 		log.Fatal(e)
 	}
 }
 
 //Appends terminal color escape codes to text to print in color
-func Color_Println (c string, text string) {
-	var s string;
-	if (c == "red") {
+func Color_Println(c string, text string) {
+	var s string
+	if c == "red" {
 		s = "\x1b[0;31m"
-	} else if (c == "green") {
+	} else if c == "green" {
 		s = "\x1b[0;32m"
-	} else if (c == "orange") {
+	} else if c == "orange" {
 		s = "\x1b[0;33m"
-	} else if (c == "blue") {
+	} else if c == "blue" {
 		s = "\x1b[0;34m"
-	} else if (c == "purple") {
+	} else if c == "purple" {
 		s = "\x1b[0;35m"
-	} else if (c == "cyan") {
+	} else if c == "cyan" {
 		s = "\x1b[0;36m"
 	} else {
 		//Default
 		s = "\x1b[0;0m"
 	}
 	s += text
-	s +="\x1b[0;0m"
+	s += "\x1b[0;0m"
 	fmt.Println(s)
 }
 
 //Returns the first index of value 0 in byte array
-func Byte_Array_Length(b []byte) uint{
+func Byte_Array_Length(b []byte) uint {
 	for i := 0; i < len(b); i++ {
-		if(b[i] == 0){
-			return uint(i);
+		if b[i] == 0 {
+			return uint(i)
 		}
 	}
-	return uint(len(b));
+	return uint(len(b))
 }
