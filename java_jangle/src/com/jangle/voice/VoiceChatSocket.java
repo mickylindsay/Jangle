@@ -40,7 +40,7 @@ public class VoiceChatSocket implements Runnable {
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-	public VoiceChatSocket(String gAddress, int gport, User gUser)
+	public VoiceChatSocket(User gUser, int gport,)
 			throws UnknownHostException, IOException {
 		port = gport;
 		socket = new DatagramSocket();

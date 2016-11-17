@@ -4,6 +4,8 @@ import java.io.InputStream;
 
 /**
  * Created by Jess on 9/28/2016.
+ * 
+ * Edited by Nathan Conroy on 11/16/2016
  */
 public class User {
 
@@ -14,6 +16,8 @@ public class User {
     private String displayName;
     private String userName;
     private String avatarURL;
+    private String IP;
+    
 
     public User(String displayName, int id, int status) {
         this.displayName = displayName;
@@ -21,6 +25,7 @@ public class User {
         this.status = status;
         this.userName = "";
         this.avatarURL = DEFAULT_AVATAR;
+        this.IP = "";
     }
     
     public User(String displayName, String userName, int id, int status){
@@ -29,6 +34,7 @@ public class User {
         this.status = status;
         this.userName = userName;
         this.avatarURL = DEFAULT_AVATAR;
+        this.IP = "";
     }
 
     public User(String displayName, int id) {
@@ -37,6 +43,7 @@ public class User {
         this.status = 0;
         this.userName = "";
         this.avatarURL = DEFAULT_AVATAR;
+        this.IP = "";
     }
 
     public String getDisplayName() {
@@ -95,6 +102,14 @@ public class User {
 
     public void setAvatar(String newURL) {
         this.avatarURL = newURL;
+    }
+    
+    public void setIP(String gIP){
+    	IP = gIP;
+    }
+    
+    public String getIP(){
+    	return IP;
     }
 }
 

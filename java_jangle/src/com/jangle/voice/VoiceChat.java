@@ -15,6 +15,8 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
+import com.jangle.client.User;
+
 /**
  * Handles the creation of the voice chat. The recieving and playing to speakers are handled in this class.
  * So far, this class will handle the recieving. It can only handle one user at the moment.
@@ -31,12 +33,14 @@ public class VoiceChat implements Runnable {
 	private DatagramSocket Recieving;
 	private VoiceBroadcast Madden;
 	
+	private ArrayList Users;
+	
 	private boolean isReceiving;
 
 	private InetAddress Address;
 	private int port;
 
-	public VoiceChat(int gport) throws SocketException {
+	public VoiceChat(int gport, ArrayList<User> gUsers) throws SocketException {
 		format = VoiceUtil.genFormat();
 		try {
 			// init speakers
@@ -50,6 +54,7 @@ public class VoiceChat implements Runnable {
 		isReceiving = false;
 		connections = new ArrayList<VoiceChatSocket>();
 		port = gport;
+		Users = gUsers;
 
 		try {
 			Address = InetAddress.getLocalHost();
@@ -70,9 +75,9 @@ public class VoiceChat implements Runnable {
 	 * @param IP
 	 *            IP of the user.
 	 */
-	private void addUserToChat(String IP) {
+	private void addUserToChat(User gUser) {
 		try {
-			connections.add(new VoiceChatSocket(IP, port));
+			connections.add(new VoiceChatSocket(gUser, port));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
