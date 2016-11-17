@@ -400,6 +400,10 @@ public class Client_ParseData implements IPARSER {
 		}
 		return avatar;
 	}
+	
+	public void sendUserIP(User User){
+		
+	}
 
 	public Client getClient() {
 		return this.Cl;
