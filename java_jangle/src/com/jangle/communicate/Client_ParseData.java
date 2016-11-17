@@ -2,7 +2,6 @@ package com.jangle.communicate;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.jangle.client.*;
@@ -10,7 +9,7 @@ import com.jangle.communicate.CommUtil.*;
 
 public class Client_ParseData implements IPARSER {
 
-	private Client Cl;
+	private Client mClient;
 	private Client_Communicator Comm;
 
 	// Variables used when recieving data from the server. These are used as
@@ -29,7 +28,7 @@ public class Client_ParseData implements IPARSER {
 	 *            The client object this communicator references
 	 */
 	public Client_ParseData(Client Clie) {
-		this.Cl = Clie;
+		this.mClient = Clie;
 
 	}
 
@@ -46,7 +45,7 @@ public class Client_ParseData implements IPARSER {
 	 * @throws IOException
 	 */
 	public Client_ParseData(Client Clie, String Host, int port) throws UnknownHostException, IOException {
-		this.Cl = Clie;
+		this.mClient = Clie;
 		this.Comm = new Client_Communicator(this, Host, port);
 	}
 
@@ -67,23 +66,23 @@ public class Client_ParseData implements IPARSER {
 	public void parseData(byte[] data) {
 
 		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
-			Cl.addMessage(new Message(data));
+			mClient.addMessage(new Message(data));
 			return;
 		}
 
 		else if (data[0] == CommUtil.LOGIN_SUCCESS) {
-			loginResult = LoginResult.SUCESS;
-			UserID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
+			mClient.setLoginResult(LoginResult.SUCESS);
+			mClient.setUserID(CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length)));
 			return;
 		}
 
 		else if (data[0] == CommUtil.LOGIN_FAIL) {
-			loginResult = LoginResult.FAIL;
+			mClient.setLoginResult(LoginResult.FAIL);
 			return;
 		}
 
 		else if (data[0] == CommUtil.CREATE_USER_FAIL) {
-			loginResult = LoginResult.NAME_TAKEN;
+			mClient.setLoginResult(LoginResult.NAME_TAKEN);
 			return;
 		}
 
@@ -97,7 +96,7 @@ public class Client_ParseData implements IPARSER {
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
 			User tmp = new User(null, id);
 			// make sure the user is not in the list
-			if (Cl.getUsers().contains(tmp) == false) {
+			if (mClient.getUsers().contains(tmp) == false) {
 
 				try {
 					tmp.setDisplayName(this.requestDisplayName(tmp));
@@ -105,7 +104,7 @@ public class Client_ParseData implements IPARSER {
 					e.printStackTrace();
 				}
 
-				Cl.addUser(tmp);
+				mClient.addUser(tmp);
 			}
 		}
 
@@ -146,11 +145,12 @@ public class Client_ParseData implements IPARSER {
 	 * @return If the Login was a success
 	 * @throws IOException
 	 */
-	public LoginResult submitLogIn(String Username, String Password) throws IOException {
+	public void submitLogIn(String Username, String Password) throws IOException {
 
 		byte[] data = new byte[20 + Password.length() + 1];
-		loginResult = LoginResult.TIMEOUT;
-		int place = 0;
+        mClient.setLoginResult(LoginResult.TIMEOUT);
+        mClient.setLoginTime(System.currentTimeMillis());
+        int place = 0;
 
 		data[0] = CommUtil.LOGIN;
 		place++;
@@ -169,19 +169,8 @@ public class Client_ParseData implements IPARSER {
 		}
 
 		Comm.sendToServer(data);
-		long startTime = System.currentTimeMillis();
 
-		while ((loginResult == LoginResult.TIMEOUT)
-				&& (System.currentTimeMillis() - startTime < CommUtil.TIME_OUT_MILLI)) {
-            
-		}
-
-		if (loginResult == LoginResult.SUCESS) {
-			Cl.setUserID(UserID);
-		}
-
-		UserID = 0;
-		return loginResult;
+		return;
 	}
 
 	/**
@@ -194,10 +183,11 @@ public class Client_ParseData implements IPARSER {
 	 * @return
 	 * @throws IOException
 	 */
-	public LoginResult createUserInServer(String Username, String Password) throws IOException {
+	public void createUserInServer(String Username, String Password) throws IOException {
 
 		byte[] data = new byte[20 + Password.length() + 1];
-		loginResult = LoginResult.TIMEOUT;
+        mClient.setLoginResult(LoginResult.TIMEOUT);
+        mClient.setLoginTime(System.currentTimeMillis());
 		int place = 0;
 
 		data[0] = CommUtil.CREATE_USER;
@@ -217,18 +207,8 @@ public class Client_ParseData implements IPARSER {
 		}
 
 		Comm.sendToServer(data);
-		long startTime = System.currentTimeMillis();
 
-		while ((loginResult == LoginResult.TIMEOUT)
-				&& (System.currentTimeMillis() - startTime < CommUtil.TIME_OUT_MILLI)) {
-		}
-
-		if (loginResult == LoginResult.SUCESS) {
-			Cl.setUserID(UserID);
-		}
-
-		UserID = 0;
-		return loginResult;
+		return;
 	}
 
 	/**
@@ -401,7 +381,7 @@ public class Client_ParseData implements IPARSER {
     }
 
 	public Client getClient() {
-		return this.Cl;
+		return this.mClient;
 	}
 
 
