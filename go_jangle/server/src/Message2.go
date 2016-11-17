@@ -1,7 +1,12 @@
 package main
 
+type Message interface {
+	Create_Message() 
+	Build_Message() []byte
+}
+
 //
-type Message struct {
+type Master struct {
 	code byte
 	offset byte
 	status byte
