@@ -4,8 +4,6 @@ import java.io.InputStream;
 
 /**
  * Created by Jess on 9/28/2016.
- * 
- * Edited by Nathan Conroy on 11/16/2016
  */
 public class User {
 
