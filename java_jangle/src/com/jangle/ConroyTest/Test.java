@@ -26,43 +26,50 @@ public class Test {
 
 	public static void main(String[] args) throws IOException, InterruptedException, LineUnavailableException {
 
-		// Client Cl = new Client();
-		// Client_ParseData Parse = null;
-		// // TestServer server = new TestServer(9090);
-		//
-		// try {
-		// Parse = new Client_ParseData(Cl, "localhost", 9090);
-		// System.out.println("generated client");
-		// } catch (IOException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
-		//
-		// Thread.sleep(1000);
-
-		// EDIT BELOW HERE
-
-		// set up the TargetDataLine
+//		Client Cl = new Client();
+//		Client_ParseData Parse = null;
+//		// TestServer server = new TestServer(9090);
+//
+//		try {
+//			Parse = new Client_ParseData(Cl, "localhost", 9090);
+//			//System.out.println("generated client");
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		
 		
-		//Microphone test = new Microphone();
+//		User Nate =  TestUtil.newNathan();
+//		
+//		//LOGIN
+//		System.out.println(Parse.submitLogIn("Nathan", "Password"));
+//		System.out.println(Parse.requestDisplayName(Nate));
+//		
+//		System.out.println(Parse.createUserInServer("Leroy Jenkins2", "JJsSandwich"));
+//		
+//		Parse.request50MessagesWithOffset(0);
+//		Thread.sleep(500);
+//		System.out.println(Cl.getMessages().size());
+//		
+//		Parse.userIdTiedToServer(Nate);
+//		System.out.println(Parse.requestRoomDisplayName(1, 1));
 		
-		VoiceChat test = new VoiceChat(7800);
+		//Parse.req
 		
-		
-		test.addUserToChat("localhost");
-		
-		test.startBrodcast();
-		test.startSpeakers();
-		
-		
-		test.recieveData();
-		
-		while(true){
-		}
-		
-		
-		
-		
+		  VoiceChat test = new VoiceChat(7800);
+		  
+		  
+		  test.addUserToChat("localhost");
+		  
+		  test.startBrodcast();
+		  test.startSpeakers();
+		  
+		  
+		  test.recieveData();
+//		  
+	  while(true){ }
+		  
+		 
 
 	}
 

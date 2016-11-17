@@ -27,7 +27,7 @@ public final class TestUtil {
 	}
 	
 	public static User newNathan(){
-		User ret = new User("Nathan", 2);
+		User ret = new User("Nathan", 5);
 		
 		return ret;
 		

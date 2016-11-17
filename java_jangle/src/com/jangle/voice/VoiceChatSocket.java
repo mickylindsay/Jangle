@@ -40,15 +40,12 @@ public class VoiceChatSocket implements Runnable {
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-	public VoiceChatSocket(String gAddress, int gport, int gmicDataWidth)
+	public VoiceChatSocket(String gAddress, int gport, User gUser)
 			throws UnknownHostException, IOException {
 		port = gport;
 		socket = new DatagramSocket();
 		Address = InetAddress.getByName(gAddress);
-
-		this.micDataWidth = gmicDataWidth;
-		
-		
+		User = gUser;
 	}
 	
 	public void sendVoice(byte[] data){
@@ -62,7 +59,7 @@ public class VoiceChatSocket implements Runnable {
 	public void run() {
 		// TODO Auto-generated method stub
 		
-		DatagramPacket packet = new DatagramPacket(Data, micDataWidth, Address, port);
+		DatagramPacket packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, Address, port);
 		try {
 			socket.send(packet);
 		} catch (IOException e) {

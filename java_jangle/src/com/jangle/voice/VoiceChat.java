@@ -27,9 +27,6 @@ public class VoiceChat implements Runnable {
 	private SourceDataLine speakers;
 
 	private AudioFormat format;
-	private int dataWidth;
-
-	private int numChatWith;
 	private ArrayList<VoiceChatSocket> connections;
 	private DatagramSocket Recieving;
 	private VoiceBroadcast Madden;
@@ -40,7 +37,7 @@ public class VoiceChat implements Runnable {
 	private int port;
 
 	public VoiceChat(int gport) throws SocketException {
-		format = new AudioFormat(8000.0f, 16, 1, true, true);
+		format = VoiceUtil.genFormat();
 		try {
 			// init speakers
 			DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, format);
@@ -49,8 +46,7 @@ public class VoiceChat implements Runnable {
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
 		}
-
-		numChatWith = 0;
+		
 		isReceiving = false;
 		connections = new ArrayList<VoiceChatSocket>();
 		port = gport;
@@ -64,7 +60,6 @@ public class VoiceChat implements Runnable {
 		
 		Madden = new VoiceBroadcast(connections, format);
 		Recieving = new DatagramSocket(gport);
-		dataWidth = Madden.getDataWidth();
 
 	}
 
@@ -75,13 +70,12 @@ public class VoiceChat implements Runnable {
 	 * @param IP
 	 *            IP of the user.
 	 */
-	public void addUserToChat(String IP) {
+	private void addUserToChat(String IP) {
 		try {
-			connections.add(new VoiceChatSocket(IP, port, dataWidth));
+			connections.add(new VoiceChatSocket(IP, port));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		numChatWith++;
 	}
 
 	public void closeAllConctions() {
@@ -131,10 +125,6 @@ public class VoiceChat implements Runnable {
 
 	@Override
 	public void run() {
-
-		// TODO with code below in a thead from main, this works. Need to put in
-		// differnet code from the voice part. Think about a differnet class.
-		// Also remove SYSO
 		while (true) {
 			byte[] data = new byte[1024];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
