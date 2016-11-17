@@ -1,5 +1,8 @@
 package com.jangle.client;
 
+import com.jangle.communicate.CommUtil;
+import com.jangle.communicate.CommUtil.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +14,10 @@ public class Client {
 
     private ArrayList<User> mUsers;
     private ArrayList<Message> mMessages;
+
+    private boolean loggedIn;
+    private LoginResult mLoginResult;
+    private long mLoginTime;
     private int serverID;
     private int channelID;
     private int userID;
@@ -23,12 +30,16 @@ public class Client {
         this.mMessages = messages;
         this.mUsers = users;
         this.userID = 0;
+        this.loggedIn = false;
+        this.mLoginTime = 0;
     }
 
     public Client(ArrayList<User> users, ArrayList<Message> messages) {
         this.mUsers = users;
         this.mMessages = messages;
         this.userID = 0;
+        this.loggedIn = false;
+        this.mLoginTime = 0;
     }
 
     public Client(int serverID, int channelID) {
@@ -36,6 +47,8 @@ public class Client {
         this.channelID = channelID;
         this.mUsers = new ArrayList<>();
         this.mMessages = new ArrayList<>();
+        this.loggedIn = false;
+        this.mLoginTime = 0;
     }
 
     public Client() {
@@ -44,6 +57,8 @@ public class Client {
         serverID = 0;
         channelID = 0;
         this.userID = 0;
+        this.loggedIn = false;
+        this.mLoginTime = 0;
     }
 
     public void addMessage(Message message) {
@@ -111,4 +126,29 @@ public class Client {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+    }
+
+    public LoginResult getLoginResult() {
+        return mLoginResult;
+    }
+
+    public void setLoginResult(LoginResult loginResult) {
+        mLoginResult = loginResult;
+    }
+
+    public long getLoginTime() {
+        return mLoginTime;
+    }
+
+    public void setLoginTime(long loginTime) {
+        mLoginTime = loginTime;
+    }
+
 }
