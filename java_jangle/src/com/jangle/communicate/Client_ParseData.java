@@ -20,6 +20,8 @@ public class Client_ParseData implements IPARSER {
 	private int numMessagesRecieved;
 	private String ServerDisplayName;
 	private String RoomDisplayName;
+	private String IP;
+	
 
 	/**
 	 * Create a parser object with no Client_Commmunicator attached to it.
@@ -126,6 +128,13 @@ public class Client_ParseData implements IPARSER {
 			RoomDisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
 			return;
 		}
+		else if (data[0] == CommUtil.REQUEST_USER_IP){
+			byte[] address = new byte[data.length - 5];
+			for (int i = 0; i < address.length; i++){
+				address [i] = data [i + 4];
+			}
+			IP = new String(address);
+		}
 
 	}
 
@@ -144,9 +153,9 @@ public class Client_ParseData implements IPARSER {
 	public void submitLogIn(String Username, String Password) throws IOException {
 
 		byte[] data = new byte[20 + Password.length() + 1];
-        mClient.setLoginResult(LoginResult.TIMEOUT);
-        mClient.setLoginTime(System.currentTimeMillis());
-        int place = 0;
+		mClient.setLoginResult(LoginResult.TIMEOUT);
+		mClient.setLoginTime(System.currentTimeMillis());
+		int place = 0;
 
 		data[0] = CommUtil.LOGIN;
 		place++;
@@ -182,8 +191,8 @@ public class Client_ParseData implements IPARSER {
 	public void createUserInServer(String Username, String Password) throws IOException {
 
 		byte[] data = new byte[20 + Password.length() + 1];
-        mClient.setLoginResult(LoginResult.TIMEOUT);
-        mClient.setLoginTime(System.currentTimeMillis());
+		mClient.setLoginResult(LoginResult.TIMEOUT);
+		mClient.setLoginTime(System.currentTimeMillis());
 		int place = 0;
 
 		data[0] = CommUtil.CREATE_USER;
@@ -375,13 +384,46 @@ public class Client_ParseData implements IPARSER {
 		Comm.sendToServer(toServer);
 		long oldTime = System.currentTimeMillis();
 
-		while (avatar == null && System.currentTimeMillis() - oldTime < 3000) {
+		while (avatar == null && System.currentTimeMillis() - oldTime < CommUtil.TIME_OUT_MILLI) {
 
 		}
 		return avatar;
 	}
-	
-	public void sendUserIP(User User){
+
+	/**
+	 * Request the IP address of a user. If the client did not recieve data, it will return "FAIL"
+	 * @param User The user to get the IP of
+	 * @return The 
+	 * @throws IOException
+	 */
+	public String getUserIP(User User) throws IOException {
+		IP = new String();
+		byte[] toServer = new byte[5];
+		toServer[0] = CommUtil.REQUEST_USER_IP;
+
+		byte[] usrID = CommUtil.intToByteArr(User.getId());
+		for (int i = 0; i < usrID.length; i++) {
+			toServer[i + 1] = usrID[i];
+
+		}
+		Comm.sendToServer(toServer);
+		
+		long oldTime = System.currentTimeMillis();
+		
+		while (IP.isEmpty() && System.currentTimeMillis() - oldTime < CommUtil.TIME_OUT_MILLI){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		if (IP.isEmpty()){
+			return "FAIL";
+		}
+		
+		return IP;
 		
 	}
 

@@ -8,6 +8,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
+import com.jangle.client.User;
 
 public class VoiceBroadcast implements Runnable {
 
@@ -19,11 +20,14 @@ public class VoiceBroadcast implements Runnable {
 
 	private boolean sendAll;
 	private int dataWidth;
+	
+	private int userID;
 
-	public VoiceBroadcast(ArrayList<VoiceChatSocket> gConnections, AudioFormat gformat) {
+	public VoiceBroadcast(ArrayList<VoiceChatSocket> gConnections, AudioFormat gformat, int gUser) {
 		connections = gConnections;
 		sendAll = false;
 		format = gformat;
+		userID = gUser;
 
 		try {
 
@@ -75,6 +79,10 @@ public class VoiceBroadcast implements Runnable {
 
 		while (sendAll) {
 			microphone.read(micData, 0, micData.length);
+			
+			byte[] toBrodcast = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE + 4];
+			
+			
 			connections.get(0).sendVoice(micData);
 			try {
 				Thread.sleep(20);
