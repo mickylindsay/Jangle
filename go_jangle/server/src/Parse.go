@@ -1,6 +1,15 @@
 package main
 
-import "fmt"
+//Master function: takes paramaters type User struct and byte array
+//byte array is the message that is recieved from the client
+//the type User struct is a reference to the connection that represents
+//the client side user that is associated with the byte array message
+//this function determines what type of message is being recieved
+//and calls the appropriate function based off the code type
+func Parse_Data(user *User, data []byte) Message {
+	m := jangle.Parsers[data[0]](user, data)
+	return m
+}
 
 //Initializes function array that contains all the functions necessary to handle every
 //message code
@@ -8,13 +17,13 @@ func Init_Parse() {
 	Parsers := make([]func(user *User, data []byte) Message, 256)
 
 	Parsers[0] = Message0
-	Parsers[1] = Message1
+	//Parsers[1] = Message1
 	Parsers[2] = Message2
-	Parsers[3] = Message3
-	Parsers[4] = Message4
+	//Parsers[3] = Message3
+	//Parsers[4] = Message4
 
 	Parsers[16] = Message16
-	Parsers[17] = Message17
+	//Parsers[17] = Message17
 
 	Parsers[32] = Message32
 	Parsers[33] = Message33
@@ -65,42 +74,22 @@ func Init_Parse() {
 	jangle.Parsers = Parsers
 }
 
-//Master function: takes paramaters type User struct and byte array
-//byte array is the message that is recieved from the client
-//the type User struct is a reference to the connection that represents
-//the client side user that is associated with the byte array message
-//this function determines what type of message is being recieved
-//and calls the appropriate function based off the code type
-func Parse_Data(user *User, data []byte) {
-
-	jangle.Parsers[data[0]](user, data)
-}
-
-//If create user successful, convert message to code type 4
-//If create user fail, convert message to code type 1
+//TODO
 func Message0(user *User, data []byte) Message {
-
-	m := Message{
-		code:     data[0],
-		username: data[1:20],
-		password: data[21:]}
-
-	id, err := User_Create(data[1:20], data[21:])
-
+	m := Create_Message(data[0], data[1:20], data[21:])
+	id, err := User_Create(m.username, m.password)
 	if err == nil {
-		data[0] = login_success
-		copy(data[1:4], Int_Converter(id))
 		user.id = id
-		Message4(user, data)
+		m = Create_Message(login_success, Int_Converter(id))
+		Send_Message(user, m)
 	} else {
-		data[0] = create_user_fail
-		Message1(user, data)
+		m = Create_Message(create_user_fail)
+		user.Write(m.Build_Message())
 	}
-
 	return m
 }
 
-//Writes to user message code type 1, create user fail
+/*//Writes to user message code type 1, create user fail
 func Message1(user *User, data []byte) Message {
 
 	m := Message{
@@ -108,33 +97,24 @@ func Message1(user *User, data []byte) Message {
 
 	user.Write(m.Build_Message())
 	return m
-}
+}*/
 
-//If login successful, convert message to code type 4
-//If login fail, convert message to code type 3
+//TODO
 func Message2(user *User, data []byte) Message {
-
-	m := Message{
-		code:     data[0],
-		username: data[1:20],
-		password: data[21:]}
-
-	id, err := User_Login(data[1:20], data[21:])
-
+	m := Create_Message(data[0], data[1:20], data[21:])
+	id, err := User_Login(m.username, m.password)
 	if err == nil {
-		data[0] = login_success
-		copy(data[1:4], Int_Converter(id))
 		user.id = id
-		Message4(user, data)
+		Create_Message(login_success, Int_Converter(id))
+		Send_Message(user, m)
 	} else {
-		data[0] = login_fail
-		Message3(user, data)
+		Create_Message(login_fail)
+		user.Write(m.Build_Message())
 	}
-
 	return m
 }
 
-//Writes to user message code type 3, login fail
+/*//Writes to user message code type 3, login fail
 func Message3(user *User, data []byte) Message {
 	fmt.Println("Fail")
 	m := Message{
@@ -142,9 +122,9 @@ func Message3(user *User, data []byte) Message {
 
 	user.Write(m.Build_Message())
 	return m
-}
+}*/
 
-//Send message code type 4 to client, login success
+/*//Send message code type 4 to client, login success
 func Message4(user *User, data []byte) Message {
 	fmt.Println("Pass")
 	m := Message{
@@ -153,37 +133,25 @@ func Message4(user *User, data []byte) Message {
 
 	Send_Message(user, m)
 	return m
-}
+}*/
 
-//Converts message code type 16, message client send
-//to message code type 17, message client recieve
+//TODO
 func Message16(user *User, data []byte) Message {
-
-	m := Message{
-		code:     data[0],
-		serverid: data[1:4],
-		roomid:   data[5:8],
-		userid:   data[9:12],
-		text:     data[13:]}
-
+	m := Create_Message(data[0], data[1:4], data[5:8], data[9:12], data[13:])
 	if user.muted != 1 {
-		Check_Command(user, m.text)
-		messageid, err := Message_Create(user, data[13:])
+		messageid, err := Message_Create(user, m.text)
 		Check_Error(err)
-
 		check := Check_Command(user, m.text)
-
 		if check == false {
-			data[0] = message_client_recieve
-			data = Time_Stamp(data)
-			Message17(user, data)
+			time := Time_Stamp()
+			m = Create_Message(message_client_recieve, m.serverid, m.roomid, m.userid, Int_Converter(messageid), time, m.text)
+			Send_Broadcast_Server_Room(Byte_Converter(m.serverid), Byte_Converter(m.roomid), m)
 		}
 	}
-
 	return m
 }
 
-//Sends message code type 17, message client recieve,
+/*//Sends message code type 17, message client recieve,
 //to a chat room on a specific server
 func Message17(user *User, data []byte) Message {
 
@@ -200,7 +168,7 @@ func Message17(user *User, data []byte) Message {
 	num2 := Byte_Converter(data[5:8])
 	Send_Broadcast_Server_Room(num1, num2, m)
 	return m
-}
+}*/
 
 //Requests n message code type 17's, message client recieve, from database
 //dependent on offset value from message code type 32, request n messages

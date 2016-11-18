@@ -133,14 +133,10 @@ func Milli_Time() uint {
 //Used for time stamping code type 16 messages
 //Takes in a byte array and creates a 4 byte space from byte 13 to 16
 //Places 4 byte time stamp in space
-func Time_Stamp(data []byte) []byte {
-	new_data := make([]byte, len(data)+4)
-	copy(new_data[0:12], data[0:12])
-	for i := 13; i < len(data); i++ {
-		new_data[i+4] = data[i]
-	}
-	copy(new_data[13:16], Int_Converter(Milli_Time()))
-	return new_data
+func Time_Stamp() []byte {
+	time := make([]byte, 4)
+	copy(time, Int_Converter(Milli_Time()))
+	return time
 }
 
 //Checks if error has occured and ends program after logging.

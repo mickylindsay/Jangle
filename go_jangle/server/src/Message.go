@@ -24,8 +24,8 @@ type Message struct {
 
 //TODO
 func Create_Message(args ...interface{}) Message {
-	message := jangle.Messages[args[0].(byte)](args...)
-	return message
+	m := jangle.Messages[args[0].(byte)](args...)
+	return m
 }
 
 //TODO
