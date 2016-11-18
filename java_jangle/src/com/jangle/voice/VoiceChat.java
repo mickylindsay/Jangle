@@ -39,8 +39,9 @@ public class VoiceChat implements Runnable {
 
 	private InetAddress Address;
 	private int port;
+	private int userID;
 
-	public VoiceChat(int gport, ArrayList<User> gUsers) throws SocketException {
+	public VoiceChat(int gport, ArrayList<User> gUsers, boolean speak) throws SocketException {
 		format = VoiceUtil.genFormat();
 		try {
 			// init speakers
@@ -63,7 +64,7 @@ public class VoiceChat implements Runnable {
 			e.printStackTrace();
 		}
 		
-		Madden = new VoiceBroadcast(connections, format);
+		Madden = new VoiceBroadcast(connections, format, userID);
 		Recieving = new DatagramSocket(gport);
 
 	}
@@ -82,7 +83,7 @@ public class VoiceChat implements Runnable {
 	}
 
 	public void closeAllConctions() {
-
+		connections.clear();
 	}
 	
 	public void startBrodcast(){
@@ -129,7 +130,7 @@ public class VoiceChat implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
-			byte[] data = new byte[1024];
+			byte[] data = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
 			try {
 				Recieving.receive(packet);

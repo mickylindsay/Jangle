@@ -39,6 +39,9 @@ public final class CommUtil {
 	public static final byte RECIEVE_ROOM_DISPLAY_NAME = (byte) 53;
 	public static final byte SEND_NEW_DISPLAY_NAME = (byte) 64;
 
+	
+	public static final byte REQUEST_USER_IP = (byte) 41;
+	
 	public static final long TIME_OUT_MILLI = 3000;
 
 	/**

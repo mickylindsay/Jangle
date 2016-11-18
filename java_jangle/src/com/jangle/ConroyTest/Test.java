@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
+import javax.annotation.processing.SupportedSourceVersion;
 import javax.sound.sampled.AudioFormat;
 
 import javax.sound.sampled.AudioSystem;
@@ -28,7 +29,7 @@ public class Test {
 
 		Client Cl = new Client();
 		Client_ParseData Parse = null;
-		// TestServer server = new TestServer(9090);
+		TestServer server = new TestServer(9090);
 
 		try {
 			Parse = new Client_ParseData(Cl, "localhost", 9090);
@@ -41,11 +42,10 @@ public class Test {
 		
 		User Nate =  TestUtil.newNathan();
 		
-		//LOGIN
-		
-		Nate.setId(4);
+		Nate.setId(2);
 		
 		System.out.println(Parse.requestDisplayName(Nate));
+		
 		
 	  while(true){ }
 		  
