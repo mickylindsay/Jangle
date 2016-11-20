@@ -133,13 +133,7 @@ func Get_Offset_Messages(user *User, offset uint) ([]Message, error) {
 				return nil, err
 			}
 			//Create a "17" message to send back to user
-			m := Message{
-				code:     17,
-				serverid: Int_Converter(user.serverid),
-				roomid:   Int_Converter(user.roomid),
-				userid:   Int_Converter(userid_read),
-				time:     Int_Converter(time_read),
-				text:     []byte(text_read)}
+			m := Create_Message(message_client_recieve, Int_Converter(user.serverid), Int_Converter(user.roomid), Int_Converter(userid_read), Int_Converter(time_read), []byte(text_read))
 			//Add that message to the array which will be returned
 			messages[i] = m
 			i++
@@ -170,9 +164,7 @@ func Get_Userid_Messages(serverid uint) ([]Message, error) {
 				return nil, err
 			}
 			//Create a "48" message to send back to user
-			m := Message{
-				code:   48,
-				userid: Int_Converter(userid)}
+			m := Create_Message(recieve_userid, Int_Converter(userid))
 			//Add that message to the array which will be returned
 			messages[i] = m
 			i++
@@ -201,10 +193,7 @@ func Get_Serverid_Messages(userid uint) ([]Message, error) {
 			err := rows.Scan(&serverid)
 			Check_Error(err)
 			//Create a "50" message to send back to user
-			m := Message{
-				code:     50,
-				serverid: Int_Converter(serverid),
-				userid:   Int_Converter(userid)}
+			m := Create_Message(recieve_serverid, Int_Converter(serverid), Int_Converter(userid))
 			//Add that message to the array which will be returned
 			messages[i] = m
 			i++
@@ -234,10 +223,7 @@ func Get_Roomid_Messages(serverid uint) ([]Message, error) {
 				return nil, err
 			}
 			//Create a "52" message to send back to user
-			m := Message{
-				code:     52,
-				serverid: Int_Converter(serverid),
-				userid:   Int_Converter(roomid)}
+			m := Create_Message(recieve_roomid, Int_Converter(serverid), Int_Converter(roomid))
 			//Add that message to the array which will be returned
 			messages[i] = m
 			i++
@@ -338,5 +324,25 @@ func Join_Server(user *User) error {
 		_, err := jangle.db.Exec("INSERT INTO members (userid, serverid) VALUES (?,?);", user.id, user.serverid)
 		return err
 	}
+	return nil
+}
+
+//TODO
+func Get_User_Icon(userid uint) (string, error) {
+	return "", nil
+}
+
+//TODO
+func Get_Server_Icon(serverid uint) (string, error) {
+	return "", nil
+}
+
+//TODO
+func Set_New_User_Icon(userid uint, url string) error {
+	return nil
+}
+
+//TODO
+func Set_New_Server_Icon(serverid uint, url string) error {
 	return nil
 }

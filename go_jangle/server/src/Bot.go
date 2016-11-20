@@ -130,8 +130,8 @@ func (c Kick) Execute() {
 
 //Builds a message code type 97, broadcast server
 func (c Kick) Send() {
-	m := Create_Message(broadcast_server, Int_Converter(c.user.serverid), Int_Converter(c.user.id))
-	Message97(c.user, m.Build_Message())
+	m := Create_Message(recieve_user_location, Int_Converter(c.user.serverid), Int_Converter(c.user.id))
+	Send_Broadcast_Server(c.user.serverid, m)
 }
 
 //Creates Mute struct with param User type
@@ -146,8 +146,9 @@ func (c Mute) Execute() {
 
 //Builds a message code type 96, broadcast status
 func (c Mute) Send() {
-	m := Create_Message(broadcast_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
-	Message96(c.user, m.Build_Message())
+	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
+	Send_Broadcast_Server(c.user.serverid, m)
+	Send_Broadcast_Friends(c.user.id, m)
 }
 
 //Creates Unmute struct with param User type
@@ -162,8 +163,9 @@ func (c Unmute) Execute() {
 
 //Builds a message code type 96, broadcast status
 func (c Unmute) Send() {
-	m := Create_Message(broadcast_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
-	Message96(c.user, m.Build_Message())
+	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
+	Send_Broadcast_Server(c.user.serverid, m)
+	Send_Broadcast_Friends(c.user.id, m)
 }
 
 //Creates Move struct with param User type and roomid as an uint
@@ -179,8 +181,8 @@ func (c Move) Execute() {
 
 //Builds a message code type 98, broadcast room
 func (c Move) Send() {
-	m := Create_Message(broadcast_room, Int_Converter(c.user.roomid), Int_Converter(c.user.id))
-	Message98(c.user, m.Build_Message())
+	m := Create_Message(recieve_user_location, Int_Converter(c.user.roomid), Int_Converter(c.user.id))
+	Send_Broadcast_Server(c.user.serverid, m)
 }
 
 //TODO

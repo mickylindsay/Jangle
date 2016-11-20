@@ -52,6 +52,7 @@ var request_status byte = 40
 var request_user_ip byte = 41
 var request_user_icon byte = 43
 var request_server_icon byte = 44
+var request_user_location byte = 45
 
 //Client recieve type codes
 var recieve_userid byte = 48
@@ -65,6 +66,7 @@ var recieve_status byte = 55
 var recieve_user_ip byte = 56
 var recieve_user_icon byte = 57
 var recieve_server_icon byte = 58
+var recieve_user_location byte = 59
 
 //Client send type codes
 var send_new_display_name byte = 64
@@ -76,16 +78,7 @@ var send_new_server_icon byte = 70
 
 //Status of client type codes
 var change_status byte = 80
-var change_server byte = 81
-var change_room byte = 82
-
-var broadcast_status byte = 96
-var broadcast_server byte = 97
-var broadcast_room byte = 98
-var broadcast_display_name byte = 99
-var broadcast_server_display_name byte = 100
-var broadcast_room_display_name byte = 101
-var broadcast_master_display_name byte = 102
+var change_user_location byte = 81
 
 //Error type codes
 var error_check byte = 255
@@ -125,14 +118,19 @@ func Int_Converter(num uint) []byte {
 	return data
 }
 
+//TODO
+func String_Converter(s string) []byte {
+	data := make([]byte, 4)
+	data = []byte(s)
+	return data
+}
+
 //Returns Current Millisecond time as unsigned int
 func Milli_Time() uint {
 	return uint(time.Now().UnixNano() / 1000000000)
 }
 
-//Used for time stamping code type 16 messages
-//Takes in a byte array and creates a 4 byte space from byte 13 to 16
-//Places 4 byte time stamp in space
+//TODO
 func Time_Stamp() []byte {
 	time := make([]byte, 4)
 	copy(time, Int_Converter(Milli_Time()))

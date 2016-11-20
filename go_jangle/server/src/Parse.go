@@ -16,67 +16,37 @@ func Parse_Data(user *User, data []byte) Message {
 func Init_Parse() {
 	Parsers := make([]func(user *User, data []byte) Message, 256)
 
-	Parsers[0] = Message0
-	//Parsers[1] = Message1
-	Parsers[2] = Message2
-	//Parsers[3] = Message3
-	//Parsers[4] = Message4
-
-	Parsers[16] = Message16
-	//Parsers[17] = Message17
-
-	Parsers[32] = Message32
-	Parsers[33] = Message33
-	Parsers[34] = Message34
-	Parsers[35] = Message35
-	Parsers[36] = Message36
-	Parsers[37] = Message37
-	Parsers[38] = Message38
-	Parsers[39] = Message39
-	Parsers[40] = Message40
-	Parsers[41] = Message41
-	Parsers[43] = Message43
-	Parsers[44] = Message44
-
-	Parsers[48] = Message48
-	Parsers[49] = Message49
-	Parsers[50] = Message50
-	Parsers[51] = Message51
-	Parsers[52] = Message52
-	Parsers[53] = Message53
-	Parsers[54] = Message54
-	Parsers[55] = Message55
-	Parsers[56] = Message56
-	Parsers[57] = Message57
-	Parsers[58] = Message58
-
-	Parsers[64] = Message64
-	Parsers[65] = Message65
-	Parsers[66] = Message66
-	Parsers[67] = Message67
-	Parsers[68] = Message68
-	Parsers[70] = Message70
-
-	Parsers[80] = Message80
-	Parsers[81] = Message81
-	Parsers[82] = Message82
-
-	Parsers[96] = Message96
-	Parsers[97] = Message97
-	Parsers[98] = Message98
-	Parsers[99] = Message99
-	Parsers[100] = Message100
-	Parsers[101] = Message101
-	Parsers[102] = Message102
-
-	Parsers[255] = Message255
+	Parsers[create_user] = Create_User_Message
+	Parsers[login] = Login_Message
+	Parsers[message_client_send] = Standard_Message
+	Parsers[request_n_messages] = Offset_Message
+	Parsers[request_all_userid] = Multi_Userid_Message
+	Parsers[request_display_name] = Display_Name_Message
+	Parsers[request_all_serverid] = Multi_Serverid_Message
+	Parsers[request_server_display_name] = Server_Display_Name_Message
+	Parsers[request_all_roomid] = Multi_Roomid_Message
+	Parsers[request_room_display_name] = Room_Display_Name_Message
+	Parsers[request_master_display_name] = Master_Display_Name_Message
+	Parsers[request_status] = Status_Message
+	Parsers[request_user_ip] = User_Ip_Message
+	Parsers[request_user_icon] = User_Icon_Message
+	Parsers[request_server_icon] = Server_Icon_Message
+	Parsers[request_user_location] = User_Location_Message
+	Parsers[send_new_display_name] = New_Display_Name_Message
+	Parsers[send_new_server_display_name] = New_Server_Display_Name_Message
+	Parsers[send_new_room_display_name] = New_Room_Display_Name_Message
+	Parsers[send_new_master_display_name] = New_Master_Display_Name_Message
+	Parsers[send_new_user_icon] = New_User_Icon_Message
+	Parsers[send_new_server_icon] = New_Server_Icon_Message
+	Parsers[change_status] = Change_Status_Message
+	Parsers[change_user_location] = Change_User_Location_Message
 
 	jangle.Parsers = Parsers
 }
 
 //TODO
-func Message0(user *User, data []byte) Message {
-	m := Create_Message(data[0], data[1:20], data[21:])
+func Create_User_Message(user *User, data []byte) Message {
+	m := Create_Message(create_user, data[1:20], data[21:])
 	id, err := User_Create(m.username, m.password)
 	if err == nil {
 		user.id = id
@@ -89,19 +59,9 @@ func Message0(user *User, data []byte) Message {
 	return m
 }
 
-/*//Writes to user message code type 1, create user fail
-func Message1(user *User, data []byte) Message {
-
-	m := Message{
-		code: data[0]}
-
-	user.Write(m.Build_Message())
-	return m
-}*/
-
 //TODO
-func Message2(user *User, data []byte) Message {
-	m := Create_Message(data[0], data[1:20], data[21:])
+func Login_Message(user *User, data []byte) Message {
+	m := Create_Message(login, data[1:20], data[21:])
 	id, err := User_Login(m.username, m.password)
 	if err == nil {
 		user.id = id
@@ -114,668 +74,229 @@ func Message2(user *User, data []byte) Message {
 	return m
 }
 
-/*//Writes to user message code type 3, login fail
-func Message3(user *User, data []byte) Message {
-	fmt.Println("Fail")
-	m := Message{
-		code: data[0]}
-
-	user.Write(m.Build_Message())
-	return m
-}*/
-
-/*//Send message code type 4 to client, login success
-func Message4(user *User, data []byte) Message {
-	fmt.Println("Pass")
-	m := Message{
-		code:   data[0],
-		userid: data[1:4]}
-
-	Send_Message(user, m)
-	return m
-}*/
-
 //TODO
-func Message16(user *User, data []byte) Message {
-	m := Create_Message(data[0], data[1:4], data[5:8], data[9:12], data[13:])
+func Standard_Message(user *User, data []byte) Message {
+	m := Create_Message(message_client_send, data[1:4], data[5:8], data[9:12], data[13:])
 	if user.muted != 1 {
 		messageid, err := Message_Create(user, m.text)
 		Check_Error(err)
 		check := Check_Command(user, m.text)
 		if check == false {
-			time := Time_Stamp()
-			m = Create_Message(message_client_recieve, m.serverid, m.roomid, m.userid, Int_Converter(messageid), time, m.text)
+			m = Create_Message(message_client_recieve, m.serverid, m.roomid, m.userid, Int_Converter(messageid), Int_Converter(Milli_Time()), m.text)
 			Send_Broadcast_Server_Room(Byte_Converter(m.serverid), Byte_Converter(m.roomid), m)
 		}
 	}
 	return m
 }
 
-/*//Sends message code type 17, message client recieve,
-//to a chat room on a specific server
-func Message17(user *User, data []byte) Message {
-
-	m := Message{
-		code:      data[0],
-		serverid:  data[1:4],
-		roomid:    data[5:8],
-		userid:    data[9:12],
-		messageid: data[13:16],
-		time:      data[17:20],
-		text:      data[21:]}
-
-	num1 := Byte_Converter(data[1:4])
-	num2 := Byte_Converter(data[5:8])
-	Send_Broadcast_Server_Room(num1, num2, m)
-	return m
-}*/
-
-//Requests n message code type 17's, message client recieve, from database
-//dependent on offset value from message code type 32, request n messages
-func Message32(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		offset: data[1]}
-
-	num := uint(data[1])
-	messages, err := Get_Offset_Messages(user, num)
+//TODO
+func Offset_Message(user *User, data []byte) Message {
+	m := Create_Message(request_n_messages, data[1])
+	messages, err := Get_Offset_Messages(user, uint(m.offset))
 	Check_Error(err)
-
 	for i := 0; i < len(messages); i++ {
 		Send_Message(user, messages[i])
 	}
-
 	return m
 }
 
-//Requests message code type 48's, recieve userid, from database
-//which consists of all userids conected to a specific server
-func Message33(user *User, data []byte) Message {
-
-	m := Message{
-		code: data[0]}
-
+//TODO
+func Multi_Userid_Message(user *User, data []byte) Message {
+	m := Create_Message(request_all_userid)
 	messages, err := Get_Userid_Messages(user.serverid)
 	Check_Error(err)
-
 	for i := 0; i < len(messages); i++ {
-		Message48(user, messages[i].Build_Message())
+		Send_Message(user, messages[i])
 	}
-
 	return m
 }
 
-//Requests a display name from the database from a user connected to a specific server
-//from requested userid in message code type 34, requested display name, then
-//builds a new byte array in the format of message code type 49, recieve display name
-func Message34(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		userid: data[1:4]}
-
-	num := Byte_Converter(data[1:4])
-	requested_display_name, err := Get_Display_Name(user.serverid, num)
+//TODO
+func Display_Name_Message(user *User, data []byte) Message {
+	m := Create_Message(request_display_name, data[1:4])
+	requested_display_name, err := Get_Display_Name(user.serverid, Byte_Converter(m.userid))
 	Check_Error(err)
-
-	data = make([]byte, len(requested_display_name)+5)
-	data[0] = recieve_display_name
-	copy(data[1:4], Int_Converter(num))
-	copy(data[5:], requested_display_name)
-
-	Message49(user, data)
+	m = Create_Message(recieve_display_name, m.userid, requested_display_name)
+	Send_Message(user, m)
 	return m
 }
 
-//Requests message code type 50's, recieve serverid, which consists of all the serverids
-//that a specific user is connected to from message code type 35, request all serverid
-func Message35(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		userid: data[1:4]}
-
-	num := Byte_Converter(data[1:4])
-	messages, err := Get_Serverid_Messages(num)
+//TODO
+func Multi_Serverid_Message(user *User, data []byte) Message {
+	m := Create_Message(request_all_serverid, data[1:4])
+	messages, err := Get_Serverid_Messages(Byte_Converter(m.userid))
 	Check_Error(err)
-
 	for i := 0; i < len(messages); i++ {
-		Message50(user, messages[i].Build_Message())
+		Send_Message(user, messages[i])
 	}
-
 	return m
 }
 
-//Requests server display name from a specific server from the requested servid in
-//message code tye 36, request server display name, then builds
-//new byte array in the format of message code type 51, recieve server display name
-func Message36(user *User, data []byte) Message {
-
-	m := Message{
-		code:     data[0],
-		serverid: data[1:4]}
-
-	num := Byte_Converter(data[1:4])
-	requested_server_display_name, err := Get_Server_Display_Name(num)
+//TODO
+func Server_Display_Name_Message(user *User, data []byte) Message {
+	m := Create_Message(request_server_display_name, data[1:4])
+	requested_server_display_name, err := Get_Server_Display_Name(Byte_Converter(m.serverid))
 	Check_Error(err)
-
-	data = make([]byte, len(requested_server_display_name)+5)
-	data[0] = recieve_server_display_name
-	copy(data[1:4], Int_Converter(num))
-	copy(data[5:], requested_server_display_name)
-
-	Message51(user, data)
+	m = Create_Message(recieve_server_display_name, m.serverid, requested_server_display_name)
+	Send_Message(user, m)
 	return m
 }
 
-//Request message code type 52's, recieve roomid, which consist of all the roomids
-//on a specific server from the serverid in message code type 37, request all roomid
-func Message37(user *User, data []byte) Message {
-
-	m := Message{
-		code:     data[0],
-		serverid: data[1:4]}
-
-	num := Byte_Converter(data[1:4])
-	messages, err := Get_Roomid_Messages(num)
+//TODO
+func Multi_Roomid_Message(user *User, data []byte) Message {
+	m := Create_Message(request_all_roomid, data[1:4])
+	messages, err := Get_Roomid_Messages(Byte_Converter(m.serverid))
 	Check_Error(err)
-
 	for i := 0; i < len(messages); i++ {
-		Message52(user, messages[i].Build_Message())
+		Send_Message(user, messages[i])
 	}
-
-	return m
-}
-
-//Requests room display name from a specific room on specific server from the requested
-//serverid and roomid in message code type 38, request room display name, then builds
-//a new byte array in the format of message code type 53, recieve room display name
-func Message38(user *User, data []byte) Message {
-
-	m := Message{
-		code:     data[0],
-		serverid: data[1:4],
-		roomid:   data[5:8]}
-
-	num1 := Byte_Converter(data[1:4])
-	num2 := Byte_Converter(data[5:8])
-	requested_room_display_name, err := Get_Room_Display_Name(num1, num2)
-	Check_Error(err)
-
-	data = make([]byte, len(requested_room_display_name)+9)
-	data[0] = recieve_room_display_name
-	copy(data[1:4], Int_Converter(num1))
-	copy(data[5:8], Int_Converter(num2))
-	copy(data[9:], requested_room_display_name)
-
-	Message53(user, data)
-	return m
-}
-
-//Requests master display name from a specific user from the requested userid in
-//message code type 39, request master diplay name, then builds a new byte array
-//in the format of message code type 54, recieve master display name
-func Message39(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		userid: data[1:4]}
-
-	num := Byte_Converter(data[1:4])
-	requested_master_display_name, err := Get_Master_Display_Name(num)
-	Check_Error(err)
-
-	data = make([]byte, len(requested_master_display_name)+5)
-	data[0] = recieve_master_display_name
-	copy(data[1:4], Int_Converter(num))
-	copy(data[5:], requested_master_display_name)
-
-	Message54(user, data)
-	return m
-}
-
-//Requests the status from a specific user from the requested userid in message code
-//type 40, request status, then builds a new byte array in the format of message code
-//type 55, recieve status
-func Message40(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		userid: data[1:4]}
-
-	arr := data[1:4]
-	data = make([]byte, 6)
-	data[0] = recieve_status
-	copy(data[1:4], arr)
-	data[5] = byte(user.status)
-	data[6] = byte(user.muted)
-
-	Message55(user, data)
-	return m
-}
-
-//Requests the local ip address of any user via userid, used for client side voice communication
-func Message41(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		userid: data[1:4]}
-
-	num := Byte_Converter(data[1:4])
-	addr := Get_User_From_Userid(num).Get_Local_Address()
-	arr := data[1:4]
-	data = make([]byte, 5+len(addr))
-	data[0] = recieve_status
-	copy(data[1:4], arr)
-	copy(data[5:], addr)
-
-	Message56(user, data)
 	return m
 }
 
 //TODO
-func Message43(user *User, data []byte) Message {
-
-	m := Message{}
-	return m
-}
-
-//TODO
-func Message44(user *User, data []byte) Message {
-
-	m := Message{}
-	return m
-}
-
-//Sends message code type 48, recieve userid, to client
-func Message48(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		userid: data[1:4]}
-
-	Send_Message(user, m)
-	return m
-}
-
-//Sends message code type 49, recieve display name, to client
-func Message49(user *User, data []byte) Message {
-
-	m := Message{
-		code:         data[0],
-		userid:       data[1:4],
-		display_name: data[5:]}
-
-	Send_Message(user, m)
-	return m
-}
-
-//Sends message code type 50, recieve serverid, to client
-func Message50(user *User, data []byte) Message {
-
-	m := Message{
-		code:     data[0],
-		serverid: data[1:4],
-		userid:   data[5:8]}
-
-	Send_Message(user, m)
-	return m
-}
-
-//Sends message code type 51, recieve server display name, to client
-func Message51(user *User, data []byte) Message {
-
-	m := Message{
-		code:                data[0],
-		serverid:            data[1:4],
-		server_display_name: data[5:]}
-
-	Send_Message(user, m)
-	return m
-}
-
-//Sends message code type 52, recieve roomid, to client
-func Message52(user *User, data []byte) Message {
-
-	m := Message{
-		code:     data[0],
-		serverid: data[1:4],
-		roomid:   data[5:8]}
-
-	Send_Message(user, m)
-	return m
-}
-
-//Sends message code type 53, recieve room display name, to client
-func Message53(user *User, data []byte) Message {
-
-	m := Message{
-		code:              data[0],
-		serverid:          data[1:4],
-		roomid:            data[5:8],
-		room_display_name: data[9:]}
-
-	Send_Message(user, m)
-	return m
-}
-
-//Sends message code type 54, recieve master display name, to client
-func Message54(user *User, data []byte) Message {
-
-	m := Message{
-		code:         data[0],
-		userid:       data[1:4],
-		display_name: data[5:]}
-
-	Send_Message(user, m)
-	return m
-}
-
-//Sends message code type 55, recieve status, to client
-func Message55(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		userid: data[1:4],
-		status: data[5],
-		muted:  data[6]}
-
-	Send_Message(user, m)
-	return m
-}
-
-//Broadcasts to a single user the ip of a requested user
-func Message56(user *User, data []byte) Message {
-
-	m := Message{
-		code:         data[0],
-		userid:       data[1:4],
-		display_name: data[5:]}
-
+func Room_Display_Name_Message(user *User, data []byte) Message {
+	m := Create_Message(request_room_display_name, data[1:4], data[5:8])
+	requested_room_display_name, err := Get_Room_Display_Name(Byte_Converter(m.serverid), Byte_Converter(m.roomid))
+	Check_Error(err)
+	m = Create_Message(recieve_room_display_name, m.serverid, m.roomid, requested_room_display_name)
 	Send_Message(user, m)
 	return m
 }
 
 //TODO
-func Message57(user *User, data []byte) Message {
-
-	m := Message{}
+func Master_Display_Name_Message(user *User, data []byte) Message {
+	m := Create_Message(request_master_display_name, data[1:4])
+	requested_master_display_name, err := Get_Master_Display_Name(Byte_Converter(m.userid))
+	Check_Error(err)
+	m = Create_Message(recieve_master_display_name, m.userid, requested_master_display_name)
+	Send_Message(user, m)
 	return m
 }
 
 //TODO
-func Message58(user *User, data []byte) Message {
-
-	m := Message{}
-	return m
-
-}
-
-//Replaces the user's display name with the new display name in message code type 64,
-//send new display name, then sends message code type 99, broadcast display name, to
-//all users on the user's connected server
-func Message64(user *User, data []byte) Message {
-
-	m := Message{
-		code:         data[0],
-		display_name: data[1:]}
-
-	err := Set_New_Display_Name(user.serverid, user.id, data[1:])
-	Check_Error(err)
-
-	data = make([]byte, len(m.display_name)+5)
-	data[0] = broadcast_display_name
-	copy(data[1:4], Int_Converter(user.id))
-	copy(data[5:], m.display_name)
-
-	Message99(user, data)
-	return m
-}
-
-//Replaces the server's display name with the new server display name in message
-//code type 65, send new  server display name, then sends message code type 100,
-//broadcast server display name, to all users that are members of the server
-func Message65(user *User, data []byte) Message {
-
-	m := Message{
-		code:                data[0],
-		serverid:            data[1:4],
-		server_display_name: data[5:]}
-
-	num := Byte_Converter(data[1:4])
-	err := Set_New_Server_Display_Name(num, data[5:])
-	Check_Error(err)
-
-	data = make([]byte, len(m.server_display_name)+5)
-	data[0] = broadcast_server_display_name
-	copy(data[1:4], m.serverid)
-	copy(data[5:], m.server_display_name)
-
-	Message100(user, data)
-	return m
-}
-
-//Replaces the room's display name with the new room display name in message
-//code type 66, send new room display name, then sends message code type 101,
-//broadcast room display name, to all users on that are connected to the server
-func Message66(user *User, data []byte) Message {
-
-	m := Message{
-		code:              data[0],
-		serverid:          data[1:4],
-		roomid:            data[5:8],
-		room_display_name: data[9:]}
-
-	num1 := Byte_Converter(data[1:4])
-	num2 := Byte_Converter(data[5:8])
-	err := Set_New_Room_Display_Name(num1, num2, data[9:])
-	Check_Error(err)
-
-	data = make([]byte, len(m.room_display_name)+9)
-	data[0] = broadcast_room_display_name
-	copy(data[1:4], m.serverid)
-	copy(data[5:8], m.roomid)
-	copy(data[9:], m.room_display_name)
-
-	Message101(user, data)
-	return m
-}
-
-//Replaces the user's master display name with the new master display name in message
-//code type 67, send new master display name, then sends message code type 102,
-//broadcast master display name, to all of the user's friends
-func Message67(user *User, data []byte) Message {
-	m := Message{
-		code:         data[0],
-		display_name: data[1:]}
-
-	err := Set_New_Master_Display_Name(user.id, data[1:])
-	Check_Error(err)
-
-	data = make([]byte, len(m.display_name)+5)
-	data[0] = broadcast_master_display_name
-	copy(data[1:4], Int_Converter(user.id))
-	copy(data[5:], m.display_name)
-
-	Message102(user, data)
+func Status_Message(user *User, data []byte) Message {
+	m := Create_Message(request_status, data[1:4])
+	m = Create_Message(recieve_status, m.userid, byte(user.status), byte(user.muted))
+	Send_Message(user, m)
 	return m
 }
 
 //TODO
-func Message68(user *User, data []byte) Message {
-
-	m := Message{}
+func User_Ip_Message(user *User, data []byte) Message {
+	m := Create_Message(request_user_ip, data[1:4])
+	address := Get_User_From_Userid(Byte_Converter(m.userid)).Get_Local_Address()
+	m = Create_Message(recieve_user_ip, m.userid, String_Converter(address))
+	Send_Message(user, m)
 	return m
 }
 
 //TODO
-func Message70(user *User, data []byte) Message {
-
-	m := Message{}
-	return m
-
-}
-
-//Changes the user's status to the new status in message code type 80, change status,
-//then builds a new byte array in the format of message code type 96, broadcast status
-func Message80(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		status: data[1],
-		muted:  data[2]}
-
-	user.status = uint(m.status)
-	user.muted = uint(m.muted)
-
-	data = make([]byte, 6)
-	data[0] = broadcast_status
-	copy(data[1:4], Int_Converter(user.id))
-	data[5] = byte(user.status)
-	data[6] = byte(user.muted)
-
-	Message96(user, data)
+func User_Icon_Message(user *User, data []byte) Message {
+	m := Create_Message(request_user_icon, data[1:4])
+	url, err := Get_User_Icon(Byte_Converter(m.userid))
+	Check_Error(err)
+	m = Create_Message(recieve_user_icon, m.userid, String_Converter(url))
+	Send_Message(user, m)
 	return m
 }
 
-//Changes the user's server to the new server in message code type 81, change server,
-//then builds a new byte array in the format of message code type 97, broadcast server
-func Message81(user *User, data []byte) Message {
-
-	m := Message{
-		code:     data[0],
-		serverid: data[1:4]}
-
-	user.serverid = Byte_Converter(data[1:4])
-
-	data = make([]byte, 9)
-	data[0] = broadcast_server
-	copy(data[1:4], Int_Converter(user.serverid))
-	copy(data[5:8], Int_Converter(user.id))
-
-	Message97(user, data)
+//TODO
+func Server_Icon_Message(user *User, data []byte) Message {
+	m := Create_Message(request_server_icon, data[1:4])
+	url, err := Get_Server_Icon(Byte_Converter(m.serverid))
+	Check_Error(err)
+	m = Create_Message(recieve_server_icon, m.serverid, url)
+	Send_Message(user, m)
 	return m
 }
 
-//Changes the user's room to the new room in message code type 82, change room, then
-//builds a new byte array in the format of message code type 98, broadcast room
-func Message82(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		roomid: data[1:4]}
-
-	user.roomid = Byte_Converter(data[1:4])
-
-	data = make([]byte, 9)
-	data[0] = broadcast_room
-	copy(data[1:4], Int_Converter(user.roomid))
-	copy(data[5:8], Int_Converter(user.id))
-
-	Message98(user, data)
+//TODO
+func User_Location_Message(user *User, data []byte) Message {
+	m := Create_Message(request_user_location, data[1:4])
+	m = Create_Message(recieve_user_location, Int_Converter(user.serverid), Int_Converter(user.roomid))
+	Send_Message(user, m)
 	return m
 }
 
-//Sends message code type 96, broadcast status, to all users on the user's connected
-//server
-func Message96(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		userid: data[1:4],
-		status: data[5],
-		muted:  data[6]}
-
+//TODO
+func New_Display_Name_Message(user *User, data []byte) Message {
+	m := Create_Message(send_new_display_name, data[1:])
+	err := Set_New_Display_Name(user.serverid, user.id, m.display_name)
+	Check_Error(err)
+	m = Create_Message(recieve_display_name, Int_Converter(user.id), m.display_name)
 	Send_Broadcast_Server(user.serverid, m)
 	return m
 }
 
-//Sends message code type 97, broadcast server, to all users on the specified server
-func Message97(user *User, data []byte) Message {
-
-	m := Message{
-		code:     data[0],
-		serverid: data[1:4],
-		userid:   data[5:8]}
-
-	Send_Broadcast_Server(Byte_Converter(m.serverid), m)
-	return m
-}
-
-//Sends message code type 98, broadcast room, to all users on the user's connected
-//server
-func Message98(user *User, data []byte) Message {
-
-	m := Message{
-		code:   data[0],
-		roomid: data[1:4],
-		userid: data[5:8]}
-
-	Send_Broadcast_Server(user.serverid, m)
-	return m
-}
-
-//Sends message code type 99, broadcast display name, to all users on the user's
-//connected server
-func Message99(user *User, data []byte) Message {
-
-	m := Message{
-		code:         data[0],
-		userid:       data[1:4],
-		display_name: data[5:]}
-
-	Send_Broadcast_Server(user.serverid, m)
-	return m
-}
-
-//Sends message code type 100, broadcast server display name, to all users that are
-//members of the specified server
-func Message100(user *User, data []byte) Message {
-
-	m := Message{
-		code:                recieve_server_display_name,
-		serverid:            data[1:4],
-		server_display_name: data[5:]}
-
+//TODO
+func New_Server_Display_Name_Message(user *User, data []byte) Message {
+	m := Create_Message(send_new_server_display_name, data[1:4], data[5:])
+	err := Set_New_Server_Display_Name(Byte_Converter(m.serverid), m.server_display_name)
+	Check_Error(err)
+	m = Create_Message(recieve_server_display_name, m.serverid, m.server_display_name)
 	Send_Broadcast_Members(Byte_Converter(m.serverid), m)
 	return m
 }
 
-//Sends message code type 101, broadcast room display name, to all users on the
-//specified server
-func Message101(user *User, data []byte) Message {
-
-	m := Message{
-		code:              data[0],
-		serverid:          data[1:4],
-		roomid:            data[5:8],
-		room_display_name: data[9:]}
-
+//TODO
+func New_Room_Display_Name_Message(user *User, data []byte) Message {
+	m := Create_Message(send_new_room_display_name, data[1:4], data[5:8], data[9:])
+	err := Set_New_Room_Display_Name(Byte_Converter(m.serverid), Byte_Converter(m.roomid), data[9:])
+	Check_Error(err)
+	m = Create_Message(recieve_room_display_name, m.serverid, m.roomid, m.room_display_name)
 	Send_Broadcast_Server(Byte_Converter(m.serverid), m)
 	return m
 }
 
-//Sends message code type 102, broadcast master display name, to all users that are
-//the user's friends
-func Message102(user *User, data []byte) Message {
-
-	m := Message{
-		code:         data[0],
-		userid:       data[1:4],
-		display_name: data[5:]}
-
-	Send_Broadcast_Friends(Byte_Converter(m.userid), m)
+//TODO
+func New_Master_Display_Name_Message(user *User, data []byte) Message {
+	m := Create_Message(send_new_master_display_name, data[1:])
+	err := Set_New_Master_Display_Name(user.id, m.master_display_name)
+	Check_Error(err)
+	m = Create_Message(recieve_master_display_name, Int_Converter(user.id), m.master_display_name)
+	Send_Broadcast_Friends(user.id, m)
 	return m
 }
 
-//Sends message code type 255, error check, to client
-func Message255(user *User, data []byte) Message {
+//TODO
+func New_User_Icon_Message(user *User, data []byte) Message {
+	m := Create_Message(send_new_user_icon, data[1:])
+	err := Set_New_User_Icon(user.id, string(m.url))
+	Check_Error(err)
+	m = Create_Message(recieve_user_icon, Int_Converter(user.id), m.url)
+	Send_Broadcast_Server(user.serverid, m)
+	Send_Broadcast_Friends(user.id, m)
+	return m
+}
 
-	m := Message{
-		code: data[0],
-		text: data[1:]}
+//TODO
+func New_Server_Icon_Message(user *User, data []byte) Message {
+	m := Create_Message(send_new_server_icon, data[1:4], data[5:])
+	err := Set_New_Server_Icon(Byte_Converter(m.serverid), string(m.url))
+	Check_Error(err)
+	m = Create_Message(recieve_server_icon, m.serverid, m.url)
+	Send_Broadcast_Members(Byte_Converter(m.serverid), m)
+	return m
 
-	Send_Message(user, m)
+}
+
+//TODO
+func Change_Status_Message(user *User, data []byte) Message {
+	m := Create_Message(change_status, data[1], data[2])
+	user.status = uint(m.status)
+	user.muted = uint(m.muted)
+	m = Create_Message(recieve_status, Int_Converter(user.id), m.status, m.muted)
+	Send_Broadcast_Server(user.serverid, m)
+	Send_Broadcast_Friends(user.id, m)
+	return m
+}
+
+//TODO
+func Change_User_Location_Message(user *User, data []byte) Message {
+	m := Create_Message(change_user_location, data[1:4], data[5:8])
+	user.serverid = Byte_Converter(m.serverid)
+	user.roomid = Byte_Converter(m.roomid)
+	m = Create_Message(recieve_user_location, m.serverid, m.roomid)
+	Send_Broadcast_Server(user.serverid, m)
 	return m
 }

@@ -114,6 +114,7 @@ func Init_Message() {
 	Messages[41] = Userid
 	Messages[43] = Userid
 	Messages[44] = Userid
+	Messages[45] = Userid
 
 	Messages[48] = Userid
 	Messages[49] = Userid_Display_Name
@@ -126,6 +127,7 @@ func Init_Message() {
 	Messages[56] = Userid_Address
 	Messages[57] = Userid_Url
 	Messages[58] = Serverid_Url
+	Messages[59] = Serverid_Roomid
 
 	Messages[64] = Display_Name
 	Messages[65] = Server_Display_Name
@@ -135,16 +137,7 @@ func Init_Message() {
 	Messages[70] = Serverid_Url
 
 	Messages[80] = Status
-	Messages[81] = Serverid
-	Messages[82] = Roomid
-
-	Messages[96] = Userid_Status
-	Messages[97] = Serverid_Userid
-	Messages[98] = Roomid_Userid
-	Messages[99] = Userid_Display_Name
-	Messages[100] = Server_Display_Name
-	Messages[101] = Room_Display_Name
-	Messages[102] = Userid_Master_Display_Name
+	Messages[81] = Serverid_Roomid
 
 	Messages[255] = Text
 

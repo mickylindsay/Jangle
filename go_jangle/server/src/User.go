@@ -34,11 +34,9 @@ func (u *User) User_Initialize() {
 		roomid:   u.roomid,
 		serverid: u.serverid,
 	}
-	data := make([]byte, 6)
-	data[0] = broadcast_status
-	copy(data[1:4], Int_Converter(u.id))
-	data[5] = byte(u.status)
-	Message96(u, data)
+	m := Create_Message(recieve_status, Int_Converter(u.id), byte(u.status), byte(u.muted))
+	Send_Broadcast_Server(u.serverid, m)
+	Send_Broadcast_Friends(u.id, m)
 }
 
 func (u *User) Get_Userid() uint {
