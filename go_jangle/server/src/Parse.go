@@ -79,12 +79,17 @@ func Standard_Message(user *User, data []byte) Message {
 	m := Create_Message(message_client_send, data[1:4], data[5:8], data[9:12], data[13:])
 	if user.muted != 1 {
 		messageid, err := Message_Create(user, m.text)
-		Check_Error(err)
-		check := Check_Command(user, m.text)
-		if check == false {
-			m = Create_Message(message_client_recieve, m.serverid, m.roomid, m.userid, Int_Converter(messageid), Int_Converter(Milli_Time()), m.text)
-			Send_Broadcast_Server_Room(Byte_Converter(m.serverid), Byte_Converter(m.roomid), m)
+		if err != nil {
+			m = Create_Message(error_check, []byte("Failed to insert message into database"))
+			Send_Message(user, m)
+		} else {
+			check := Check_Command(user, m.text)
+			if check == false {
+				m = Create_Message(message_client_recieve, m.serverid, m.roomid, m.userid, Int_Converter(messageid), Int_Converter(Milli_Time()), m.text)
+				Send_Broadcast_Server_Room(Byte_Converter(m.serverid), Byte_Converter(m.roomid), m)
+			}
 		}
+		
 	}
 	return m
 }
@@ -93,9 +98,13 @@ func Standard_Message(user *User, data []byte) Message {
 func Offset_Message(user *User, data []byte) Message {
 	m := Create_Message(request_n_messages, data[1])
 	messages, err := Get_Offset_Messages(user, uint(m.offset))
-	Check_Error(err)
-	for i := 0; i < len(messages); i++ {
-		Send_Message(user, messages[i])
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to retrieve offset messages from database"))
+		Send_Message(user, m)
+	} else {
+		for i := 0; i < len(messages); i++ {
+			Send_Message(user, messages[i])
+		}
 	}
 	return m
 }
@@ -104,9 +113,13 @@ func Offset_Message(user *User, data []byte) Message {
 func Multi_Userid_Message(user *User, data []byte) Message {
 	m := Create_Message(request_all_userid)
 	messages, err := Get_Userid_Messages(user.serverid)
-	Check_Error(err)
-	for i := 0; i < len(messages); i++ {
-		Send_Message(user, messages[i])
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to retrieve all userid from database"))
+		Send_Message(user, m)
+	} else {
+		for i := 0; i < len(messages); i++ {
+			Send_Message(user, messages[i])
+		}
 	}
 	return m
 }
@@ -115,9 +128,13 @@ func Multi_Userid_Message(user *User, data []byte) Message {
 func Display_Name_Message(user *User, data []byte) Message {
 	m := Create_Message(request_display_name, data[1:4])
 	requested_display_name, err := Get_Display_Name(user.serverid, Byte_Converter(m.userid))
-	Check_Error(err)
-	m = Create_Message(recieve_display_name, m.userid, requested_display_name)
-	Send_Message(user, m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to retrieve display name from database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_display_name, m.userid, requested_display_name)
+		Send_Message(user, m)
+	}
 	return m
 }
 
@@ -125,9 +142,13 @@ func Display_Name_Message(user *User, data []byte) Message {
 func Multi_Serverid_Message(user *User, data []byte) Message {
 	m := Create_Message(request_all_serverid, data[1:4])
 	messages, err := Get_Serverid_Messages(Byte_Converter(m.userid))
-	Check_Error(err)
-	for i := 0; i < len(messages); i++ {
-		Send_Message(user, messages[i])
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to retrieve all serverid from database"))
+		Send_Message(user, m)
+	} else {
+		for i := 0; i < len(messages); i++ {
+			Send_Message(user, messages[i])
+		}
 	}
 	return m
 }
@@ -136,9 +157,13 @@ func Multi_Serverid_Message(user *User, data []byte) Message {
 func Server_Display_Name_Message(user *User, data []byte) Message {
 	m := Create_Message(request_server_display_name, data[1:4])
 	requested_server_display_name, err := Get_Server_Display_Name(Byte_Converter(m.serverid))
-	Check_Error(err)
-	m = Create_Message(recieve_server_display_name, m.serverid, requested_server_display_name)
-	Send_Message(user, m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to retrieve server display name from database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_server_display_name, m.serverid, requested_server_display_name)
+		Send_Message(user, m)
+	}
 	return m
 }
 
@@ -146,9 +171,13 @@ func Server_Display_Name_Message(user *User, data []byte) Message {
 func Multi_Roomid_Message(user *User, data []byte) Message {
 	m := Create_Message(request_all_roomid, data[1:4])
 	messages, err := Get_Roomid_Messages(Byte_Converter(m.serverid))
-	Check_Error(err)
-	for i := 0; i < len(messages); i++ {
-		Send_Message(user, messages[i])
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to retrieve all roomid from database"))
+		Send_Message(user, m)
+	} else {
+		for i := 0; i < len(messages); i++ {
+			Send_Message(user, messages[i])
+		}
 	}
 	return m
 }
@@ -157,9 +186,13 @@ func Multi_Roomid_Message(user *User, data []byte) Message {
 func Room_Display_Name_Message(user *User, data []byte) Message {
 	m := Create_Message(request_room_display_name, data[1:4], data[5:8])
 	requested_room_display_name, err := Get_Room_Display_Name(Byte_Converter(m.serverid), Byte_Converter(m.roomid))
-	Check_Error(err)
-	m = Create_Message(recieve_room_display_name, m.serverid, m.roomid, requested_room_display_name)
-	Send_Message(user, m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to retrieve room display name from database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_room_display_name, m.serverid, m.roomid, requested_room_display_name)
+		Send_Message(user, m)
+	}
 	return m
 }
 
@@ -167,9 +200,13 @@ func Room_Display_Name_Message(user *User, data []byte) Message {
 func Master_Display_Name_Message(user *User, data []byte) Message {
 	m := Create_Message(request_master_display_name, data[1:4])
 	requested_master_display_name, err := Get_Master_Display_Name(Byte_Converter(m.userid))
-	Check_Error(err)
-	m = Create_Message(recieve_master_display_name, m.userid, requested_master_display_name)
-	Send_Message(user, m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to retrieve master display name from database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_master_display_name, m.userid, requested_master_display_name)
+		Send_Message(user, m)
+	}
 	return m
 }
 
@@ -202,9 +239,13 @@ func User_Ip_Message(user *User, data []byte) Message {
 func User_Icon_Message(user *User, data []byte) Message {
 	m := Create_Message(request_user_icon, data[1:4])
 	url, err := Get_User_Icon(Byte_Converter(m.userid))
-	Check_Error(err)
-	m = Create_Message(recieve_user_icon, m.userid, String_Converter(url))
-	Send_Message(user, m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to retrieve user icon from database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_user_icon, m.userid, String_Converter(url))
+		Send_Message(user, m)
+	}
 	return m
 }
 
@@ -212,9 +253,13 @@ func User_Icon_Message(user *User, data []byte) Message {
 func Server_Icon_Message(user *User, data []byte) Message {
 	m := Create_Message(request_server_icon, data[1:4])
 	url, err := Get_Server_Icon(Byte_Converter(m.serverid))
-	Check_Error(err)
-	m = Create_Message(recieve_server_icon, m.serverid, url)
-	Send_Message(user, m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to retrieve server icon from database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_server_icon, m.serverid, url)
+		Send_Message(user, m)
+	}
 	return m
 }
 
@@ -222,9 +267,13 @@ func Server_Icon_Message(user *User, data []byte) Message {
 func New_Display_Name_Message(user *User, data []byte) Message {
 	m := Create_Message(send_new_display_name, data[1:])
 	err := Set_New_Display_Name(user.serverid, user.id, m.display_name)
-	Check_Error(err)
-	m = Create_Message(recieve_display_name, Int_Converter(user.id), m.display_name)
-	Send_Broadcast_Server(user.serverid, m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to insert new display name into database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_display_name, Int_Converter(user.id), m.display_name)
+		Send_Broadcast_Server(user.serverid, m)
+	}
 	return m
 }
 
@@ -232,9 +281,13 @@ func New_Display_Name_Message(user *User, data []byte) Message {
 func New_Server_Display_Name_Message(user *User, data []byte) Message {
 	m := Create_Message(send_new_server_display_name, data[1:4], data[5:])
 	err := Set_New_Server_Display_Name(Byte_Converter(m.serverid), m.server_display_name)
-	Check_Error(err)
-	m = Create_Message(recieve_server_display_name, m.serverid, m.server_display_name)
-	Send_Broadcast_Members(Byte_Converter(m.serverid), m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to insert new server display name into database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_server_display_name, m.serverid, m.server_display_name)
+		Send_Broadcast_Members(Byte_Converter(m.serverid), m)
+	}
 	return m
 }
 
@@ -242,9 +295,13 @@ func New_Server_Display_Name_Message(user *User, data []byte) Message {
 func New_Room_Display_Name_Message(user *User, data []byte) Message {
 	m := Create_Message(send_new_room_display_name, data[1:4], data[5:8], data[9:])
 	err := Set_New_Room_Display_Name(Byte_Converter(m.serverid), Byte_Converter(m.roomid), data[9:])
-	Check_Error(err)
-	m = Create_Message(recieve_room_display_name, m.serverid, m.roomid, m.room_display_name)
-	Send_Broadcast_Server(Byte_Converter(m.serverid), m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to insert new room display name into database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_room_display_name, m.serverid, m.roomid, m.room_display_name)
+		Send_Broadcast_Server(Byte_Converter(m.serverid), m)
+	}
 	return m
 }
 
@@ -252,9 +309,13 @@ func New_Room_Display_Name_Message(user *User, data []byte) Message {
 func New_Master_Display_Name_Message(user *User, data []byte) Message {
 	m := Create_Message(send_new_master_display_name, data[1:])
 	err := Set_New_Master_Display_Name(user.id, m.master_display_name)
-	Check_Error(err)
-	m = Create_Message(recieve_master_display_name, Int_Converter(user.id), m.master_display_name)
-	Send_Broadcast_Friends(user.id, m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to insert new master display name into database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_master_display_name, Int_Converter(user.id), m.master_display_name)
+		Send_Broadcast_Friends(user.id, m)
+	}
 	return m
 }
 
@@ -262,10 +323,14 @@ func New_Master_Display_Name_Message(user *User, data []byte) Message {
 func New_User_Icon_Message(user *User, data []byte) Message {
 	m := Create_Message(send_new_user_icon, data[1:])
 	err := Set_New_User_Icon(user.id, string(m.url))
-	Check_Error(err)
-	m = Create_Message(recieve_user_icon, Int_Converter(user.id), m.url)
-	Send_Broadcast_Server(user.serverid, m)
-	Send_Broadcast_Friends(user.id, m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to insert new user icon into database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_user_icon, Int_Converter(user.id), m.url)
+		Send_Broadcast_Server(user.serverid, m)
+		Send_Broadcast_Friends(user.id, m)
+	}
 	return m
 }
 
@@ -273,9 +338,13 @@ func New_User_Icon_Message(user *User, data []byte) Message {
 func New_Server_Icon_Message(user *User, data []byte) Message {
 	m := Create_Message(send_new_server_icon, data[1:4], data[5:])
 	err := Set_New_Server_Icon(Byte_Converter(m.serverid), string(m.url))
-	Check_Error(err)
-	m = Create_Message(recieve_server_icon, m.serverid, m.url)
-	Send_Broadcast_Members(Byte_Converter(m.serverid), m)
+	if err != nil {
+		m = Create_Message(error_check, []byte("Failed to insert new server icon into database"))
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_server_icon, m.serverid, m.url)
+		Send_Broadcast_Members(Byte_Converter(m.serverid), m)
+	}
 	return m
 
 }
