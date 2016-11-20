@@ -28,10 +28,10 @@ func Init_Parse() {
 	Parsers[request_room_display_name] = Room_Display_Name_Message
 	Parsers[request_master_display_name] = Master_Display_Name_Message
 	Parsers[request_status] = Status_Message
+	Parsers[request_location] = Location_Message
 	Parsers[request_user_ip] = User_Ip_Message
 	Parsers[request_user_icon] = User_Icon_Message
 	Parsers[request_server_icon] = Server_Icon_Message
-	Parsers[request_user_location] = User_Location_Message
 	Parsers[send_new_display_name] = New_Display_Name_Message
 	Parsers[send_new_server_display_name] = New_Server_Display_Name_Message
 	Parsers[send_new_room_display_name] = New_Room_Display_Name_Message
@@ -39,7 +39,7 @@ func Init_Parse() {
 	Parsers[send_new_user_icon] = New_User_Icon_Message
 	Parsers[send_new_server_icon] = New_Server_Icon_Message
 	Parsers[change_status] = Change_Status_Message
-	Parsers[change_user_location] = Change_User_Location_Message
+	Parsers[change_location] = Change_Location_Message
 
 	jangle.Parsers = Parsers
 }
@@ -182,6 +182,14 @@ func Status_Message(user *User, data []byte) Message {
 }
 
 //TODO
+func Location_Message(user *User, data []byte) Message {
+	m := Create_Message(request_location, data[1:4])
+	m = Create_Message(recieve_location, Int_Converter(user.serverid), Int_Converter(user.roomid), Int_Converter(user.id))
+	Send_Message(user, m)
+	return m
+}
+
+//TODO
 func User_Ip_Message(user *User, data []byte) Message {
 	m := Create_Message(request_user_ip, data[1:4])
 	address := Get_User_From_Userid(Byte_Converter(m.userid)).Get_Local_Address()
@@ -206,14 +214,6 @@ func Server_Icon_Message(user *User, data []byte) Message {
 	url, err := Get_Server_Icon(Byte_Converter(m.serverid))
 	Check_Error(err)
 	m = Create_Message(recieve_server_icon, m.serverid, url)
-	Send_Message(user, m)
-	return m
-}
-
-//TODO
-func User_Location_Message(user *User, data []byte) Message {
-	m := Create_Message(request_user_location, data[1:4])
-	m = Create_Message(recieve_user_location, Int_Converter(user.serverid), Int_Converter(user.roomid))
 	Send_Message(user, m)
 	return m
 }
@@ -292,11 +292,19 @@ func Change_Status_Message(user *User, data []byte) Message {
 }
 
 //TODO
-func Change_User_Location_Message(user *User, data []byte) Message {
-	m := Create_Message(change_user_location, data[1:4], data[5:8])
-	user.serverid = Byte_Converter(m.serverid)
-	user.roomid = Byte_Converter(m.roomid)
-	m = Create_Message(recieve_user_location, m.serverid, m.roomid)
-	Send_Broadcast_Server(user.serverid, m)
+func Change_Location_Message(user *User, data []byte) Message {
+	m := Create_Message(change_location, data[1:4], data[5:8])
+	if user.serverid != Byte_Converter(m.serverid) {
+		old_server := user.serverid
+		user.serverid = Byte_Converter(m.serverid)
+		user.roomid = Byte_Converter(m.roomid)
+		m = Create_Message(recieve_location, m.serverid, m.roomid, Int_Converter(user.id))
+		Send_Broadcast_Server(old_server, m)
+		Send_Broadcast_Server(user.serverid, m)
+	} else {
+		user.roomid = Byte_Converter(m.roomid)
+		m = Create_Message(recieve_location, m.serverid, m.roomid, Int_Converter(user.id))
+		Send_Broadcast_Server(user.serverid, m)
+	}
 	return m
 }

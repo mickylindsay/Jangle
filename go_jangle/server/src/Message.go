@@ -90,56 +90,50 @@ func (m Message) Build_Message() []byte {
 func Init_Message() {
 	Messages := make([]func(args ...interface{}) Message, 256)
 
-	Messages[0] = Username_Password
-	Messages[1] = Base
-	Messages[2] = Username_Password
-	Messages[3] = Base
-	Messages[4] = Userid
-
-	Messages[16] = Message_Send
-	Messages[17] = Message_Recieve
-	Messages[18] = Messageid_Text
-	Messages[19] = Messageid
-	Messages[20] = Messageid
-
-	Messages[32] = Multi_Message
-	Messages[33] = Base
-	Messages[34] = Userid
-	Messages[35] = Userid
-	Messages[36] = Serverid
-	Messages[37] = Serverid
-	Messages[38] = Serverid_Roomid
-	Messages[39] = Userid
-	Messages[40] = Userid
-	Messages[41] = Userid
-	Messages[43] = Userid
-	Messages[44] = Userid
-	Messages[45] = Userid
-
-	Messages[48] = Userid
-	Messages[49] = Userid_Display_Name
-	Messages[50] = Serverid_Userid
-	Messages[51] = Server_Display_Name
-	Messages[52] = Serverid_Roomid
-	Messages[53] = Room_Display_Name
-	Messages[54] = Userid_Master_Display_Name
-	Messages[55] = Userid_Status
-	Messages[56] = Userid_Address
-	Messages[57] = Userid_Url
-	Messages[58] = Serverid_Url
-	Messages[59] = Serverid_Roomid
-
-	Messages[64] = Display_Name
-	Messages[65] = Server_Display_Name
-	Messages[66] = Room_Display_Name
-	Messages[67] = Master_Display_Name
-	Messages[68] = Url
-	Messages[70] = Serverid_Url
-
-	Messages[80] = Status
-	Messages[81] = Serverid_Roomid
-
-	Messages[255] = Text
+	Messages[create_user] = Username_Password
+	Messages[create_user_fail] = Base
+	Messages[login] = Username_Password
+	Messages[login_fail] = Base
+	Messages[login_success] = Userid
+	Messages[message_client_send] = Message_Send
+	Messages[message_client_recieve] = Message_Recieve
+	Messages[message_edit] = Messageid_Text
+	Messages[message_delete] = Messageid
+	Messages[message_remove] = Messageid
+	Messages[request_n_messages] = Multi_Message
+	Messages[request_all_userid] = Base
+	Messages[request_display_name] = Userid
+	Messages[request_all_serverid] = Userid
+	Messages[request_server_display_name] = Serverid
+	Messages[request_all_roomid] = Serverid
+	Messages[request_room_display_name] = Serverid_Roomid
+	Messages[request_master_display_name] = Userid
+	Messages[request_status] = Userid
+	Messages[request_location] = Userid
+	Messages[request_user_ip] = Userid
+	Messages[request_user_icon] = Userid
+	Messages[request_server_icon] = Userid
+	Messages[recieve_userid] = Userid
+	Messages[recieve_display_name] = Userid_Display_Name
+	Messages[recieve_serverid] = Serverid_Userid
+	Messages[recieve_server_display_name] = Server_Display_Name
+	Messages[recieve_roomid] = Serverid_Roomid
+	Messages[recieve_room_display_name] = Room_Display_Name
+	Messages[recieve_master_display_name] = Userid_Master_Display_Name
+	Messages[recieve_status] = Userid_Status
+	Messages[recieve_location] = Serverid_Roomid_Userid
+	Messages[recieve_user_ip] = Userid_Address
+	Messages[recieve_user_icon] = Userid_Url
+	Messages[recieve_server_icon] = Serverid_Url
+	Messages[send_new_display_name] = Display_Name
+	Messages[send_new_server_display_name] = Server_Display_Name
+	Messages[send_new_room_display_name] = Room_Display_Name
+	Messages[send_new_master_display_name] = Master_Display_Name
+	Messages[send_new_user_icon] = Url
+	Messages[send_new_server_icon] = Serverid_Url
+	Messages[change_status] = Status
+	Messages[change_location] = Serverid_Roomid
+	Messages[error_check] = Text
 
 	jangle.Messages = Messages
 }
@@ -198,6 +192,16 @@ func Messageid_Text(args ...interface{}) Message {
 		code:      args[0].(byte),
 		messageid: args[1].([]byte),
 		text:      args[2].([]byte)}
+	return m
+}
+
+//TODO
+func Serverid_Roomid_Userid(args ...interface{}) Message {
+	m := Message{
+		code:     args[0].(byte),
+		serverid: args[1].([]byte),
+		roomid:   args[2].([]byte),
+		userid:   args[3].([]byte)}
 	return m
 }
 

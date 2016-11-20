@@ -64,7 +64,8 @@ func Switcher(s string) byte {
 //Kicks the user from the server
 func Kick_User(args []string) {
 	c := Kick{
-		user: Get_User_From_Userid(Byte_Converter([]byte(args[1])))}
+		user: Get_User_From_Userid(Byte_Converter([]byte(args[1]))),
+		old_server: Get_User_From_Userid(Byte_Converter([]byte(args[1]))).serverid}
 	c.Execute()
 	c.Send()
 }
@@ -118,6 +119,7 @@ type Command interface {
 //Creates Kick struct with param User type
 type Kick struct {
 	user *User
+	old_server uint
 }
 
 //Sets the user's severid and roomid to the default value and removes the user from
@@ -130,8 +132,8 @@ func (c Kick) Execute() {
 
 //Builds a message code type 97, broadcast server
 func (c Kick) Send() {
-	m := Create_Message(recieve_user_location, Int_Converter(c.user.serverid), Int_Converter(c.user.id))
-	Send_Broadcast_Server(c.user.serverid, m)
+	m := Create_Message(recieve_location, Int_Converter(c.user.serverid), Int_Converter(c.user.roomid), Int_Converter(c.user.id))
+	Send_Broadcast_Server(c.old_server, m)
 }
 
 //Creates Mute struct with param User type
@@ -181,7 +183,7 @@ func (c Move) Execute() {
 
 //Builds a message code type 98, broadcast room
 func (c Move) Send() {
-	m := Create_Message(recieve_user_location, Int_Converter(c.user.roomid), Int_Converter(c.user.id))
+	m := Create_Message(recieve_location, Int_Converter(c.user.roomid), Int_Converter(c.user.roomid), Int_Converter(c.user.id))
 	Send_Broadcast_Server(c.user.serverid, m)
 }
 
