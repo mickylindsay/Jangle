@@ -74,14 +74,11 @@ func (m Message) Build_Message() []byte {
 		message = append(message, m.url...)
 	}
 	if m.offset != 0 {
-		var temp1 []byte = []byte{m.offset}
-		message = append(message, temp1...)
+		message = append(message, []byte{m.offset}...)
 	}
 	if m.code == (change_status | recieve_status) {
-		var temp2 []byte = []byte{m.status}
-		message = append(message, temp2...)
-		var temp3 []byte = []byte{m.muted}
-		message = append(message, temp3...)
+		message = append(message, []byte{m.status}...)
+		message = append(message, []byte{m.muted}...)
 	}
 	return message
 }
