@@ -22,6 +22,7 @@ public class Client {
     private int channelID;
     private int userID;
     private String displayName;
+    private String IP;
 
 
     public Client(ArrayList<User> users, ArrayList<Message> messages, int serverID, int channelID) {
@@ -32,6 +33,7 @@ public class Client {
         this.userID = 0;
         this.loggedIn = false;
         this.mLoginTime = 0;
+        this.IP = "";
     }
 
     public Client(ArrayList<User> users, ArrayList<Message> messages) {
@@ -40,6 +42,7 @@ public class Client {
         this.userID = 0;
         this.loggedIn = false;
         this.mLoginTime = 0;
+        this.IP = "";
     }
 
     public Client(int serverID, int channelID) {
@@ -49,6 +52,7 @@ public class Client {
         this.mMessages = new ArrayList<>();
         this.loggedIn = false;
         this.mLoginTime = 0;
+        this.IP = "";
     }
 
     public Client() {
@@ -59,6 +63,7 @@ public class Client {
         this.userID = 0;
         this.loggedIn = false;
         this.mLoginTime = 0;
+        this.IP = "";
     }
 
     public void addMessage(Message message) {
@@ -81,6 +86,10 @@ public class Client {
 
     public List<User> getUsers() {
         return mUsers;
+    }
+    
+    public ArrayList<User> getUsersArrayList(){
+    	return this.mUsers;
     }
 
     public void setUsers(ArrayList<User> users) {
@@ -149,6 +158,14 @@ public class Client {
 
     public void setLoginTime(long loginTime) {
         mLoginTime = loginTime;
+    }
+    
+    public String getIP(){
+    	return this.IP;
+    }
+    
+    public void setIP(String gIP){
+    	this.IP = gIP;
     }
 
 }

@@ -15,6 +15,7 @@ public class User {
     private String userName;
     private String avatarURL;
     private String IP;
+    private int channelID;
     
 
     public User(String displayName, int id, int status) {
@@ -24,6 +25,7 @@ public class User {
         this.userName = "";
         this.avatarURL = DEFAULT_AVATAR;
         this.IP = "";
+        this.channelID = 0;
     }
     
     public User(String displayName, String userName, int id, int status){
@@ -33,6 +35,7 @@ public class User {
         this.userName = userName;
         this.avatarURL = DEFAULT_AVATAR;
         this.IP = "";
+        this.channelID = 0;
     }
 
     public User(String displayName, int id) {
@@ -42,6 +45,7 @@ public class User {
         this.userName = "";
         this.avatarURL = DEFAULT_AVATAR;
         this.IP = "";
+        this.channelID = 0;
     }
 
     public String getDisplayName() {
@@ -92,6 +96,14 @@ public class User {
     	else{
     		return false;
     	}
+    }
+    
+    public void setChannelID(int id){
+    	this.channelID = id;
+    }
+    
+    public int getChannelID(){
+    	return this.channelID;
     }
 
     public String getAvatarURL() {
