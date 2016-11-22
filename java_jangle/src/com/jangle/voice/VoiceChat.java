@@ -129,7 +129,7 @@ public class VoiceChat implements Runnable {
 	 * @throws UnknownHostException
 	 */
 	private void addUserToChat(User gUser) throws UnknownHostException, IOException {
-		connections.add(new VoiceChatSocket(gUser, port));
+		connections.add(new VoiceChatSocket(gUser, port, Parser));
 	}
 
 	/**
