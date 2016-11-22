@@ -128,7 +128,7 @@ public class Client_ParseData implements IPARSER {
 			RoomDisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
 			return;
 		}
-		else if (data[0] == CommUtil.REQUEST_USER_IP){
+		else if (data[0] == CommUtil.REVIEVE_USER_IP){
 			byte[] address = new byte[data.length - 5];
 			for (int i = 0; i < address.length; i++){
 				address [i] = data [i + 4];

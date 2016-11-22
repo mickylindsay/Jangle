@@ -17,6 +17,7 @@ import javax.sound.sampled.TargetDataLine;
 
 import com.jangle.client.Client;
 import com.jangle.client.User;
+import com.jangle.communicate.Client_ParseData;
 
 /**
  * Handles the creation of the voice chat. The recieving and playing to speakers
@@ -35,6 +36,7 @@ public class VoiceChat implements Runnable {
 	private DatagramSocket Recieving;
 	private VoiceBroadcast Madden;
 	private Client Cl;
+	private Client_ParseData Parser;
 
 	private ArrayList<User> Users;
 
@@ -44,7 +46,7 @@ public class VoiceChat implements Runnable {
 	private int port;
 	private int userID;
 
-	public VoiceChat(int gport, boolean speak, Client gCl) throws SocketException {
+	public VoiceChat(int gport, boolean speak, Client gCl,  Client_ParseData gParser) throws SocketException {
 		format = VoiceUtil.genFormat();
 		try {
 			// init speakers
@@ -60,6 +62,7 @@ public class VoiceChat implements Runnable {
 		port = gport;
 		Cl = gCl;
 		Users = Cl.getUsersArrayList();
+		Parser = gParser;
 		
 
 		try {
@@ -69,7 +72,7 @@ public class VoiceChat implements Runnable {
 			e.printStackTrace();
 		}
 
-		Madden = new VoiceBroadcast(Users, format, Cl, port);
+		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser);
 		Recieving = new DatagramSocket(gport);
 		
 		

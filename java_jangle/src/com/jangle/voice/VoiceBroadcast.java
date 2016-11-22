@@ -12,6 +12,7 @@ import javax.sound.sampled.TargetDataLine;
 
 import com.jangle.client.Client;
 import com.jangle.client.User;
+import com.jangle.communicate.Client_ParseData;
 
 public class VoiceBroadcast implements Runnable {
 
@@ -22,6 +23,7 @@ public class VoiceBroadcast implements Runnable {
 	private TargetDataLine microphone;
 	private Client Cl;
 	private ArrayList<User> Users;
+	private Client_ParseData Parser;
 
 	private boolean sendAll;
 	private int dataWidth;
@@ -29,13 +31,14 @@ public class VoiceBroadcast implements Runnable {
 	private int userID;
 	private int port;
 
-	public VoiceBroadcast(ArrayList<User> gUsers, AudioFormat gformat, Client gCl, int gport) {
+	public VoiceBroadcast(ArrayList<User> gUsers, AudioFormat gformat, Client gCl, int gport, Client_ParseData gParser) {
 		Users = gUsers;
 		// connections = gConnections;
 		sendAll = false;
 		format = gformat;
 		Cl = gCl;
 		port = gport;
+		Parser = gParser;
 
 		try {
 
@@ -97,12 +100,12 @@ public class VoiceBroadcast implements Runnable {
 		while (sendAll) {
 
 			connections = new ArrayList<VoiceChatSocket>();
-			
-			 microphone.read(micData, 0, micData.length);
-			 /*
-				 * This block is used if an external class/thread manages the
-				 * connections ArrayList
-				 * 
+
+			microphone.read(micData, 0, micData.length);
+			/*
+			 * This block is used if an external class/thread manages the
+			 * connections ArrayList
+			 * 
 			 * byte[] toBrodcast = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
 			 * 
 			 * for (int i = 0; i < connections.size(); i++){
@@ -118,7 +121,7 @@ public class VoiceBroadcast implements Runnable {
 					 * enabled, the packet will get ignored on the reciever's
 					 * end
 					 */
-					
+
 					try {
 						connections.add(new VoiceChatSocket(Users.get(i), port));
 					} catch (IOException e) {

@@ -29,6 +29,7 @@ public final class CommUtil {
 	public static final byte REQUEST_SERVER_DISPLAY_NAME = (byte) 36;
 	public static final byte REQUEST_ALL_ROOM_ID = (byte) 37;
 	public static final byte REQUEST_ROOM_DISPALY_NAME = (byte) 38;
+	public static final byte REQUEST_USER_IP = (byte) 41;
     public static final byte REQUEST_USER_ICON = (byte) 43;
 
 	public static final byte RECIEVE_USERID = (byte) 48;
@@ -37,10 +38,12 @@ public final class CommUtil {
 	public static final byte RECIEVE_SERVER_DISPLAY_NAME = (byte) 51;
 	public static final byte RECIEVE_ROOM_ID = (byte) 52;
 	public static final byte RECIEVE_ROOM_DISPLAY_NAME = (byte) 53;
+	public static final byte REVIEVE_USER_IP = (byte) 57;
+	
 	public static final byte SEND_NEW_DISPLAY_NAME = (byte) 64;
 
 	
-	public static final byte REQUEST_USER_IP = (byte) 41;
+	
 	
 	public static final long TIME_OUT_MILLI = 3000;
 
