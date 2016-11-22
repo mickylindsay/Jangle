@@ -1,17 +1,17 @@
 package main
 
-import(
+import (
+	"bufio"
 	"fmt"
 	"os"
-	"bufio"
 )
 
 //TODO
 func Size_Meta_Data(b []byte) []byte {
-	data := make([]byte, 4 + len(b));
-	copy(data[0:3], Int_Converter(uint(len(b))));
-	copy(data[4:], b[:]);
-	return data;
+	data := make([]byte, 4+len(b))
+	copy(data[0:3], Int_Converter(uint(len(b))))
+	copy(data[4:], b[:])
+	return data
 }
 
 //TODO
@@ -50,19 +50,19 @@ func Login_Test() []byte {
 }
 
 //TODO
-func Standard_Message_Test () []byte {
-	reader := bufio.NewReader(os.Stdin);
+func Standard_Message_Test() []byte {
+	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter Message: ")
-	text, _ := reader.ReadString('\n');
+	text, _ := reader.ReadString('\n')
 	m := Create_Message(message_client_send, default_id, default_id, default_id, []byte(text))
 	return Size_Meta_Data(m.Build_Message())
 }
 
 //TODO
 func Offset_Message_Test() []byte {
-	reader := bufio.NewReader(os.Stdin);
+	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter Offset Value: ")
-	offset, _ := reader.ReadString('\n');
+	offset, _ := reader.ReadString('\n')
 	m := Create_Message(request_n_messages, []byte(offset))
 	return Size_Meta_Data(m.Build_Message())
 }
@@ -141,77 +141,77 @@ func Server_Icon_Message_Test() []byte {
 
 //TODO
 func New_Display_Name_Message_Test() []byte {
-	reader := bufio.NewReader(os.Stdin);
+	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter New Display Name: ")
-	display_name, _ := reader.ReadString('\n');
+	display_name, _ := reader.ReadString('\n')
 	m := Create_Message(send_new_display_name, []byte(display_name))
 	return Size_Meta_Data(m.Build_Message())
 }
 
 //TODO
 func New_Server_Display_Name_Message_Test() []byte {
-	reader := bufio.NewReader(os.Stdin);
+	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter New Server Display Name: ")
-	server_display_name, _ := reader.ReadString('\n');
+	server_display_name, _ := reader.ReadString('\n')
 	m := Create_Message(send_new_server_display_name, default_id, []byte(server_display_name))
 	return Size_Meta_Data(m.Build_Message())
 }
 
 //TODO
 func New_Room_Display_Name_Message_Test() []byte {
-	reader := bufio.NewReader(os.Stdin);
+	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter New Room Display Name: ")
-	room_display_name, _ := reader.ReadString('\n');
+	room_display_name, _ := reader.ReadString('\n')
 	m := Create_Message(send_new_room_display_name, default_id, default_id, []byte(room_display_name))
 	return Size_Meta_Data(m.Build_Message())
 }
 
 //TODO
 func New_Master_Display_Name_Message_Test() []byte {
-	reader := bufio.NewReader(os.Stdin);
+	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter New Master Display Name: ")
-	master_display_name, _ := reader.ReadString('\n');
+	master_display_name, _ := reader.ReadString('\n')
 	m := Create_Message(send_new_master_display_name, []byte(master_display_name))
 	return Size_Meta_Data(m.Build_Message())
 }
 
 //TODO
 func New_User_Icon_Message_Test() []byte {
-	reader := bufio.NewReader(os.Stdin);
+	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter New User Icon Url: ")
-	url, _ := reader.ReadString('\n');
+	url, _ := reader.ReadString('\n')
 	m := Create_Message(send_new_user_icon, []byte(url))
 	return Size_Meta_Data(m.Build_Message())
 }
 
 //TODO
 func New_Server_Icon_Message_Test() []byte {
-	reader := bufio.NewReader(os.Stdin);
+	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter New Server Icon Url: ")
-	url, _ := reader.ReadString('\n');
+	url, _ := reader.ReadString('\n')
 	m := Create_Message(send_new_server_icon, default_id, []byte(url))
 	return Size_Meta_Data(m.Build_Message())
 }
 
 //TODO
 func Change_Status_Message_Test() []byte {
-	reader := bufio.NewReader(os.Stdin);
+	reader := bufio.NewReader(os.Stdin)
 	var valid_status bool = false
 	var valid_muted bool = false
 	var switcher_status byte
 	var switcher_muted byte
 	for valid_status != true {
 		fmt.Print("Enter New Status (offline, online, away): ")
-		status, _ := reader.ReadString('\n');
+		status, _ := reader.ReadString('\n')
 		switch {
-			case status == "offline":
-				switcher_status = offline
-			case status == "online":
-				switcher_status = online
-			case status == "away":
-				switcher_status = away
-			default:
-				switcher_status = 255
+		case status == "offline":
+			switcher_status = offline
+		case status == "online":
+			switcher_status = online
+		case status == "away":
+			switcher_status = away
+		default:
+			switcher_status = 255
 		}
 		if switcher_status != 255 {
 			valid_status = true
@@ -219,17 +219,16 @@ func Change_Status_Message_Test() []byte {
 			fmt.Print("Invalid Status: must be offline, online, away")
 		}
 	}
-
 	for valid_muted != true {
 		fmt.Print("Enter New Muted (unmuted, muted): ")
 		muted, _ := reader.ReadString('\n')
 		switch {
-			case muted == "unmuted":
-				switcher_muted = user_unmuted
-			case muted == "muted":
-				switcher_muted = user_muted
-			default:
-				switcher_muted = 255	
+		case muted == "unmuted":
+			switcher_muted = user_unmuted
+		case muted == "muted":
+			switcher_muted = user_muted
+		default:
+			switcher_muted = 255
 		}
 		if switcher_muted != 255 {
 			valid_muted = true
@@ -243,11 +242,11 @@ func Change_Status_Message_Test() []byte {
 
 //TODO
 func Change_Location_Message_Test() []byte {
-	reader := bufio.NewReader(os.Stdin);
+	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter New Server Location: ")
-	server_location, _ := reader.ReadString('\n');
+	server_location, _ := reader.ReadString('\n')
 	fmt.Print("Enter New Room Location: ")
-	room_location, _ := reader.ReadString('\n');
+	room_location, _ := reader.ReadString('\n')
 	m := Create_Message(change_location, String_Converter(server_location), String_Converter(room_location))
 	return Size_Meta_Data(m.Build_Message())
 }

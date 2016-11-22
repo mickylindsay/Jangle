@@ -15,6 +15,7 @@ type User struct {
 	roomid       uint
 	serverid     uint
 	logged_in    bool
+	voice        uint
 	muted        uint
 	status       uint
 	permissions  uint

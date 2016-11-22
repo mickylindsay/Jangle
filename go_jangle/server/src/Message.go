@@ -20,6 +20,7 @@ type Message struct {
 	offset              byte
 	status              byte
 	muted               byte
+	voice               byte
 }
 
 //TODO
@@ -319,7 +320,8 @@ func Status(args ...interface{}) Message {
 	m := Message{
 		code:   args[0].(byte),
 		status: args[1].(byte),
-		muted:  args[2].(byte)}
+		muted:  args[2].(byte),
+		voice:  args[3].(byte)}
 	return m
 }
 
@@ -329,7 +331,8 @@ func Userid_Status(args ...interface{}) Message {
 		code:   args[0].(byte),
 		userid: args[1].([]byte),
 		status: args[2].(byte),
-		muted:  args[3].(byte)}
+		muted:  args[3].(byte),
+		voice:  args[4].(byte)}
 	return m
 }
 

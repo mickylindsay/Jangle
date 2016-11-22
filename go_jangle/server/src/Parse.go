@@ -213,7 +213,7 @@ func Master_Display_Name_Message(user *User, data []byte) Message {
 //TODO
 func Status_Message(user *User, data []byte) Message {
 	m := Create_Message(request_status, data[1:4])
-	m = Create_Message(recieve_status, m.userid, byte(user.status), byte(user.muted))
+	m = Create_Message(recieve_status, m.userid, byte(user.status), byte(user.muted), byte(user.voice))
 	Send_Message(user, m)
 	return m
 }
@@ -346,15 +346,15 @@ func New_Server_Icon_Message(user *User, data []byte) Message {
 		Send_Broadcast_Members(Byte_Converter(m.serverid), m)
 	}
 	return m
-
 }
 
 //TODO
 func Change_Status_Message(user *User, data []byte) Message {
-	m := Create_Message(change_status, data[1], data[2])
+	m := Create_Message(change_status, data[1], data[2], data[3])
 	user.status = uint(m.status)
 	user.muted = uint(m.muted)
-	m = Create_Message(recieve_status, Int_Converter(user.id), m.status, m.muted)
+	user.voice = uint(m.voice)
+	m = Create_Message(recieve_status, Int_Converter(user.id), m.status, m.muted, m.voice)
 	Send_Broadcast_Server(user.serverid, m)
 	Send_Broadcast_Friends(user.id, m)
 	return m
