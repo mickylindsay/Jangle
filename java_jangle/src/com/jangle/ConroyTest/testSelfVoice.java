@@ -24,13 +24,16 @@ public class testSelfVoice {
 		Cl.addUser(Nate);
 		Nate.setChannelID(1);
 		Cl.setChannelID(1);
-		
-		
+
+
+		/*
 		VoiceChat test = new VoiceChat(7800, false, Cl);
 		
 		test.connectToVoice();
 		test.startBrodcast();
-		
+		*/
+
+
 		while (true){
 			
 		}
