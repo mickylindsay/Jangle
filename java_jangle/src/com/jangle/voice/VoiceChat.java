@@ -15,11 +15,14 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
+import com.jangle.client.Client;
 import com.jangle.client.User;
+import com.jangle.communicate.Client_ParseData;
 
 /**
- * Handles the creation of the voice chat. The recieving and playing to speakers are handled in this class.
- * So far, this class will handle the recieving. It can only handle one user at the moment.
+ * Handles the creation of the voice chat. The recieving and playing to speakers
+ * are handled in this class. So far, this class will handle the recieving. It
+ * can only handle one user at the moment.
  * 
  * @author Nathan Conroy
  *
@@ -32,16 +35,18 @@ public class VoiceChat implements Runnable {
 	private ArrayList<VoiceChatSocket> connections;
 	private DatagramSocket Recieving;
 	private VoiceBroadcast Madden;
-	
-	private ArrayList Users;
-	
+	private Client Cl;
+	private Client_ParseData Parser;
+
+	private ArrayList<User> Users;
+
 	private boolean isReceiving;
 
 	private InetAddress Address;
 	private int port;
 	private int userID;
 
-	public VoiceChat(int gport, ArrayList<User> gUsers, boolean speak) throws SocketException {
+	public VoiceChat(int gport, boolean speak, Client gCl,  Client_ParseData gParser) throws SocketException {
 		format = VoiceUtil.genFormat();
 		try {
 			// init speakers
@@ -51,11 +56,14 @@ public class VoiceChat implements Runnable {
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
 		}
-		
+
 		isReceiving = false;
 		connections = new ArrayList<VoiceChatSocket>();
 		port = gport;
-		Users = gUsers;
+		Cl = gCl;
+		Users = Cl.getUsersArrayList();
+		Parser = gParser;
+		
 
 		try {
 			Address = InetAddress.getLocalHost();
@@ -63,10 +71,52 @@ public class VoiceChat implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		Madden = new VoiceBroadcast(connections, format, userID);
-		Recieving = new DatagramSocket(gport);
 
+		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser);
+		Recieving = new DatagramSocket(gport);
+		
+		
+		//If speak is true, the user wants to start speaking right away
+		if (speak){
+			connectToVoice();
+			startBrodcast();
+		}
+
+	}
+
+	/**
+	 * Want connect the user to the voice chat. Does not start broadcasting voice.
+	 * However, data that is sent from users in the voice chat will play though
+	 * the device's default audio device
+	 * 
+	 * To start sending voice to other users, call the function StartBrodcast();
+	 */
+	public void connectToVoice() {
+		//Start speakers
+		try {
+			startSpeakers();
+		} catch (LineUnavailableException e) {
+			//Speakers are not ready to broadcast to.
+		}
+		
+		//start recieving data
+		recieveData();
+		
+	}
+
+	public void disconnectFromVoice() {
+		connections.clear();
+		stopSpeakers();
+		stopRecieve();
+		endBrodcast();
+	}
+
+	public void startBrodcast() {
+		Madden.startBrodcast();
+	}
+
+	public void endBrodcast() {
+		Madden.stopBrodcast();
 	}
 
 	/**
@@ -75,25 +125,11 @@ public class VoiceChat implements Runnable {
 	 * 
 	 * @param IP
 	 *            IP of the user.
-	 * @throws IOException 
-	 * @throws UnknownHostException 
+	 * @throws IOException
+	 * @throws UnknownHostException
 	 */
 	private void addUserToChat(User gUser) throws UnknownHostException, IOException {
-		connections.add(new VoiceChatSocket(gUser, port));
-	}
-
-	public void closeAllConctions() {
-		connections.clear();
-	}
-	
-	public void startBrodcast(){
-		try {
-			Madden.startMicInput();
-		} catch (LineUnavailableException e) {
-			System.out.println("Failed to start mic");
-			e.printStackTrace();
-		}
-		Madden.brodcastToAll();
+		connections.add(new VoiceChatSocket(gUser, port, Parser));
 	}
 
 	/**
@@ -104,7 +140,7 @@ public class VoiceChat implements Runnable {
 	 *             If the speaker is not instantiation. Could be due to the
 	 *             speaker was removed from now and this object's instantiation
 	 */
-	public void startSpeakers() throws LineUnavailableException {
+	private void startSpeakers() throws LineUnavailableException {
 		speakers.open(format);
 		speakers.start();
 	}
@@ -112,24 +148,24 @@ public class VoiceChat implements Runnable {
 	/**
 	 * Stop playing to the speakers.
 	 */
-	public void stopSpeakers() {
+	private void stopSpeakers() {
 		speakers.drain();
 		speakers.close();
 	}
 
-	public void recieveData() {
+	private void recieveData() {
 		isReceiving = true;
 		Thread th = new Thread(this);
 		th.start();
 	}
-	
-	public void stopRecieve(){
+
+	private void stopRecieve() {
 		isReceiving = false;
 	}
 
 	@Override
 	public void run() {
-		while (true) {
+		while (isReceiving) {
 			byte[] data = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
 			try {

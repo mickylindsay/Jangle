@@ -48,10 +48,7 @@ public final class TestUtil {
 		return ret;
 		
 	}
-	
-	
-	
-	
+
 	public static ArrayList<User> genUserList(){
 		ArrayList<User> ret = new ArrayList<User>();
 		

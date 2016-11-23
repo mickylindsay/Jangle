@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import com.jangle.client.User;
+import com.jangle.communicate.Client_ParseData;
 
 /**
  * Class that acts as a wrapper for a socket, so is easier to manage for
@@ -23,6 +24,7 @@ public class VoiceChatSocket implements Runnable {
 	private DatagramSocket socket;
 	private InetAddress Address;
 	private int port;
+	private Client_ParseData Parser;
 	
 	private byte[] Data;
 	
@@ -40,12 +42,13 @@ public class VoiceChatSocket implements Runnable {
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-	public VoiceChatSocket(User gUser, int gport)
+	public VoiceChatSocket(User gUser, int gport, Client_ParseData gParser)
 			throws UnknownHostException, IOException {
 		User = gUser;
 		port = gport;
 		socket = new DatagramSocket();
 		Address = InetAddress.getByName(User.getIP());
+		Parser = gParser;
 		
 	}
 	
@@ -59,13 +62,18 @@ public class VoiceChatSocket implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		
+		if (User.getIP() == "" || User.getIP() == "Fail"){
+			try {
+				Address = InetAddress.getByName(Parser.getUserIP(User));
+			} catch (IOException e) {
+				//Happens if a communication error occurs. 
+			}
+		}
 		DatagramPacket packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, Address, port);
 		try {
 			socket.send(packet);
 		} catch (IOException e) {
-			System.out.println("fail");
-			e.printStackTrace();
+			//failed to send the packet. Since this is datagram, if there is no reciever, nothing should happen. 
 		}
 		
 	}
