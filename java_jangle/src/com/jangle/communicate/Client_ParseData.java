@@ -68,9 +68,22 @@ public class Client_ParseData implements IPARSER {
 	public void parseData(byte[] data) {
 
 		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
-			mClient.addMessage(new Message(data));
-			return;
-		}
+            Message newMess = new Message(data);
+			mClient.addMessage(newMess);
+
+            for(int i = 0; i < mClient.getUsers().size(); i++) {
+                if (newMess.getUserID() == mClient.getUsers().get(i).getId()){
+                    return;
+                }
+            }
+            User newUser = new User("" + newMess.getUserID(), newMess.getUserID());
+            mClient.getUsers().add(newUser);
+            try {
+                requestDisplayName(newUser);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
 		else if (data[0] == CommUtil.LOGIN_SUCCESS) {
 			mClient.setLoginResult(LoginResult.SUCESS);
@@ -89,26 +102,37 @@ public class Client_ParseData implements IPARSER {
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_DISPLAY_NAME) {
-			DisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
-			return;
+            int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+			String newDiplay = new String(Arrays.copyOfRange(data, 5, data.length));
+            for (int i = 0; i < mClient.getUsers().size(); i++) {
+                if (id == mClient.getUsers().get(i).getId()){
+                    mClient.getUsers().get(i).setDisplayName(newDiplay);
+                    return;
+                }
+            }
+            //If user is not already added we add them
+            mClient.getUsers().add(new User(newDiplay, id));
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_USERID) {
 
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
-			User tmp = new User(null, id);
-			// make sure the user is not in the list
-			if (mClient.getUsers().contains(tmp) == false) {
+			User tmp = new User("" + id, id);
 
-				try {
-					tmp.setDisplayName(this.requestDisplayName(tmp));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+            for (int i = 0; i < mClient.getUsers().size(); i++) {
+                if (id == mClient.getUsers().get(i).getId())
+                    return;
+            }
 
 				mClient.addUser(tmp);
-			}
-		}
+
+            try {
+                requestDisplayName(tmp);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
 
 		else if (data[0] == CommUtil.RECIEVE_SERVER_ID) {
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
@@ -255,10 +279,8 @@ public class Client_ParseData implements IPARSER {
 
 	}
 
-	// TODO SQL error?? preety sure my code is right
-	public String requestDisplayName(User user) throws IOException {
-
-		DisplayName = new String();
+	// TODO SQL error?? pretty sure my code is right
+	public void requestDisplayName(User user) throws IOException {
 
 		byte[] toServer = new byte[5];
 		toServer[0] = CommUtil.REQUEST_DISPLAY_NAME;
@@ -270,17 +292,6 @@ public class Client_ParseData implements IPARSER {
 		}
 
 		Comm.sendToServer(toServer);
-		long oldTime = System.currentTimeMillis();
-
-		while (DisplayName.isEmpty() && System.currentTimeMillis() - oldTime < 3000) {
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return DisplayName;
 
 	}
 
@@ -344,9 +355,7 @@ public class Client_ParseData implements IPARSER {
 	 * @return
 	 * @throws IOException
 	 */
-	public String requestRoomDisplayName(int serverID, int roomID) throws IOException {
-
-		RoomDisplayName = "";
+	public void requestRoomDisplayName(int serverID, int roomID) throws IOException {
 
 		byte[] toServer = new byte[9];
 		toServer[0] = CommUtil.REQUEST_ROOM_DISPALY_NAME;
@@ -360,19 +369,9 @@ public class Client_ParseData implements IPARSER {
 		}
 
 		Comm.sendToServer(toServer);
-		long oldTime = System.currentTimeMillis();
-
-		while (!RoomDisplayName.equals("") && System.currentTimeMillis() - oldTime < 3000)
-			;
-
-		return RoomDisplayName;
-
 	}
 
-	public String requestAvatarURL(User user) throws IOException {
-
-		String avatar = null;
-
+	public void requestAvatarURL(User user) throws IOException {
 		byte[] toServer = new byte[5];
 		toServer[0] = CommUtil.REQUEST_USER_ICON;
 		byte[] idInByte = CommUtil.intToByteArr(user.getId());
@@ -382,12 +381,7 @@ public class Client_ParseData implements IPARSER {
 		}
 
 		Comm.sendToServer(toServer);
-		long oldTime = System.currentTimeMillis();
 
-		while (avatar == null && System.currentTimeMillis() - oldTime < CommUtil.TIME_OUT_MILLI) {
-
-		}
-		return avatar;
 	}
 
 	/**
@@ -426,6 +420,7 @@ public class Client_ParseData implements IPARSER {
 		return IP;
 		
 	}
+
 
 	public Client getClient() {
 		return this.mClient;

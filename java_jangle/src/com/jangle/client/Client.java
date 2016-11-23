@@ -151,4 +151,15 @@ public class Client {
         mLoginTime = loginTime;
     }
 
+    public User findUser(int id) {
+
+        for (User mUser : mUsers) {
+            if (mUser.getId() == id) {
+                return mUser;
+            }
+        }
+        //if not found return null
+        return null;
+    }
+
 }
