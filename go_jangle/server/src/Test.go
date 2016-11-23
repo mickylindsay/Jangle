@@ -198,8 +198,10 @@ func Change_Status_Message_Test() []byte {
 	reader := bufio.NewReader(os.Stdin)
 	var valid_status bool = false
 	var valid_muted bool = false
+	var valid_voice bool = false
 	var switcher_status byte
 	var switcher_muted byte
+	var switcher_voice byte
 	for valid_status != true {
 		fmt.Print("Enter New Status (offline, online, away): ")
 		status, _ := reader.ReadString('\n')
@@ -228,15 +230,32 @@ func Change_Status_Message_Test() []byte {
 		case muted == "muted":
 			switcher_muted = user_muted
 		default:
-			switcher_muted = 255
+			switcher_muted = error_check
 		}
-		if switcher_muted != 255 {
+		if switcher_muted != error_check {
 			valid_muted = true
 		} else {
 			fmt.Print("Invalid Muted: must be unmuted or muted")
 		}
 	}
-	m := Create_Message(change_status, switcher_status, switcher_muted)
+	for valid_voice != true {
+		fmt.Print("Enter New Voice (novoice, voice): ")
+		voice, _ := reader.ReadString('\n')
+		switch {
+		case voice == "novoice":
+			switcher_voice = user_no_voice
+		case voice == "voice":
+			switcher_voice = user_voice
+		default:
+			switcher_voice = error_check
+		}
+		if switcher_voice != error_check {
+			valid_voice = true
+		} else {
+			fmt.Print("Invalid Voice: must be novoice or voice")
+		}
+	}
+	m := Create_Message(change_status, switcher_status, switcher_muted, switcher_voice)
 	return Size_Meta_Data(m.Build_Message())
 }
 

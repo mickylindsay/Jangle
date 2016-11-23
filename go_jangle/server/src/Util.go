@@ -39,7 +39,7 @@ var message_edit byte = 18
 var message_delete byte = 19
 var message_remove byte = 20
 
-//Request from client type codes
+//Client request type codes
 var request_n_messages byte = 32
 var request_all_userid byte = 33
 var request_display_name byte = 34
@@ -76,14 +76,14 @@ var send_new_master_display_name byte = 67
 var send_new_user_icon byte = 68
 var send_new_server_icon byte = 70
 
-//Status of client type codes
+//Client status type codes
 var change_status byte = 80
 var change_location byte = 81
 
 //Error type codes
 var error_check byte = 255
 
-//Status types
+//Status values
 var offline byte = 0
 var online byte = 1
 var away byte = 2
@@ -91,6 +91,10 @@ var away byte = 2
 //Mute values
 var user_unmuted byte = 0
 var user_muted byte = 1
+
+//Voice values
+var user_no_voice byte = 0
+var user_voice byte = 1
 
 //Default and invalid value for server, room, and user
 var invalid_id []byte = []byte{0, 0, 0, 0}

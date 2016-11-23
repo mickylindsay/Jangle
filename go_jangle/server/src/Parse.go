@@ -89,7 +89,7 @@ func Standard_Message(user *User, data []byte) Message {
 				Send_Broadcast_Server_Room(Byte_Converter(m.serverid), Byte_Converter(m.roomid), m)
 			}
 		}
-		
+
 	}
 	return m
 }
