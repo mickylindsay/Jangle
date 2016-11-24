@@ -69,13 +69,16 @@ public class Client_ParseData implements IPARSER {
 
 		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
             Message newMess = new Message(data);
-			mClient.addMessage(newMess);
+            if (!mClient.isDuplicateMessage(newMess))
+			    mClient.addMessage(newMess);
 
+            //This code adds user to ui if not added already
             for(int i = 0; i < mClient.getUsers().size(); i++) {
                 if (newMess.getUserID() == mClient.getUsers().get(i).getId()){
                     return;
                 }
             }
+
             User newUser = new User("" + newMess.getUserID(), newMess.getUserID());
             mClient.getUsers().add(newUser);
             try {
@@ -83,6 +86,7 @@ public class Client_ParseData implements IPARSER {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
 
 		else if (data[0] == CommUtil.LOGIN_SUCCESS) {
