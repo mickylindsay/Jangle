@@ -66,7 +66,7 @@ public class messageThread implements Runnable {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                        	messageList = FXCollections.observableArrayList(messages);
+                        	messageList = FXCollections.observableArrayList(mClient.getMessages());
                             ui.updateMessages(messageList);
                         }
                     });

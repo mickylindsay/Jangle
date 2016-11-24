@@ -67,6 +67,8 @@ public class Client {
     }
 
     public void addMessage(Message message) {
+        if (mMessages.contains(message))
+            return;
         //keeps messages chronologically ordered
         if (mMessages.size() == 0)
             mMessages.add(message);
