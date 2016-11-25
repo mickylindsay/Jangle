@@ -33,14 +33,13 @@ public class testSelfVoice {
 		Cl.addUser(Nate);
 		Nate.setChannelID(1);
 		Cl.setChannelID(1);
+
 		//Cl.addUser(Nate);
 		
 		
 		VoiceChat test = new VoiceChat(7800, false, Cl, Parser);
-		
-		test.connectToVoice();
-		test.startBrodcast();
-		
+
+
 		while (true){
 			
 		}

@@ -170,19 +170,12 @@ public class FXMLController implements Initializable {
                     if (empty) {
                         setText(null);
                         setGraphic(null);
+                        return;
                     }
-                    if(user.getDisplayName() == null) {
+                    else if(user.getDisplayName() == null) {
                         try {
-                            String newDisplayName = mClientParseData.requestDisplayName(user);
-                            String newAvatarURL = mClientParseData.requestAvatarURL(user);
-
-                            if(newDisplayName != null) {
-                                user.setDisplayName(newDisplayName);
-                            }
-                            if(newAvatarURL != null) {
-                                user.setAvatar(newAvatarURL);
-                            }
-
+                            mClientParseData.requestDisplayName(user);
+                            mClientParseData.requestAvatarURL(user);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -223,7 +216,7 @@ public class FXMLController implements Initializable {
                         setAlignment(Pos.CENTER_LEFT);
                         //setTextAlignment(TextAlignment.LEFT);
                     }
-                    setText(message.toString());
+                    setText(formatMessage(message));
                 }
             }
         });
@@ -279,5 +272,14 @@ public class FXMLController implements Initializable {
         mSettings.setBackgroundImageView(chatBackground);
 
         return dialog;
+    }
+
+    private String formatMessage(Message message) {
+        User sender = mClient.findUser(message.getUserID());
+
+        if(sender == null)
+            return message.getUserID() + "\n" + message.getMessageContent() + "    " + message.getTimeStamp();
+
+        return sender.getDisplayName() + "\n" + message.getMessageContent() + "    " + message.getTimeStamp();
     }
 }

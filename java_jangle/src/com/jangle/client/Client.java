@@ -67,7 +67,27 @@ public class Client {
     }
 
     public void addMessage(Message message) {
-        mMessages.add(message);
+        if (mMessages.contains(message))
+            return;
+        //keeps messages chronologically ordered
+        if (mMessages.size() == 0)
+            mMessages.add(message);
+        else {
+            for (int i = 0; i < mMessages.size(); i++) {
+                if (message.getTimeStamp() > mMessages.get(i).getTimeStamp())
+                    continue;
+                else if (message.getTimeStamp() == mMessages.get(i).getTimeStamp()) {
+                    mMessages.add(i + 1, message);
+                    return;
+                }
+                else {
+                    mMessages.add(i, message);
+                    return;
+                }
+            }
+            //add at the end if the loop finishes
+            mMessages.add(message);
+        }
     }
 
     public void addUser(User user) {
@@ -166,6 +186,25 @@ public class Client {
     
     public void setIP(String gIP){
     	this.IP = gIP;
+    }
+
+    public User findUser(int id) {
+
+        for (User mUser : mUsers) {
+            if (mUser.getId() == id) {
+                return mUser;
+            }
+        }
+        //if not found return null
+        return null;
+    }
+
+    public boolean isDuplicateMessage(Message newMess) {
+        for (Message mMessage : mMessages) {
+            if (newMess.toString().equals(mMessage.toString()))
+                return true;
+        }
+        return false;
     }
 
 }

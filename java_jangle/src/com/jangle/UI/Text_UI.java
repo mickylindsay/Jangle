@@ -64,6 +64,7 @@ public class Text_UI extends Application {
 		loginStage.setScene(new Scene(createLoginDialog()));
 		loginStage.showAndWait();
 
+        mClientParseData.request50MessagesWithOffset(0);
 		primaryStage.setScene(new Scene(createContent()));
 		primaryStage.show();
 

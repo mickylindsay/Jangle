@@ -43,8 +43,8 @@ public class Test {
 		User Nate =  TestUtil.newNathan();
 		
 		Nate.setId(2);
-		
-		System.out.println(Parse.requestDisplayName(Nate));
+		//TODO: Commented out from method being void now
+		//System.out.println(Parse.requestDisplayName(Nate));
 		
 		
 	  while(true){ }
