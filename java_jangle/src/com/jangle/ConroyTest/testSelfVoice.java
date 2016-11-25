@@ -38,12 +38,25 @@ public class testSelfVoice {
 		
 		VoiceChat test = new VoiceChat(7800, false, Cl, Parser);
 		
-		test.connectToVoice();
+		
 		test.startBrodcast();
 
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
+		test.endBrodcast();
+		test.disconnectFromVoice();
 		while (true){
-			
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		

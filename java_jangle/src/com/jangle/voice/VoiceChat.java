@@ -46,6 +46,10 @@ public class VoiceChat implements Runnable {
 	private int port;
 	private int userID;
 
+	// error checking variabltes
+	private boolean connectedToVoice;
+	private boolean broadcasting;
+
 	public VoiceChat(int gport, boolean speak, Client gCl, Client_ParseData gParser) throws SocketException {
 		format = VoiceUtil.genFormat();
 		try {
@@ -63,6 +67,8 @@ public class VoiceChat implements Runnable {
 		Cl = gCl;
 		Users = Cl.getUsersArrayList();
 		Parser = gParser;
+		broadcasting = false;
+		connectedToVoice = false;
 
 		try {
 			Address = InetAddress.getLocalHost();
@@ -90,16 +96,19 @@ public class VoiceChat implements Runnable {
 	 * To start sending voice to other users, call the function StartBrodcast();
 	 */
 	public void connectToVoice() {
-		// Start speakers
-		try {
-			startSpeakers();
-		} catch (LineUnavailableException e) {
-			// Speakers are not ready to broadcast to.
+		if (!connectedToVoice) {
+
+			// Start speakers
+			try {
+				startSpeakers();
+			} catch (LineUnavailableException e) {
+				// Speakers are not ready to broadcast to.
+			}
+
+			// start recieving data
+			recieveData();
+			connectedToVoice = true;
 		}
-
-		// start recieving data
-		recieveData();
-
 	}
 
 	/**
@@ -111,21 +120,26 @@ public class VoiceChat implements Runnable {
 		stopSpeakers();
 		stopRecieve();
 		endBrodcast();
+		connectedToVoice = false;
 	}
 
 	/**
-	 * Start sending voice to other users.
+	 * Start sending voice to other users. You can only send voice data to other users if you are connected to voice chat 
 	 */
 	public void startBrodcast() {
-		Madden.startBrodcast();
+		if (!broadcasting && connectedToVoice){
+			Madden.startBrodcast();
+			broadcasting = true;
+		}
 	}
 
 	/**
-	 * Stop sending voice to other users. However, user is still connected to the
-	 * voice chat, and will still be receiving voice data
+	 * Stop sending voice to other users. However, user is still connected to
+	 * the voice chat, and will still be receiving voice data
 	 */
 	public void endBrodcast() {
 		Madden.stopBrodcast();
+		broadcasting = false;
 	}
 
 	/**
