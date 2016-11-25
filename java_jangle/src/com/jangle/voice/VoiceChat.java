@@ -167,13 +167,19 @@ public class VoiceChat implements Runnable {
 	public void run() {
 		while (isReceiving) {
 			byte[] data = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
+			byte[] toSpeaker = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
+			int loop = 0;
+			
 			try {
 				Recieving.receive(packet);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
+			if (loop % Cl.getUsers().size() == 0){
+				
+			}
 			speakers.write(data, 0, data.length);
 
 			try {
