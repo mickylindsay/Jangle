@@ -165,12 +165,12 @@ public class VoiceChat implements Runnable {
 
 	@Override
 	public void run() {
+		byte[] data = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
+		byte[] toSpeaker = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
+		DatagramPacket packet = new DatagramPacket(data, data.length);
+		int loop = 1;
+		
 		while (isReceiving) {
-			byte[] data = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
-			byte[] toSpeaker = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
-			DatagramPacket packet = new DatagramPacket(data, data.length);
-			int loop = 0;
-			
 			try {
 				Recieving.receive(packet);
 			} catch (IOException e) {
@@ -178,15 +178,28 @@ public class VoiceChat implements Runnable {
 			}
 
 			if (loop % Cl.getUsers().size() == 0){
+				loop = 0;
+				
+				for (int i =  0; i < toSpeaker.length; i++){
+					toSpeaker[i] = (byte) ((data[i] + toSpeaker[i]) >> 1);
+				}
+				speakers.write(toSpeaker, 0, toSpeaker.length);
 				
 			}
-			speakers.write(data, 0, data.length);
+			else{
+				for (int i =  0; i < toSpeaker.length; i++){
+					toSpeaker[i] = (byte) ((data[i] + toSpeaker[i]) >> 1);
+				}
+			}
+			loop += 1;
+			
 
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
 		}
 	}
 

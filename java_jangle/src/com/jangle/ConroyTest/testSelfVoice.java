@@ -23,7 +23,7 @@ public class testSelfVoice {
 			Parser = new Client_ParseData(Cl, "localhost", 9090);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		Cl.getUsersArrayList();
@@ -33,11 +33,13 @@ public class testSelfVoice {
 		Cl.addUser(Nate);
 		Nate.setChannelID(1);
 		Cl.setChannelID(1);
-
-		//Cl.addUser(Nate);
+		Cl.addUser(Nate);
 		
 		
 		VoiceChat test = new VoiceChat(7800, false, Cl, Parser);
+		
+		test.connectToVoice();
+		test.startBrodcast();
 
 
 		while (true){

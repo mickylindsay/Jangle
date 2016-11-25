@@ -124,6 +124,7 @@ public class VoiceBroadcast implements Runnable {
 
 					try {
 						connections.add(new VoiceChatSocket(Users.get(i), port, Parser));
+						System.out.println("sent to user " + i);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
