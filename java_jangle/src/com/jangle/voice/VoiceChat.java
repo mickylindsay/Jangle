@@ -46,7 +46,7 @@ public class VoiceChat implements Runnable {
 	private int port;
 	private int userID;
 
-	public VoiceChat(int gport, boolean speak, Client gCl,  Client_ParseData gParser) throws SocketException {
+	public VoiceChat(int gport, boolean speak, Client gCl, Client_ParseData gParser) throws SocketException {
 		format = VoiceUtil.genFormat();
 		try {
 			// init speakers
@@ -63,7 +63,6 @@ public class VoiceChat implements Runnable {
 		Cl = gCl;
 		Users = Cl.getUsersArrayList();
 		Parser = gParser;
-		
 
 		try {
 			Address = InetAddress.getLocalHost();
@@ -74,10 +73,9 @@ public class VoiceChat implements Runnable {
 
 		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser);
 		Recieving = new DatagramSocket(gport);
-		
-		
-		//If speak is true, the user wants to start speaking right away
-		if (speak){
+
+		// If speak is true, the user wants to start speaking right away
+		if (speak) {
 			connectToVoice();
 			startBrodcast();
 		}
@@ -85,25 +83,29 @@ public class VoiceChat implements Runnable {
 	}
 
 	/**
-	 * Want connect the user to the voice chat. Does not start broadcasting voice.
-	 * However, data that is sent from users in the voice chat will play though
-	 * the device's default audio device
+	 * Want connect the user to the voice chat. Does not start broadcasting
+	 * voice. However, data that is sent from users in the voice chat will play
+	 * though the device's default audio device
 	 * 
 	 * To start sending voice to other users, call the function StartBrodcast();
 	 */
 	public void connectToVoice() {
-		//Start speakers
+		// Start speakers
 		try {
 			startSpeakers();
 		} catch (LineUnavailableException e) {
-			//Speakers are not ready to broadcast to.
+			// Speakers are not ready to broadcast to.
 		}
-		
-		//start recieving data
+
+		// start recieving data
 		recieveData();
-		
+
 	}
 
+	/**
+	 * Disconnect the user from Voice chat. The user does not want to be part of
+	 * the voice chat
+	 */
 	public void disconnectFromVoice() {
 		connections.clear();
 		stopSpeakers();
@@ -111,10 +113,17 @@ public class VoiceChat implements Runnable {
 		endBrodcast();
 	}
 
+	/**
+	 * Start sending voice to other users.
+	 */
 	public void startBrodcast() {
 		Madden.startBrodcast();
 	}
 
+	/**
+	 * Stop sending voice to other users. However, user is still connected to the
+	 * voice chat, and will still be receiving voice data
+	 */
 	public void endBrodcast() {
 		Madden.stopBrodcast();
 	}
@@ -169,37 +178,36 @@ public class VoiceChat implements Runnable {
 		byte[] toSpeaker = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
 		DatagramPacket packet = new DatagramPacket(data, data.length);
 		int loop = 1;
-		
+
 		while (isReceiving) {
 			try {
 				Recieving.receive(packet);
 			} catch (IOException e) {
-				e.printStackTrace();
+
 			}
 
-			if (loop % Cl.getUsers().size() == 0){
+			if (loop % Cl.getUsers().size() == 0) {
 				loop = 0;
-				
-				for (int i =  0; i < toSpeaker.length; i++){
+
+				for (int i = 0; i < toSpeaker.length; i++) {
 					toSpeaker[i] = (byte) ((data[i] + toSpeaker[i]) >> 1);
 				}
 				speakers.write(toSpeaker, 0, toSpeaker.length);
-				
+
 			}
-			else{
-				for (int i =  0; i < toSpeaker.length; i++){
+			else {
+				for (int i = 0; i < toSpeaker.length; i++) {
 					toSpeaker[i] = (byte) ((data[i] + toSpeaker[i]) >> 1);
 				}
 			}
 			loop += 1;
-			
 
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
 	}
 
