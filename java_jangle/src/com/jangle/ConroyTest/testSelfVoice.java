@@ -32,7 +32,7 @@ public class testSelfVoice {
 		Nate.setIP("localhost");
 		Cl.addUser(Nate);
 		Nate.setChannelID(1);
-		Cl.setChannelID(1);
+		Cl.setCurrentChannelID(1);
 		Cl.addUser(Nate);
 		
 		
