@@ -138,6 +138,13 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleSettings(ActionEvent actionEvent) {
+
+        try {
+            mClientParseData.requestAllUsersTiedToServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         Stage settingsStage = new Stage();
         settingsStage.setScene(new Scene(createSettingsDialog()));
         settingsStage.showAndWait();

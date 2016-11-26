@@ -70,8 +70,8 @@ public class Client_ParseData implements IPARSER {
 		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
             Message newMess = new Message(data);
             if (!mClient.isDuplicateMessage(newMess))
-			    mClient.addMessage(newMess);
-
+			    mClient.addMessage(newMess, newMess.getServerID(), newMess.getChannelID());
+/*
             //This code adds user to ui if not added already
             for(int i = 0; i < mClient.getUsers().size(); i++) {
                 if (newMess.getUserID() == mClient.getUsers().get(i).getId()){
@@ -86,6 +86,7 @@ public class Client_ParseData implements IPARSER {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            */
 
         }
 
@@ -139,22 +140,43 @@ public class Client_ParseData implements IPARSER {
         }
 
 		else if (data[0] == CommUtil.RECIEVE_SERVER_ID) {
-			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
-			// IMPLEMENT THIS LATER
+			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+            Server newServer = new Server(id);
+            mClient.addServer(newServer);
+            requestServerDisplayName(newServer);
+            requestAllRoomsInServer(newServer);
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_SERVER_DISPLAY_NAME) {
-			ServerDisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
+            int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+			String displayName = new String(Arrays.copyOfRange(data, 5, data.length));
+
+            if (mClient.getServer(id) != null)
+                mClient.getServer(id).setName(displayName);
+
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_ROOM_ID) {
-			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
-			// implement it later
-		}
+			int sId = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+            int chId = CommUtil.byteToInt(Arrays.copyOfRange(data, 6, 10));
+
+            Channel newChannel = new Channel(chId);
+            mClient.getServer(sId).addChannel(newChannel);
+
+            try {
+                requestRoomDisplayName(sId, chId);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
 
 		else if (data[0] == CommUtil.RECIEVE_ROOM_DISPLAY_NAME) {
-			RoomDisplayName = new String(Arrays.copyOfRange(data, 5, data.length));
-			return;
+            int sId = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+            int chId = CommUtil.byteToInt(Arrays.copyOfRange(data, 6, 10));
+			String displayName = new String(Arrays.copyOfRange(data, 11, data.length));
+
+            mClient.getServer(sId).getChannel(chId).setName(displayName);
 		}
 		else if (data[0] == CommUtil.REVIEVE_USER_IP){
 			byte[] address = new byte[data.length - 5];
@@ -166,7 +188,8 @@ public class Client_ParseData implements IPARSER {
 
 	}
 
-	/**
+
+    /**
 	 * Submits a login request to the server. If the login is a success, the
 	 * user ID of the client that it passed to this parser when initalized will
 	 * get set to the user's userID
@@ -268,7 +291,7 @@ public class Client_ParseData implements IPARSER {
 	 * 
 	 * @throws IOException
 	 */
-	public void userIdTiedToServer(User user) throws IOException {
+	public void requestAllServers(User user) throws IOException {
 
 		byte[] toServer = new byte[5];
 		toServer[0] = CommUtil.REQUEST_ALL_SERVERID;
@@ -425,9 +448,39 @@ public class Client_ParseData implements IPARSER {
 		
 	}
 
+    private void requestAllRoomsInServer(Server server) {
+        byte[] toSend = new byte[5];
+        toSend[0] = CommUtil.REQUEST_ALL_ROOM_ID;
+
+        byte[] idInByte = CommUtil.intToByteArr(server.getId());
+        for (int i = 1; i < idInByte.length; i++) {
+            toSend[i] = idInByte[i];
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void requestServerDisplayName(Server server){
+        byte[] toSend = new byte[5];
+        toSend[0] = CommUtil.RECIEVE_SERVER_DISPLAY_NAME;
+
+        byte[] idInByte = CommUtil.intToByteArr(server.getId());
+        for (int i = 1; i < idInByte.length; i++) {
+            toSend[i] = idInByte[i];
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 	public Client getClient() {
 		return this.mClient;
 	}
-
 }

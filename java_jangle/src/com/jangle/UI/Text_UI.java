@@ -1,6 +1,9 @@
 package com.jangle.UI;
 
+import com.jangle.client.Channel;
 import com.jangle.client.Client;
+import com.jangle.client.Server;
+import com.jangle.client.User;
 import com.jangle.communicate.Client_ParseData;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -36,7 +39,11 @@ public class Text_UI extends Application {
 
 	private Parent createLoginDialog() throws IOException {
         serverIP = mConfigUtil.getFormattedServerIP();
-		this.mClient = new Client();
+		this.mClient = new Client(1, 1);
+        Server server = new Server(1);
+        Channel channel = new Channel(1);
+        mClient.addServer(server);
+        mClient.getServer(1).addChannel(channel);
 		try {
 			this.mClientParseData = new Client_ParseData(mClient, serverIP[0], new Integer(serverIP[1]));
 		}catch (Exception e) {
@@ -59,14 +66,16 @@ public class Text_UI extends Application {
 	public void start(Stage primaryStage) throws IOException {
         mConfigUtil = new ConfigUtil();
 
-
 		Stage loginStage = new Stage();
 		loginStage.setScene(new Scene(createLoginDialog()));
 		loginStage.showAndWait();
 
         mClientParseData.request50MessagesWithOffset(0);
-		primaryStage.setScene(new Scene(createContent()));
-		primaryStage.show();
+        mClientParseData.requestAllUsersTiedToServer();
+        //TODO: Fix requesting servers
+        //mClientParseData.requestAllServers(new User("", mClient.getUserID()));
+        primaryStage.setScene(new Scene(createContent()));
+        primaryStage.show();
 
 	}
 

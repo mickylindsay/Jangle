@@ -1,9 +1,9 @@
 package com.jangle.client;
 
-import com.jangle.communicate.CommUtil;
 import com.jangle.communicate.CommUtil.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -14,26 +14,29 @@ public class Client {
 
     private ArrayList<User> mUsers;
     private ArrayList<Message> mMessages;
+    private HashMap<Integer, Server> mServers;
 
     private boolean loggedIn;
     private LoginResult mLoginResult;
     private long mLoginTime;
-    private int serverID;
-    private int channelID;
+    private int currentServerID;
+    private int currentChannelID;
     private int userID;
     private String displayName;
     private String IP;
 
 
-    public Client(ArrayList<User> users, ArrayList<Message> messages, int serverID, int channelID) {
-        this.channelID = channelID;
-        this.serverID = serverID;
+
+    public Client(ArrayList<User> users, ArrayList<Message> messages, int currentServerID, int currentChannelID) {
+        this.currentChannelID = currentChannelID;
+        this.currentServerID = currentServerID;
         this.mMessages = messages;
         this.mUsers = users;
         this.userID = 0;
         this.loggedIn = false;
         this.mLoginTime = 0;
         this.IP = "";
+        this.mServers = new HashMap<>();
     }
 
     public Client(ArrayList<User> users, ArrayList<Message> messages) {
@@ -43,50 +46,45 @@ public class Client {
         this.loggedIn = false;
         this.mLoginTime = 0;
         this.IP = "";
+        this.mServers = new HashMap<>();
     }
 
-    public Client(int serverID, int channelID) {
-        this.serverID = serverID;
-        this.channelID = channelID;
+    public Client(int currentServerID, int currentChannelID) {
+        this.currentServerID = currentServerID;
+        this.currentChannelID = currentChannelID;
         this.mUsers = new ArrayList<>();
         this.mMessages = new ArrayList<>();
         this.loggedIn = false;
         this.mLoginTime = 0;
         this.IP = "";
+        this.mServers = new HashMap<>();
     }
 
     public Client() {
         this.mUsers = new ArrayList<>();
         this.mMessages = new ArrayList<>();
-        serverID = 0;
-        channelID = 0;
+        currentServerID = 0;
+        currentChannelID = 0;
         this.userID = 0;
         this.loggedIn = false;
         this.mLoginTime = 0;
         this.IP = "";
+        this.mServers = new HashMap<>();
     }
 
-    public void addMessage(Message message) {
-        if (mMessages.contains(message))
-            return;
-        //keeps messages chronologically ordered
-        if (mMessages.size() == 0)
-            mMessages.add(message);
-        else {
-            for (int i = 0; i < mMessages.size(); i++) {
-                if (message.getTimeStamp() > mMessages.get(i).getTimeStamp())
-                    continue;
-                else if (message.getTimeStamp() == mMessages.get(i).getTimeStamp()) {
-                    mMessages.add(i + 1, message);
-                    return;
-                }
-                else {
-                    mMessages.add(i, message);
-                    return;
-                }
+    public void addMessage(Message message, int sId, int chId) {
+        if (mServers.get(sId) != null) {
+            if(mServers.get(sId).getChannel(chId) != null) {
+                mServers.get(sId).getChannel(chId).addMessage(message);
             }
-            //add at the end if the loop finishes
-            mMessages.add(message);
+            else {
+                System.out.println("Trying to add message to server: " + sId + " in channel: " + chId
+                    + " failed. Channel does not exist");
+            }
+        }
+        else {
+            System.out.println("Trying to add message to server: " + sId + " in channel: " + chId
+                    + " failed. Server does not exist");
         }
     }
 
@@ -120,24 +118,41 @@ public class Client {
         return mMessages;
     }
 
+    public List<Message> getMessages(int sId, int chId){
+        if (mServers.get(sId) != null) {
+            if(mServers.get(sId).getChannel(chId) != null) {
+                return mServers.get(sId).getChannel(chId).getmMessages();
+            }
+            else {
+                System.out.println("Trying to get messages from server: " + sId + " in channel: " + chId
+                        + " failed. Channel does not exist");
+            }
+        }
+        else {
+            System.out.println("Trying to get messages from server: " + sId + " in channel: " + chId
+                    + " failed. Server does not exist");
+        }
+        return null;
+    }
+
     public void setMessages(ArrayList<Message> messages) {
         mMessages = messages;
     }
 
-    public int getServerID() {
-        return serverID;
+    public int getCurrentServerID() {
+        return currentServerID;
     }
 
-    public void setServerID(int serverID) {
-        this.serverID = serverID;
+    public void setCurrentServerID(int currentServerID) {
+        this.currentServerID = currentServerID;
     }
 
-    public int getChannelID() {
-        return channelID;
+    public int getCurrentChannelID() {
+        return currentChannelID;
     }
 
-    public void setChannelID(int channelID) {
-        this.channelID = channelID;
+    public void setCurrentChannelID(int currentChannelID) {
+        this.currentChannelID = currentChannelID;
     }
 
     public int getUserID() {
@@ -207,4 +222,16 @@ public class Client {
         return false;
     }
 
+    public HashMap<Integer, Server> getServers() {
+        return mServers;
+    }
+
+    public void addServer(Server server) {
+        //TODO: Add server if server not already added
+        mServers.put(server.getId(), server);
+    }
+
+    public Server getServer(int id) {
+        return mServers.get(id);
+    }
 }
