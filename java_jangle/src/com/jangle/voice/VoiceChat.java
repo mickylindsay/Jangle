@@ -46,7 +46,11 @@ public class VoiceChat implements Runnable {
 	private int port;
 	private int userID;
 
-	public VoiceChat(int gport, boolean speak, Client gCl,  Client_ParseData gParser) throws SocketException {
+	// error checking variabltes
+	private boolean connectedToVoice;
+	private boolean broadcasting;
+
+	public VoiceChat(int gport, boolean speak, Client gCl, Client_ParseData gParser) throws SocketException {
 		format = VoiceUtil.genFormat();
 		try {
 			// init speakers
@@ -63,7 +67,8 @@ public class VoiceChat implements Runnable {
 		Cl = gCl;
 		Users = Cl.getUsersArrayList();
 		Parser = gParser;
-		
+		broadcasting = false;
+		connectedToVoice = false;
 
 		try {
 			Address = InetAddress.getLocalHost();
@@ -74,10 +79,9 @@ public class VoiceChat implements Runnable {
 
 		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser);
 		Recieving = new DatagramSocket(gport);
-		
-		
-		//If speak is true, the user wants to start speaking right away
-		if (speak){
+
+		// If speak is true, the user wants to start speaking right away
+		if (speak) {
 			connectToVoice();
 			startBrodcast();
 		}
@@ -85,38 +89,57 @@ public class VoiceChat implements Runnable {
 	}
 
 	/**
-	 * Want connect the user to the voice chat. Does not start broadcasting voice.
-	 * However, data that is sent from users in the voice chat will play though
-	 * the device's default audio device
+	 * Want connect the user to the voice chat. Does not start broadcasting
+	 * voice. However, data that is sent from users in the voice chat will play
+	 * though the device's default audio device
 	 * 
 	 * To start sending voice to other users, call the function StartBrodcast();
 	 */
 	public void connectToVoice() {
-		//Start speakers
-		try {
-			startSpeakers();
-		} catch (LineUnavailableException e) {
-			//Speakers are not ready to broadcast to.
+		if (!connectedToVoice) {
+
+			// Start speakers
+			try {
+				startSpeakers();
+			} catch (LineUnavailableException e) {
+				// Speakers are not ready to broadcast to.
+			}
+
+			// start recieving data
+			recieveData();
+			connectedToVoice = true;
 		}
-		
-		//start recieving data
-		recieveData();
-		
 	}
 
+	/**
+	 * Disconnect the user from Voice chat. The user does not want to be part of
+	 * the voice chat
+	 */
 	public void disconnectFromVoice() {
 		connections.clear();
 		stopSpeakers();
 		stopRecieve();
 		endBrodcast();
+		connectedToVoice = false;
 	}
 
+	/**
+	 * Start sending voice to other users. You can only send voice data to other users if you are connected to voice chat 
+	 */
 	public void startBrodcast() {
-		Madden.startBrodcast();
+		if (!broadcasting && connectedToVoice){
+			Madden.startBrodcast();
+			broadcasting = true;
+		}
 	}
 
+	/**
+	 * Stop sending voice to other users. However, user is still connected to
+	 * the voice chat, and will still be receiving voice data
+	 */
 	public void endBrodcast() {
 		Madden.stopBrodcast();
+		broadcasting = false;
 	}
 
 	/**
@@ -165,22 +188,40 @@ public class VoiceChat implements Runnable {
 
 	@Override
 	public void run() {
+		byte[] data = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
+		byte[] toSpeaker = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
+		DatagramPacket packet = new DatagramPacket(data, data.length);
+		int loop = 1;
+
 		while (isReceiving) {
-			byte[] data = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
-			DatagramPacket packet = new DatagramPacket(data, data.length);
 			try {
 				Recieving.receive(packet);
 			} catch (IOException e) {
-				e.printStackTrace();
+
 			}
 
-			speakers.write(data, 0, data.length);
+			if (loop % Cl.getUsers().size() == 0) {
+				loop = 0;
+
+				for (int i = 0; i < toSpeaker.length; i++) {
+					toSpeaker[i] = (byte) ((data[i] + toSpeaker[i]) >> 1);
+				}
+				speakers.write(toSpeaker, 0, toSpeaker.length);
+
+			}
+			else {
+				for (int i = 0; i < toSpeaker.length; i++) {
+					toSpeaker[i] = (byte) ((data[i] + toSpeaker[i]) >> 1);
+				}
+			}
+			loop += 1;
 
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+
 		}
 	}
 
