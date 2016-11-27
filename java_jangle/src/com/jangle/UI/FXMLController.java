@@ -223,6 +223,8 @@ public class FXMLController implements Initializable {
                         setAlignment(Pos.CENTER_LEFT);
                         //setTextAlignment(TextAlignment.LEFT);
                     }
+                    else
+                        setGraphic(null);
                     setText(formatMessage(message));
                 }
             }

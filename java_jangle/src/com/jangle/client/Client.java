@@ -118,6 +118,18 @@ public class Client {
         return mMessages;
     }
 
+    public List<Message> getMessageListCustom(int sId, int chID) {
+        ArrayList<Message> list = new ArrayList<>();
+        for(Message m : mMessages) {
+            if (m.getServerID() == sId) {
+                if (m.getChannelID() == chID) {
+                    list.add(m);
+                }
+            }
+        }
+        return list;
+    }
+
     public List<Message> getMessages(int sId, int chId){
         if (mServers.get(sId) != null) {
             if(mServers.get(sId).getChannel(chId) != null) {

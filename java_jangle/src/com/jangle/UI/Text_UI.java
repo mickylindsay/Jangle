@@ -44,6 +44,7 @@ public class Text_UI extends Application {
         Channel channel = new Channel(1);
         mClient.addServer(server);
         mClient.getServer(1).addChannel(channel);
+
 		try {
 			this.mClientParseData = new Client_ParseData(mClient, serverIP[0], new Integer(serverIP[1]));
 		}catch (Exception e) {
@@ -70,7 +71,7 @@ public class Text_UI extends Application {
 		loginStage.setScene(new Scene(createLoginDialog()));
 		loginStage.showAndWait();
 
-        mClientParseData.request50MessagesWithOffset(0);
+        mClientParseData.request50MessagesWithOffset(1);
         mClientParseData.requestAllUsersTiedToServer();
         //TODO: Fix requesting servers
         //mClientParseData.requestAllServers(new User("", mClient.getUserID()));

@@ -107,6 +107,7 @@ public class Client_ParseData implements IPARSER {
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_DISPLAY_NAME) {
+            //TODO: Changing
             int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
 			String newDiplay = new String(Arrays.copyOfRange(data, 5, data.length));
             for (int i = 0; i < mClient.getUsers().size(); i++) {

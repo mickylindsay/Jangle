@@ -44,6 +44,7 @@ public class messageThread implements Runnable {
         int uSize = 0;
 
         while(true) {
+            System.out.println(mClient.getServer(1).getChannels().size());
 
             if (mSize == mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).size()){
                 try {
@@ -59,14 +60,13 @@ public class messageThread implements Runnable {
 
                 for (int i = 0; i < difference; i++) {
                     toDisplay = mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).get(mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID()).size() - difference + i);
-
                     messages.add(toDisplay);
 
                     //Making new UI update thread
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                        	messageList = FXCollections.observableArrayList(mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID()));
+                          	messageList = FXCollections.observableArrayList(mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID()));
                             ui.updateMessages(messageList);
                         }
                     });
