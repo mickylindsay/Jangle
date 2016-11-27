@@ -26,12 +26,11 @@ func Init_Command() {
 func Check_Command(user *User, data []byte) bool {
 	var check bool
 	if string(data[0]) == "/" {
-		var args []string
-		args = strings.Split(string(data), " ")
+		args := strings.Split(string(data), " ")
 		trigger := Switcher(args[0])
 		if trigger != 255 {
 			check = true
-			jangle.Commands[trigger](args[1:])
+			jangle.Commands[trigger](args)
 		} else {
 			check = false
 		}
@@ -65,7 +64,7 @@ func Switcher(s string) byte {
 //Kicks the user from the server
 func Kick_User(args []string) {
 	c := Kick{
-		user: Get_User_From_Userid(Byte_Converter([]byte(args[1]))),
+		user:       Get_User_From_Userid(Byte_Converter([]byte(args[1]))),
 		old_server: Get_User_From_Userid(Byte_Converter([]byte(args[1]))).serverid}
 	c.Execute()
 	c.Send()
@@ -119,7 +118,7 @@ type Command interface {
 
 //Creates Kick struct with param User type
 type Kick struct {
-	user *User
+	user       *User
 	old_server uint
 }
 

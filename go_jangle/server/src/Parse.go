@@ -140,7 +140,7 @@ func Display_Name_Message(user *User, data []byte) Message {
 
 //TODO
 func Multi_Serverid_Message(user *User, data []byte) Message {
-	m := Create_Message(request_all_serverid, data[1:4])
+	m := Create_Message(request_all_serverid, data[1:5])
 	messages, err := Get_Serverid_Messages(Byte_Converter(m.userid))
 	if err != nil {
 		m = Create_Message(error_check, []byte("Failed to retrieve all serverid from database"))
@@ -155,7 +155,7 @@ func Multi_Serverid_Message(user *User, data []byte) Message {
 
 //TODO
 func Server_Display_Name_Message(user *User, data []byte) Message {
-	m := Create_Message(request_server_display_name, data[1:4])
+	m := Create_Message(request_server_display_name, data[1:5])
 	requested_server_display_name, err := Get_Server_Display_Name(Byte_Converter(m.serverid))
 	if err != nil {
 		m = Create_Message(error_check, []byte("Failed to retrieve server display name from database"))
@@ -169,7 +169,7 @@ func Server_Display_Name_Message(user *User, data []byte) Message {
 
 //TODO
 func Multi_Roomid_Message(user *User, data []byte) Message {
-	m := Create_Message(request_all_roomid, data[1:4])
+	m := Create_Message(request_all_roomid, data[1:5])
 	messages, err := Get_Roomid_Messages(Byte_Converter(m.serverid))
 	if err != nil {
 		m = Create_Message(error_check, []byte("Failed to retrieve all roomid from database"))
@@ -184,7 +184,7 @@ func Multi_Roomid_Message(user *User, data []byte) Message {
 
 //TODO
 func Room_Display_Name_Message(user *User, data []byte) Message {
-	m := Create_Message(request_room_display_name, data[1:4], data[5:8])
+	m := Create_Message(request_room_display_name, data[1:5], data[5:9])
 	requested_room_display_name, err := Get_Room_Display_Name(Byte_Converter(m.serverid), Byte_Converter(m.roomid))
 	if err != nil {
 		m = Create_Message(error_check, []byte("Failed to retrieve room display name from database"))
@@ -198,7 +198,7 @@ func Room_Display_Name_Message(user *User, data []byte) Message {
 
 //TODO
 func Master_Display_Name_Message(user *User, data []byte) Message {
-	m := Create_Message(request_master_display_name, data[1:4])
+	m := Create_Message(request_master_display_name, data[1:5])
 	requested_master_display_name, err := Get_Master_Display_Name(Byte_Converter(m.userid))
 	if err != nil {
 		m = Create_Message(error_check, []byte("Failed to retrieve master display name from database"))
@@ -212,7 +212,7 @@ func Master_Display_Name_Message(user *User, data []byte) Message {
 
 //TODO
 func Status_Message(user *User, data []byte) Message {
-	m := Create_Message(request_status, data[1:4])
+	m := Create_Message(request_status, data[1:5])
 	m = Create_Message(recieve_status, m.userid, byte(user.status), byte(user.muted), byte(user.voice))
 	Send_Message(user, m)
 	return m
@@ -220,7 +220,7 @@ func Status_Message(user *User, data []byte) Message {
 
 //TODO
 func Location_Message(user *User, data []byte) Message {
-	m := Create_Message(request_location, data[1:4])
+	m := Create_Message(request_location, data[1:5])
 	m = Create_Message(recieve_location, Int_Converter(user.serverid), Int_Converter(user.roomid), Int_Converter(user.id))
 	Send_Message(user, m)
 	return m
@@ -228,7 +228,7 @@ func Location_Message(user *User, data []byte) Message {
 
 //TODO
 func User_Ip_Message(user *User, data []byte) Message {
-	m := Create_Message(request_user_ip, data[1:4])
+	m := Create_Message(request_user_ip, data[1:5])
 	address := Get_User_From_Userid(Byte_Converter(m.userid)).Get_Local_Address()
 	m = Create_Message(recieve_user_ip, m.userid, String_Converter(address))
 	Send_Message(user, m)
@@ -237,7 +237,7 @@ func User_Ip_Message(user *User, data []byte) Message {
 
 //TODO
 func User_Icon_Message(user *User, data []byte) Message {
-	m := Create_Message(request_user_icon, data[1:4])
+	m := Create_Message(request_user_icon, data[1:5])
 	url, err := Get_User_Icon(Byte_Converter(m.userid))
 	if err != nil {
 		m = Create_Message(error_check, []byte("Failed to retrieve user icon from database"))
@@ -251,7 +251,7 @@ func User_Icon_Message(user *User, data []byte) Message {
 
 //TODO
 func Server_Icon_Message(user *User, data []byte) Message {
-	m := Create_Message(request_server_icon, data[1:4])
+	m := Create_Message(request_server_icon, data[1:5])
 	url, err := Get_Server_Icon(Byte_Converter(m.serverid))
 	if err != nil {
 		m = Create_Message(error_check, []byte("Failed to retrieve server icon from database"))
@@ -279,7 +279,7 @@ func New_Display_Name_Message(user *User, data []byte) Message {
 
 //TODO
 func New_Server_Display_Name_Message(user *User, data []byte) Message {
-	m := Create_Message(send_new_server_display_name, data[1:4], data[5:])
+	m := Create_Message(send_new_server_display_name, data[1:5], data[5:])
 	err := Set_New_Server_Display_Name(Byte_Converter(m.serverid), m.server_display_name)
 	if err != nil {
 		m = Create_Message(error_check, []byte("Failed to insert new server display name into database"))
@@ -293,8 +293,8 @@ func New_Server_Display_Name_Message(user *User, data []byte) Message {
 
 //TODO
 func New_Room_Display_Name_Message(user *User, data []byte) Message {
-	m := Create_Message(send_new_room_display_name, data[1:4], data[5:8], data[9:])
-	err := Set_New_Room_Display_Name(Byte_Converter(m.serverid), Byte_Converter(m.roomid), data[9:])
+	m := Create_Message(send_new_room_display_name, data[1:5], data[5:9], data[9:])
+	err := Set_New_Room_Display_Name(Byte_Converter(m.serverid), Byte_Converter(m.roomid), m.room_display_name)
 	if err != nil {
 		m = Create_Message(error_check, []byte("Failed to insert new room display name into database"))
 		Send_Message(user, m)
@@ -336,7 +336,7 @@ func New_User_Icon_Message(user *User, data []byte) Message {
 
 //TODO
 func New_Server_Icon_Message(user *User, data []byte) Message {
-	m := Create_Message(send_new_server_icon, data[1:4], data[5:])
+	m := Create_Message(send_new_server_icon, data[1:5], data[5:])
 	err := Set_New_Server_Icon(Byte_Converter(m.serverid), string(m.url))
 	if err != nil {
 		m = Create_Message(error_check, []byte("Failed to insert new server icon into database"))
@@ -362,7 +362,7 @@ func Change_Status_Message(user *User, data []byte) Message {
 
 //TODO
 func Change_Location_Message(user *User, data []byte) Message {
-	m := Create_Message(change_location, data[1:4], data[5:8])
+	m := Create_Message(change_location, data[1:5], data[5:9])
 	if user.serverid != Byte_Converter(m.serverid) {
 		old_server := user.serverid
 		user.serverid = Byte_Converter(m.serverid)
