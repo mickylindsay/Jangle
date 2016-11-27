@@ -34,7 +34,7 @@
                                     <Image url="@../img/settings.png" />
                                  </image>
                               </ImageView>
-                              <Button fx:id="settingsButton" onAction="#handleSettings" layoutY="465.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="52.0" style="-fx-background-color: transparent;" />
+                              <Button fx:id="settingsButton" layoutY="465.0" mnemonicParsing="false" onAction="#handleSettings" prefHeight="52.0" prefWidth="52.0" style="-fx-background-color: transparent;" />
                            </children>
                         </AnchorPane>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -43,7 +43,9 @@
                                 <items>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                                        <children>
-                                          <ListView fx:id="userList" prefHeight="520.0" prefWidth="164.0" stylesheets="@../css/userList.css" />
+                                          <ListView fx:id="userList" prefHeight="474.0" prefWidth="164.0" stylesheets="@../css/userList.css" />
+                                          <Button  fx:id="connectButton" onAction="#handleVoipConnection" layoutY="474.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="83.0" text="Connect" />
+                                          <Button fx:id="muteButton" onAction="#handleMute" layoutX="81.0" layoutY="474.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="83.0" text="Mute" />
                                        </children>
                                     </AnchorPane>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">

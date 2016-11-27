@@ -43,6 +43,7 @@ public class messageThread implements Runnable {
         //Users Size
         int uSize = 0;
 
+
         while(true) {
             System.out.println(mClient.getServer(1).getChannels().size());
 
@@ -81,6 +82,8 @@ public class messageThread implements Runnable {
                 for (int i = 0; i < difference; i++) {
                     mUsers.add(mClient.getUsers().get(mClient.getUsers().size() - difference + i));
                     //TODO: Display name updates and caching
+                    //TODO: Look into displaying the channels and adding an on click handler
+                    //TODO: Chack out using the clients user list instead for possible memory saving
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -91,7 +94,6 @@ public class messageThread implements Runnable {
                 }
                 uSize = mClient.getUsers().size();
             }
-
         }
     }
 }

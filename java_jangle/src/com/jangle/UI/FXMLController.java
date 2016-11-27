@@ -150,6 +150,8 @@ public class FXMLController implements Initializable {
         settingsStage.showAndWait();
     }
 
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         testlist = FXCollections.observableArrayList();
@@ -186,6 +188,9 @@ public class FXMLController implements Initializable {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                    }
+                    else if (user.isChannel()){
+                        setGraphic(null);
                     }
                     else {
                         Image image = new Image(user.getAvatarURL());
@@ -266,6 +271,16 @@ public class FXMLController implements Initializable {
                 }
             }
         });
+
+        userList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (userList.getSelectionModel().getSelectedItem().isChannel()){
+                    mClient.changeChannel(userList.getSelectionModel().getSelectedItem().getId()-1000);
+                }
+            }
+        });
+
     }
 
     private Parent createSettingsDialog() {
@@ -290,5 +305,15 @@ public class FXMLController implements Initializable {
             return message.getUserID() + "\n" + message.getMessageContent() + "    " + message.getTimeStamp();
 
         return sender.getDisplayName() + "\n" + message.getMessageContent() + "    " + message.getTimeStamp();
+    }
+
+    @FXML
+    public void handleMute(ActionEvent actionEvent) {
+        //TODO: Toggles the mute on voice in but not out from the client
+    }
+
+    @FXML
+    public void handleVoipConnection(ActionEvent actionEvent) {
+        //TODO: Initialize voice client... NEED Conroy
     }
 }

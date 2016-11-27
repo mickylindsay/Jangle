@@ -16,6 +16,7 @@ public class User {
     private String avatarURL;
     private String IP;
     private int channelID;
+    private boolean isChannel;
     
 
     public User(String displayName, int id, int status) {
@@ -26,6 +27,7 @@ public class User {
         this.avatarURL = DEFAULT_AVATAR;
         this.IP = "";
         this.channelID = 0;
+        this.isChannel = false;
     }
     
     public User(String displayName, String userName, int id, int status){
@@ -36,6 +38,7 @@ public class User {
         this.avatarURL = DEFAULT_AVATAR;
         this.IP = "";
         this.channelID = 0;
+        this.isChannel = false;
     }
 
     public User(String displayName, int id) {
@@ -46,6 +49,17 @@ public class User {
         this.avatarURL = DEFAULT_AVATAR;
         this.IP = "";
         this.channelID = 0;
+        this.isChannel = false;
+    }
+
+    public User(Channel channel){
+        this.displayName = channel.toString();
+        this.id = 1000 + channel.getId();
+        this.userName = channel.getName();
+        this.status = 0;
+        this.IP = "";
+        this.channelID = channel.getId();
+        this.isChannel = true;
     }
 
     public String getDisplayName() {
@@ -120,6 +134,10 @@ public class User {
     
     public String getIP(){
     	return IP;
+    }
+
+    public boolean isChannel() {
+        return isChannel;
     }
 }
 

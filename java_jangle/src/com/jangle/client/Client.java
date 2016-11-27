@@ -240,10 +240,26 @@ public class Client {
 
     public void addServer(Server server) {
         //TODO: Add server if server not already added
+        if (mServers.get(server.getId()) != null) {
+            return;
+        }
         mServers.put(server.getId(), server);
     }
 
     public Server getServer(int id) {
         return mServers.get(id);
+    }
+
+    public void changeChannel(int id) {
+        if (currentChannelID == id) {
+            return;
+        }
+        else if (getServer(currentServerID).getChannel(id) == null){
+            System.out.println("Trying to switch to channel: " + id +" failed. Channel does not exist");
+        }
+        else{
+            currentChannelID = id;
+            //TODO: Looking into making mMessages dynamic for messages that SHOULD be displayed at the time
+        }
     }
 }

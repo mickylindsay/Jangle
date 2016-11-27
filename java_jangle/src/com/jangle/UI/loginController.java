@@ -7,10 +7,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
@@ -27,6 +24,7 @@ public class loginController implements Initializable {
     //private loginThread mLoginThread;
     private CommUtil.LoginResult mLoginResult;
     private loginThread mLoginThread;
+    private ConfigUtil mConfigUtil;
 
     @FXML
     public TextField usernameField;
@@ -50,6 +48,8 @@ public class loginController implements Initializable {
     public Label noUsernameOrPassword;
     @FXML
     public Label usernameTaken;
+    @FXML
+    public CheckBox rememberUsername;
 
     @FXML
     private void handleLogin(ActionEvent actionEvent) {
@@ -128,6 +128,10 @@ public class loginController implements Initializable {
     }
 
     public void successfulLogin() {
+        if (rememberUsername.isSelected()) {
+            mConfigUtil.setUserName(usernameField.getText());
+        }
+
         Stage here = (Stage) logInButton.getScene().getWindow();
         here.close();
     }
@@ -136,5 +140,15 @@ public class loginController implements Initializable {
     public void setmClient_parseData(Client_ParseData Client_parseData){
         this.mClient_parseData = Client_parseData;
         mLoginThread = new loginThread(this, mClient_parseData.getClient());
+    }
+
+    public void setmConfigUtil(ConfigUtil configUtil) {
+        this.mConfigUtil = configUtil;
+        setRememberedUsername();
+    }
+
+    public void setRememberedUsername() {
+        if (mConfigUtil.getUserName() != null)
+            usernameField.setText(mConfigUtil.getUserName());
     }
 }
