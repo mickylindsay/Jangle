@@ -26,7 +26,8 @@ func Init_Command() {
 func Check_Command(user *User, data []byte) bool {
 	var check bool
 	if string(data[0]) == "/" {
-		args := strings.Split(string(data), " ")
+		var args []string
+		args = strings.Split(string(data), " ")
 		trigger := Switcher(args[0])
 		if trigger != 255 {
 			check = true
