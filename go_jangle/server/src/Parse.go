@@ -76,7 +76,7 @@ func Login_Message(user *User, data []byte) Message {
 
 //TODO
 func Standard_Message(user *User, data []byte) Message {
-	m := Create_Message(message_client_send, data[1:4], data[5:8], data[9:12], data[13:])
+	m := Create_Message(message_client_send, data[1:5], data[6:9], data[10:13], data[14:])
 	if user.muted != 1 {
 		messageid, err := Message_Create(user, m.text)
 		if err != nil {
@@ -124,7 +124,7 @@ func Multi_Userid_Message(user *User, data []byte) Message {
 	return m
 }
 
-//TODO
+//I HAVE NO FUCKING IDEA
 func Display_Name_Message(user *User, data []byte) Message {
 	m := Create_Message(request_display_name, data[1:5])
 	requested_display_name, err := Get_Display_Name(user.serverid, Byte_Converter(m.userid))
