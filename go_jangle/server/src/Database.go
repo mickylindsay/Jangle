@@ -133,7 +133,7 @@ func Get_Offset_Messages(user *User, offset uint) ([]Message, error) {
 				return nil, err
 			}
 			//Create a "17" message to send back to user
-			m := Create_Message(message_client_recieve, Int_Converter(user.serverid), Int_Converter(user.roomid), Int_Converter(userid_read), Int_Converter(time_read), []byte(text_read))
+			m := Create_Message(message_client_recieve, Int_Converter(user.serverid), Int_Converter(user.roomid), Int_Converter(userid_read), default_id, Int_Converter(time_read), []byte(text_read))
 			//Add that message to the array which will be returned
 			messages[i] = m
 			i++
