@@ -126,7 +126,7 @@ func Multi_Userid_Message(user *User, data []byte) Message {
 
 //TODO
 func Display_Name_Message(user *User, data []byte) Message {
-	m := Create_Message(request_display_name, data[1:4])
+	m := Create_Message(request_display_name, data[1:5])
 	requested_display_name, err := Get_Display_Name(user.serverid, Byte_Converter(m.userid))
 	if err != nil {
 		m = Create_Message(error_check, []byte("Failed to retrieve display name from database"))
