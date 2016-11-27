@@ -46,7 +46,7 @@ func Init_Parse() {
 
 //TODO
 func Create_User_Message(user *User, data []byte) Message {
-	m := Create_Message(create_user, data[1:20], data[21:])
+	m := Create_Message(create_user, data[1:21], data[21:])
 	id, err := User_Create(m.username, m.password)
 	if err == nil {
 		user.id = id
