@@ -65,10 +65,10 @@ func Login_Message(user *User, data []byte) Message {
 	id, err := User_Login(m.username, m.password)
 	if err == nil {
 		user.id = id
-		Create_Message(login_success, Int_Converter(id))
+		m = Create_Message(login_success, Int_Converter(id))
 		Send_Message(user, m)
 	} else {
-		Create_Message(login_fail)
+		m = Create_Message(login_fail)
 		user.Write(m.Build_Message())
 	}
 	return m
