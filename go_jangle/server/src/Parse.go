@@ -61,7 +61,7 @@ func Create_User_Message(user *User, data []byte) Message {
 
 //TODO
 func Login_Message(user *User, data []byte) Message {
-	m := Create_Message(login, data[1:20], data[21:])
+	m := Create_Message(login, data[1:21], data[21:])
 	id, err := User_Login(m.username, m.password)
 	if err == nil {
 		user.id = id
