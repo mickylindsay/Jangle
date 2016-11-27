@@ -45,15 +45,15 @@ func Check_Command(user *User, data []byte) bool {
 func Switcher(s string) byte {
 	var switcher byte
 	switch {
-	case s == "kick":
+	case s == "/kick":
 		switcher = 0
-	case s == "mute":
+	case s == "/mute":
 		switcher = 1
-	case s == "unmute":
+	case s == "/unmute":
 		switcher = 2
-	case s == "move":
+	case s == "/move":
 		switcher = 3
-	case s == "prune":
+	case s == "/prune":
 		switcher = 4
 	default:
 		switcher = 255
