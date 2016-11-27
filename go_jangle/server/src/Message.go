@@ -80,6 +80,7 @@ func (m Message) Build_Message() []byte {
 	if m.code == (change_status | recieve_status) {
 		message = append(message, []byte{m.status}...)
 		message = append(message, []byte{m.muted}...)
+		message = append(message, []byte{m.voice}...)
 	}
 	return message
 }
