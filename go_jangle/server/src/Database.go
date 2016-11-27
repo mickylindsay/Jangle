@@ -47,7 +47,6 @@ func User_Login(u []byte, p []byte) (uint, error) {
 	if !jangle.no_database {
 		var userid uint
 		err := jangle.db.QueryRow("SELECT userid FROM users WHERE username =? AND passwordhash=?", string(u[:Byte_Array_Length(u)]), string(p)).Scan(&userid)
-		fmt.Println("IM HERE", userid)
 		return userid, err
 	}
 	return 1, nil
@@ -329,20 +328,32 @@ func Join_Server(user *User) error {
 
 //TODO
 func Get_User_Icon(userid uint) (string, error) {
-	return "", nil
+	var temp string
+	err := jangle.db.QueryRow("SELECT iamgepath FROM users WHERE userid = ?", userid).Scan(&temp)
+	return temp, err
 }
 
 //TODO
 func Get_Server_Icon(serverid uint) (string, error) {
-	return "", nil
+	var temp string
+	err := jangle.db.QueryRow("SELECT iamgepath FROM servers WHERE userid = ?", serverid).Scan(&temp)
+	return temp, err
 }
 
 //TODO
 func Set_New_User_Icon(userid uint, url string) error {
+	if !jangle.no_database {
+		_, e := jangle.db.Exec("UPDATE users SET imagepath = ? WHERE userid = ?", url, userid)
+		return e
+	}
 	return nil
 }
 
 //TODO
 func Set_New_Server_Icon(serverid uint, url string) error {
+		if !jangle.no_database {
+		_, e := jangle.db.Exec("UPDATE servers SET imagepath = ? WHERE serverid = ?", url, serverid)
+		return e
+	}
 	return nil
 }
