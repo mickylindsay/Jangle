@@ -76,7 +76,7 @@ func Login_Message(user *User, data []byte) Message {
 
 //TODO
 func Standard_Message(user *User, data []byte) Message {
-	m := Create_Message(message_client_send, data[1:5], data[6:10], data[11:15], data[16:])
+	m := Create_Message(message_client_send, data[1:5], data[5:9], data[9:13], data[13:])
 	if user.muted != 1 {
 		messageid, err := Message_Create(user, m.text)
 		if err != nil {
