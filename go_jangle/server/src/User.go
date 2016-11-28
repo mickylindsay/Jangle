@@ -91,4 +91,3 @@ func (u *User) Get_Local_Address() string {
 func (u *User) Get_Remote_Address() string {
 	return (*(*u).c).RemoteAddr().String()
 }
->>>>>>> 81a2ccfc63dde464c167b934ce6c030180bcb2f6

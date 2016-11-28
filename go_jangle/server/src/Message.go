@@ -77,7 +77,7 @@ func (m Message) Build_Message() []byte {
 	if m.offset != 0 {
 		message = append(message, []byte{m.offset}...)
 	}
-	if m.code == (change_status | recieve_status) {
+	if m.code == change_status || m.code == recieve_status {
 		message = append(message, []byte{m.status}...)
 		message = append(message, []byte{m.muted}...)
 		message = append(message, []byte{m.voice}...)
