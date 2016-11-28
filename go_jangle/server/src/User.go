@@ -29,6 +29,7 @@ func (u *User) equals(u2 *User) bool {
 func (u *User) User_Initialize() {
 	u.roomid = 1
 	u.serverid = 1
+	Join_Server(u);
 	u.status = uint(online)
 	u.location = &Address{
 		userid:   u.id,
@@ -62,6 +63,7 @@ func (u *User) Set_Roomid(id uint) {
 
 func (u *User) Set_Serverid(id uint) {
 	u.serverid = id
+	Join_Server(u);
 }
 
 func (u *User) Read(read_data []byte) (int, error) {
