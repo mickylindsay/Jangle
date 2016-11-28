@@ -174,7 +174,7 @@ public class Client_ParseData implements IPARSER {
 
 			mClient.getServer(sId).getChannel(chId).setName(displayName);
 		}
-		else if (data[0] == CommUtil.REVIEVE_USER_IP) {
+		else if (data[0] == CommUtil.RECIEVE_USER_IP) {
 			byte[] address = new byte[data.length - 4];
 			for (int i = 0; i < address.length; i++) {
 				address[i] = data[i + 4];

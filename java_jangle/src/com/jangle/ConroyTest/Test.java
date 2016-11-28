@@ -32,7 +32,7 @@ public class Test {
 		//TestServer server = new TestServer(9090);
 
 		try {
-			Parser = new Client_ParseData(Cl, "localhost", 9090);
+			Parser = new Client_ParseData(Cl, "10.25.70.96", 9090);
 			//System.out.println("generated client");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -48,7 +48,8 @@ public class Test {
 		
 		Parser.requestUserStatus(Nate);
 		
-		/*
+		
+		
 		Parser.sendUserStatusChange();
 		
 		Parser.submitLogIn("nathan", "password");
@@ -58,7 +59,7 @@ public class Test {
 		voice.connectToVoice();
 		voice.startBrodcast();
 		
-		*/
+		
 	  while(true){ 
 		  Thread.sleep(500);
 	  }
