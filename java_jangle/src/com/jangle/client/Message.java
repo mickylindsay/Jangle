@@ -47,17 +47,19 @@ public class Message {
 		byte[] chan = new byte[4];
 		byte[] user = new byte[4];
 		byte[] server = new byte[4];
+        byte[] messageID = new byte[4];
 		byte[] time = new byte[4];
-		byte[] content = new byte[data.length - 17];
+		byte[] content = new byte[data.length - 21];
 		
 		for (int i = 0; i < 4; i++) {
 			server[i] = data[i + 1];
 			chan[i] = data[i + 5];
 			user[i] = data[i + 9];
-			time[i] = data[i + 13];
+			messageID[i] = data[i + 13];
+            time[i] = data[i + 17];
 		}
 
-		content = Arrays.copyOfRange(data, 17, data.length);
+		content = Arrays.copyOfRange(data, 21, data.length);
 
 		
 		
@@ -66,6 +68,7 @@ public class Message {
 		this.serverID = CommUtil.byteToInt(server);
 		this.timeStamp = (long) CommUtil.byteToInt(time);
 		this.messageContent = new String(content);
+        this.messageID = CommUtil.byteToInt(messageID);
 	}
 
 	public Message() {

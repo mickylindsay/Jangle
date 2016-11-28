@@ -1,0 +1,10 @@
+ssh into ISU server
+
+cd /SS_05-Jangle/go_jangle/server
+
+sudo git checkout master
+sudo git pull origin master
+
+sudo /bin/env GOPATH=/home/go make
+
+./bin/server --address 10.25.70.96 --debug

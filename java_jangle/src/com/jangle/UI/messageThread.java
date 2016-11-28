@@ -13,7 +13,7 @@ import javafx.scene.control.TextArea;
 import java.util.ArrayList;
 
 /**
- * Created by sable_000 on 9/29/2016.
+ * Created by Jess on 9/29/2016.
  */
 public class messageThread implements Runnable {
 
@@ -43,9 +43,11 @@ public class messageThread implements Runnable {
         //Users Size
         int uSize = 0;
 
-        while(true) {
 
-            if (mSize == mClient.getMessages().size()){
+        while(true) {
+            //System.out.println(mClient.getServer(1).getChannels().size());
+
+            if (mSize == mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).size()){
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
@@ -53,25 +55,24 @@ public class messageThread implements Runnable {
                 }
             }
 
-            else if (mSize < mClient.getMessages().size()){
-                int difference = mClient.getMessages().size() - mSize;
+            else if (mSize < mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID()).size()){
+                int difference = mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID()).size() - mSize;
                 Message toDisplay = null;
 
                 for (int i = 0; i < difference; i++) {
-                    toDisplay = mClient.getMessages().get(mClient.getMessages().size() - difference + i);
-
+                    toDisplay = mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).get(mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID()).size() - difference + i);
                     messages.add(toDisplay);
 
                     //Making new UI update thread
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                        	messageList = FXCollections.observableArrayList(messages);
+                          	messageList = FXCollections.observableArrayList(mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID()));
                             ui.updateMessages(messageList);
                         }
                     });
                 }
-                mSize = mClient.getMessages().size();
+                mSize = mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).size();
             }
 
 
@@ -81,6 +82,8 @@ public class messageThread implements Runnable {
                 for (int i = 0; i < difference; i++) {
                     mUsers.add(mClient.getUsers().get(mClient.getUsers().size() - difference + i));
                     //TODO: Display name updates and caching
+                    //TODO: Look into displaying the channels and adding an on click handler
+                    //TODO: Chack out using the clients user list instead for possible memory saving
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -91,7 +94,6 @@ public class messageThread implements Runnable {
                 }
                 uSize = mClient.getUsers().size();
             }
-
         }
     }
 }
