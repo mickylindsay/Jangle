@@ -52,6 +52,9 @@ func Listen_To_Clients(user *User, e *list.Element) {
 
 //Sends message to one specific user.
 func Send_Message(user *User, message Message) uint {
+	if user == nil{
+		return 0;
+	}
 	write_data := message.Build_Message()
 	if jangle.debug {
 		fmt.Println("OUT: ", write_data)
@@ -99,7 +102,14 @@ func Send_Broadcast_Server_Room(serverid uint, roomid uint, message Message) {
 
 //TODO
 func Send_Broadcast_Members(serverid uint, message Message) {
-
+	ids, err :=  Get_Member_Userid(serverid);
+	if err == nil{
+		fmt.Println("Unable to find members of server", serverid);
+		return;
+	}
+	for i := 0; i < len(ids); i++ {
+		Send_Message(Get_User_From_Userid(ids[i]), message);
+	}
 }
 
 //TODO
