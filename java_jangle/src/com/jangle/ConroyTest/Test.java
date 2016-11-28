@@ -29,7 +29,7 @@ public class Test {
 
 		Client Cl = new Client();
 		Client_ParseData Parser = null;
-		TestServer server = new TestServer(9090);
+		//TestServer server = new TestServer(9090);
 
 		try {
 			Parser = new Client_ParseData(Cl, "localhost", 9090);
@@ -41,23 +41,24 @@ public class Test {
 		
 		
 		User Nate = TestUtil.newNathan();
-		Nate.setIP("localhost");
+		
 		Cl.addUser(Nate);
-		
-		Cl.setCurrentChannelID(1);
-		Cl.setVoiceStatus(true);
-		
 		Nate.setVoiceStatus(true);
-		Nate.setChannelID(1);
 		Nate.setIsMuted(false);
 		
-		VoiceChat test = new VoiceChat(7800, false, Cl, Parser);
+		Parser.requestUserStatus(Nate);
 		
-		test.connectToVoice();
-		test.startBrodcast();
+		/*
+		Parser.sendUserStatusChange();
 		
-		System.out.println("here");
+		Parser.submitLogIn("nathan", "password");
 		
+		VoiceChat voice = new VoiceChat(7800, false, Cl, Parser);
+		
+		voice.connectToVoice();
+		voice.startBrodcast();
+		
+		*/
 	  while(true){ 
 		  Thread.sleep(500);
 	  }

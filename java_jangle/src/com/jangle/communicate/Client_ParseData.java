@@ -68,7 +68,7 @@ public class Client_ParseData implements IPARSER {
 
 		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
 			Message newMess = new Message(data);
-            System.out.println("Server id: " + newMess.getServerID() + " channelid: " + newMess.getChannelID());
+			System.out.println("Server id: " + newMess.getServerID() + " channelid: " + newMess.getChannelID());
 			if (!mClient.isDuplicateMessage(newMess))
 				mClient.addMessage(newMess, newMess.getServerID(), newMess.getChannelID());
 			/*
@@ -157,7 +157,7 @@ public class Client_ParseData implements IPARSER {
 
 			Channel newChannel = new Channel(chId);
 			mClient.getServer(sId).addChannel(newChannel);
-            mClient.addUser(new User(newChannel));
+			mClient.addUser(new User(newChannel));
 
 			try {
 				requestRoomDisplayName(sId, chId);
@@ -175,49 +175,52 @@ public class Client_ParseData implements IPARSER {
 			mClient.getServer(sId).getChannel(chId).setName(displayName);
 		}
 		else if (data[0] == CommUtil.REVIEVE_USER_IP) {
-			byte[] address = new byte[data.length - 5];
+			byte[] address = new byte[data.length - 4];
 			for (int i = 0; i < address.length; i++) {
 				address[i] = data[i + 4];
 			}
 			IP = new String(address);
+
+			int loc = IP.indexOf(':');
+			IP = IP.substring(0, loc);
 		}
-		
-		else if (data[0] == CommUtil.RECIEVE_USER_STATUS){
+
+		else if (data[0] == CommUtil.RECIEVE_USER_STATUS) {
 			byte[] userIDb = new byte[4];
-			
-			for (int i = 0; i < userIDb.length; i++){
-				userIDb[i] = data [i + 1];
+
+			for (int i = 0; i < userIDb.length; i++) {
+				userIDb[i] = data[i + 1];
 			}
-			
+
 			int userID = CommUtil.byteToInt(userIDb);
-			
+
 			User user = mClient.findUser(userID);
-			if (user == null){
-				//TODO ask about the best way to add a user
+			if (user == null) {
+				// TODO ask about the best way to add a user
 				return;
 			}
-			
-			if (data[5] == (byte) 0){
+
+			if (data[5] == (byte) 0) {
 				user.setStatus(CommUtil.UserStatus.OFFLINE);
 			}
-			else if (data[5] == (byte) 1){
+			else if (data[5] == (byte) 1) {
 				user.setStatus(CommUtil.UserStatus.ONLINE);
 			}
-			else{
+			else {
 				user.setStatus(CommUtil.UserStatus.AWAY);
 			}
-			
-			if (data[6] == (byte) 0){
+
+			if (data[6] == (byte) 0) {
 				user.setIsMuted(false);
 			}
-			else{
+			else {
 				user.setIsMuted(true);
 			}
-			
-			if (data[7] == (byte) 0){
+
+			if (data[7] == (byte) 0) {
 				user.setVoiceStatus(false);
 			}
-			else{
+			else {
 				user.setVoiceStatus(true);
 			}
 		}
@@ -519,7 +522,8 @@ public class Client_ParseData implements IPARSER {
 	}
 
 	/**
-	 * Send the status of the user to the server. This should be called whenever a status change is made from the user
+	 * Send the status of the user to the server. This should be called whenever
+	 * a status change is made from the user
 	 */
 	public void sendUserStatusChange() {
 		byte status = (byte) 0;
@@ -539,30 +543,52 @@ public class Client_ParseData implements IPARSER {
 		else {
 			voice = (byte) 0;
 		}
-		
-		if (mClient.getStatus() == CommUtil.UserStatus.OFFLINE){
+
+		if (mClient.getStatus() == CommUtil.UserStatus.OFFLINE) {
 			status = (byte) 0;
 		}
-		else if (mClient.getStatus() == CommUtil.UserStatus.ONLINE){
+		else if (mClient.getStatus() == CommUtil.UserStatus.ONLINE) {
 			status = (byte) 1;
 		}
-		else{
+		else {
 			status = (byte) 2;
 		}
-		
+
 		byte[] toServer = new byte[4];
-		
+
 		toServer[0] = CommUtil.SEND_STAUTS_CHANGE;
 		toServer[1] = status;
 		toServer[2] = muted;
 		toServer[3] = voice;
+
+		try {
+			Comm.sendToServer(toServer);
+		} catch (IOException e) {
+
+		}
+
+	}
+	
+	public void requestUserStatus(User User){
+		byte[] toServer = new byte[5];
+		toServer[0] = CommUtil.REQUEST_USER_STATUS;
+		
+		byte[] userID = CommUtil.intToByteArr(User.getId());
+		
+		for (int i = 0; i < userID.length; i++){
+			toServer[1 + i] = userID[i];
+		}
 		
 		try {
 			Comm.sendToServer(toServer);
 		} catch (IOException e) {
-			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		
+		
+		
 	}
+
 }

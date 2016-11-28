@@ -42,6 +42,7 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
+        this.voice = false;
     }
 
     public Client(ArrayList<User> users, ArrayList<Message> messages) {
@@ -53,6 +54,7 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
+        this.voice = false;
     }
 
     public Client(int currentServerID, int currentChannelID) {
@@ -65,6 +67,7 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
+        this.voice = false;
     }
 
     public Client() {
@@ -78,6 +81,7 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
+        this.voice = false;
     }
 
     public void addMessage(Message message, int sId, int chId) {
