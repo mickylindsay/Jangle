@@ -1,20 +1,31 @@
 package com.jangle.client;
 
+import java.io.InputStream;
+
 /**
  * Created by Jess on 9/28/2016.
  */
 public class User {
 
+    private final String DEFAULT_AVATAR = "http://res.freestockphotos.biz/pictures/17/17384-illustration-of-a-red-santa-hat-pv.png";
+
     private int id;
     private int status;
     private String displayName;
     private String userName;
+    private String avatarURL;
+    private String IP;
+    private int channelID;
+    
 
     public User(String displayName, int id, int status) {
         this.displayName = displayName;
         this.id = id;
         this.status = status;
         this.userName = "";
+        this.avatarURL = DEFAULT_AVATAR;
+        this.IP = "";
+        this.channelID = 0;
     }
     
     public User(String displayName, String userName, int id, int status){
@@ -22,6 +33,9 @@ public class User {
         this.id = id;
         this.status = status;
         this.userName = userName;
+        this.avatarURL = DEFAULT_AVATAR;
+        this.IP = "";
+        this.channelID = 0;
     }
 
     public User(String displayName, int id) {
@@ -29,6 +43,9 @@ public class User {
         this.id = id;
         this.status = 0;
         this.userName = "";
+        this.avatarURL = DEFAULT_AVATAR;
+        this.IP = "";
+        this.channelID = 0;
     }
 
     public String getDisplayName() {
@@ -80,6 +97,29 @@ public class User {
     		return false;
     	}
     }
+    
+    public void setChannelID(int id){
+    	this.channelID = id;
+    }
+    
+    public int getChannelID(){
+    	return this.channelID;
+    }
 
+    public String getAvatarURL() {
+        return avatarURL;
+    }
+
+    public void setAvatar(String newURL) {
+        this.avatarURL = newURL;
+    }
+    
+    public void setIP(String gIP){
+    	IP = gIP;
+    }
+    
+    public String getIP(){
+    	return IP;
+    }
 }
 

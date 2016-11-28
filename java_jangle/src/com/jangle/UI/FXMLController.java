@@ -54,7 +54,7 @@ public class FXMLController implements Initializable {
     @FXML
     private TextField messageStage;
     @FXML
-    private ListView<User> users;
+    private ListView<User> userList;
     @FXML
     private Button attachButton;
     @FXML
@@ -113,7 +113,6 @@ public class FXMLController implements Initializable {
         else {
             String extension = splitPath[1];
             if (extension.equals("png") || extension.equals("jpeg") || extension.equals("jpg") || extension.equals("bmp") || extension.equals("gif")) {
-                //TODO: upload the file to the hosting site
                 //Cloudinary maven path: cloudinary-http
                 Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap("cloud_name", "jangle", "api_key", "786816698113964", "api_secret", "vFTEtCmW_tOWLyXAia19UtIude4"));
                 try {
@@ -139,6 +138,13 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleSettings(ActionEvent actionEvent) {
+
+        try {
+            mClientParseData.requestAllUsersTiedToServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         Stage settingsStage = new Stage();
         settingsStage.setScene(new Scene(createSettingsDialog()));
         settingsStage.showAndWait();
@@ -148,6 +154,56 @@ public class FXMLController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         testlist = FXCollections.observableArrayList();
 
+        setMessageAreaCellFactory();
+        setServerListCellFactory();
+        setUserListCellFactory();
+
+
+        initializeListViewEventHandler();
+
+    }
+
+    private void setServerListCellFactory() {
+        //TODO: make server list factory
+    }
+
+    private void setUserListCellFactory() {
+        {
+            userList.setCellFactory(listView -> new ListCell<User>() {
+                private ImageView imageView = new ImageView();
+                @Override
+                public void updateItem(User user, boolean empty) {
+                    super.updateItem(user, empty);
+                    if (empty) {
+                        setText(null);
+                        setGraphic(null);
+                        return;
+                    }
+                    else if(user.getDisplayName() == null) {
+                        try {
+                            mClientParseData.requestDisplayName(user);
+                            mClientParseData.requestAvatarURL(user);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        Image image = new Image(user.getAvatarURL());
+                        imageView.setImage(image);
+                        imageView.setPreserveRatio(true);
+                        imageView.setFitWidth(20);
+                        setGraphic(imageView);
+                        setContentDisplay(ContentDisplay.LEFT);
+                        setAlignment(Pos.CENTER_LEFT);
+                        //setTextAlignment(TextAlignment.LEFT);
+                    }
+                    setText(user.getDisplayName());
+                }
+            });
+        }
+    }
+
+    private void setMessageAreaCellFactory() {
         messageArea.setCellFactory(listView -> new ListCell<Message>() {
             private ImageView imageView = new ImageView();
             @Override
@@ -167,12 +223,12 @@ public class FXMLController implements Initializable {
                         setAlignment(Pos.CENTER_LEFT);
                         //setTextAlignment(TextAlignment.LEFT);
                     }
-                    setText(message.toString());
+                    else
+                        setGraphic(null);
+                    setText(formatMessage(message));
                 }
             }
         });
-        initializeListViewEventHandler();
-
     }
 
     public void updateMessages(ObservableList messages) {
@@ -180,7 +236,7 @@ public class FXMLController implements Initializable {
     }
 
     public void updateUsers(ObservableList userList){
-        this.users.setItems(userList);
+        this.userList.setItems(userList);
     }
 
     public void setmClientParseData(Client_ParseData clientParseData){
@@ -225,5 +281,14 @@ public class FXMLController implements Initializable {
         mSettings.setBackgroundImageView(chatBackground);
 
         return dialog;
+    }
+
+    private String formatMessage(Message message) {
+        User sender = mClient.findUser(message.getUserID());
+
+        if(sender == null)
+            return message.getUserID() + "\n" + message.getMessageContent() + "    " + message.getTimeStamp();
+
+        return sender.getDisplayName() + "\n" + message.getMessageContent() + "    " + message.getTimeStamp();
     }
 }

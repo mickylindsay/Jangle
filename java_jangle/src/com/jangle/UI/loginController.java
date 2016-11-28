@@ -26,6 +26,7 @@ public class loginController implements Initializable {
     private Client_ParseData mClient_parseData;
     //private loginThread mLoginThread;
     private CommUtil.LoginResult mLoginResult;
+    private loginThread mLoginThread;
 
     @FXML
     public TextField usernameField;
@@ -73,29 +74,10 @@ public class loginController implements Initializable {
         loadingAnim.setVisible(true);
 
         try {
-            mLoginResult = mClient_parseData.submitLogIn(username, password);
-        } catch (Exception e) {
+            mClient_parseData.submitLogIn(username, password);
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
-        if (mLoginResult == CommUtil.LoginResult.TIMEOUT) {
-            loginTimeout.setVisible(true);
-            loadingAnim.setVisible(false);
-        }
-        else if (mLoginResult == CommUtil.LoginResult.FAIL) {
-            loadingAnim.setVisible(false);
-            failedLogin.setVisible(true);
-        }
-        else if (mLoginResult == CommUtil.LoginResult.SUCESS) {
-            loadingAnim.setVisible(false);
-            successfulLogin();
-        }
-        else {
-            loadingAnim.setVisible(false);
-            loginTimeout.setVisible(true);
-        }
-
-        System.out.println("login");
 
     }
 
@@ -104,8 +86,6 @@ public class loginController implements Initializable {
         String username = usernameField.getText();
         String password = passwordField.getText();
         clearScreen();
-
-
 
         if (username.length() > 20){
             itWontFitSenpai.setVisible(true);
@@ -120,32 +100,16 @@ public class loginController implements Initializable {
             return;
         }
 
+        loadingAnim.setVisible(true
+        );
         // Send the register user to the server
 
         try {
-           mLoginResult = mClient_parseData.createUserInServer(username, password);
+            mClient_parseData.createUserInServer(username, password);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        if (mLoginResult == CommUtil.LoginResult.TIMEOUT) {
-            loginTimeout.setVisible(true);
-            loadingAnim.setVisible(false);
-        }
-        else if (mLoginResult == CommUtil.LoginResult.NAME_TAKEN) {
-            loadingAnim.setVisible(false);
-            usernameTaken.setVisible(true);
-        }
-        else if (mLoginResult == CommUtil.LoginResult.SUCESS) {
-            loadingAnim.setVisible(false);
-            successfulLogin();
-        }
-        else {
-            failedLogin.setVisible(true);
-            loadingAnim.setVisible(false);
-        }
-
-        System.out.println("resgister");
     }
 
     @Override
@@ -153,7 +117,7 @@ public class loginController implements Initializable {
 
     }
 
-    private void clearScreen(){
+    public void clearScreen(){
         loginTimeout.setVisible(false);
         itWontFitSenpai.setVisible(false);
         failedLogin.setVisible(false);
@@ -171,5 +135,6 @@ public class loginController implements Initializable {
 
     public void setmClient_parseData(Client_ParseData Client_parseData){
         this.mClient_parseData = Client_parseData;
+        mLoginThread = new loginThread(this, mClient_parseData.getClient());
     }
 }
