@@ -15,6 +15,7 @@ public class Channel {
     public Channel(int id) {
         this.id = id;
         mMessages = new ArrayList<>();
+        this.name = null;
     }
 
     public int getId() {
@@ -59,5 +60,12 @@ public class Channel {
             //add at the end if the loop finishes
             mMessages.add(message);
         }
+    }
+
+    public String toString() {
+        if (this.name == null)
+            return "Channel: " + id;
+        else
+            return "Channel: " + name;
     }
 }

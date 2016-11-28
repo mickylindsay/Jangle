@@ -37,5 +37,6 @@
             <Font size="14.0" />
          </font>
       </Label>
+      <CheckBox fx:id="rememberUsername" layoutX="38.0" layoutY="337.0" mnemonicParsing="false" text="Remember Username" textFill="WHITE" />
    </children>
 </AnchorPane>

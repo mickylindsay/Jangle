@@ -20,6 +20,7 @@ public class User {
     private String IP;
     private int channelID;
     private boolean voice;
+    private boolean isChannel;
     
 
     public User(String displayName, int id, int status) {
@@ -32,6 +33,7 @@ public class User {
         this.channelID = 0;
         this.isMuted = false;
         this.voice = false;
+        this.isChannel = false;
     }
     
     public User(String displayName, String userName, int id, int status){
@@ -44,6 +46,7 @@ public class User {
         this.channelID = 0;
         this.isMuted = false;
         this.voice = false;
+        this.isChannel = false;
     }
 
     public User(String displayName, int id) {
@@ -56,6 +59,17 @@ public class User {
         this.channelID = 0;
         this.isMuted = false;
         this.voice = false;
+        this.isChannel = false;
+    }
+
+    public User(Channel channel){
+        this.displayName = channel.toString();
+        this.id = 1000 + channel.getId();
+        this.userName = channel.getName();
+        this.status = CommUtil.UserStatus.ONLINE;
+        this.IP = "";
+        this.channelID = channel.getId();
+        this.isChannel = true;
     }
 
     public String getDisplayName() {
@@ -146,6 +160,10 @@ public class User {
     
     public boolean getVoiceStatus(){
     	return this.voice;
+    }
+
+    public boolean isChannel() {
+        return isChannel;
     }
 }
 

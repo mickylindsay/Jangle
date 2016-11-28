@@ -55,6 +55,7 @@ public class Text_UI extends Application {
 		AnchorPane dialog = loader.load();
 		loginController mLogin = loader.getController();
 		mLogin.setmClient_parseData(mClientParseData);
+        mLogin.setmConfigUtil(mConfigUtil);
 
 		return dialog;
 	}
