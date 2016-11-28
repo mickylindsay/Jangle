@@ -38,9 +38,13 @@ public final class CommUtil {
 	public static final byte RECIEVE_SERVER_DISPLAY_NAME = (byte) 51;
 	public static final byte RECIEVE_ROOM_ID = (byte) 52;
 	public static final byte RECIEVE_ROOM_DISPLAY_NAME = (byte) 53;
+	public static final byte RECIEVE_USER_STATUS = (byte) 55;
 	public static final byte REVIEVE_USER_IP = (byte) 57;
 	
 	public static final byte SEND_NEW_DISPLAY_NAME = (byte) 64;
+	
+	public static final byte SEND_STAUTS_CHANGE = (byte) 80;
+	public static final byte SEND_ROOM_LOCATION_CHANGE = (byte) 81;
 
 	
 	
@@ -104,5 +108,6 @@ public final class CommUtil {
 	public enum UserRequestResult{
 		SUCESS, TIMEOUT
 	}
+	
 
 }

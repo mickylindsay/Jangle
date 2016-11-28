@@ -21,7 +21,6 @@ public class Client_ParseData implements IPARSER {
 	private String ServerDisplayName;
 	private String RoomDisplayName;
 	private String IP;
-	
 
 	/**
 	 * Create a parser object with no Client_Commmunicator attached to it.
@@ -68,27 +67,21 @@ public class Client_ParseData implements IPARSER {
 	public void parseData(byte[] data) {
 
 		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
-            Message newMess = new Message(data);
-            if (!mClient.isDuplicateMessage(newMess))
-			    mClient.addMessage(newMess, newMess.getServerID(), newMess.getChannelID());
-/*
-            //This code adds user to ui if not added already
-            for(int i = 0; i < mClient.getUsers().size(); i++) {
-                if (newMess.getUserID() == mClient.getUsers().get(i).getId()){
-                    return;
-                }
-            }
+			Message newMess = new Message(data);
+			if (!mClient.isDuplicateMessage(newMess))
+				mClient.addMessage(newMess, newMess.getServerID(), newMess.getChannelID());
+			/*
+			 * //This code adds user to ui if not added already for(int i = 0; i
+			 * < mClient.getUsers().size(); i++) { if (newMess.getUserID() ==
+			 * mClient.getUsers().get(i).getId()){ return; } }
+			 * 
+			 * User newUser = new User("" + newMess.getUserID(),
+			 * newMess.getUserID()); mClient.getUsers().add(newUser); try {
+			 * requestDisplayName(newUser); } catch (IOException e) {
+			 * e.printStackTrace(); }
+			 */
 
-            User newUser = new User("" + newMess.getUserID(), newMess.getUserID());
-            mClient.getUsers().add(newUser);
-            try {
-                requestDisplayName(newUser);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            */
-
-        }
+		}
 
 		else if (data[0] == CommUtil.LOGIN_SUCCESS) {
 			mClient.setLoginResult(LoginResult.SUCESS);
@@ -107,17 +100,17 @@ public class Client_ParseData implements IPARSER {
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_DISPLAY_NAME) {
-            //TODO: Changing
-            int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+			// TODO: Changing
+			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
 			String newDiplay = new String(Arrays.copyOfRange(data, 5, data.length));
-            for (int i = 0; i < mClient.getUsers().size(); i++) {
-                if (id == mClient.getUsers().get(i).getId()){
-                    mClient.getUsers().get(i).setDisplayName(newDiplay);
-                    return;
-                }
-            }
-            //If user is not already added we add them
-            mClient.getUsers().add(new User(newDiplay, id));
+			for (int i = 0; i < mClient.getUsers().size(); i++) {
+				if (id == mClient.getUsers().get(i).getId()) {
+					mClient.getUsers().get(i).setDisplayName(newDiplay);
+					return;
+				}
+			}
+			// If user is not already added we add them
+			mClient.getUsers().add(new User(newDiplay, id));
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_USERID) {
@@ -125,72 +118,111 @@ public class Client_ParseData implements IPARSER {
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, data.length));
 			User tmp = new User("" + id, id);
 
-            for (int i = 0; i < mClient.getUsers().size(); i++) {
-                if (id == mClient.getUsers().get(i).getId())
-                    return;
-            }
+			for (int i = 0; i < mClient.getUsers().size(); i++) {
+				if (id == mClient.getUsers().get(i).getId())
+					return;
+			}
 
-				mClient.addUser(tmp);
+			mClient.addUser(tmp);
 
-            try {
-                requestDisplayName(tmp);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+			try {
+				requestDisplayName(tmp);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
-        }
+		}
 
 		else if (data[0] == CommUtil.RECIEVE_SERVER_ID) {
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
-            Server newServer = new Server(id);
-            mClient.addServer(newServer);
-            requestServerDisplayName(newServer);
-            requestAllRoomsInServer(newServer);
+			Server newServer = new Server(id);
+			mClient.addServer(newServer);
+			requestServerDisplayName(newServer);
+			requestAllRoomsInServer(newServer);
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_SERVER_DISPLAY_NAME) {
-            int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
 			String displayName = new String(Arrays.copyOfRange(data, 5, data.length));
 
-            if (mClient.getServer(id) != null)
-                mClient.getServer(id).setName(displayName);
+			if (mClient.getServer(id) != null)
+				mClient.getServer(id).setName(displayName);
 
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_ROOM_ID) {
 			int sId = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
-            int chId = CommUtil.byteToInt(Arrays.copyOfRange(data, 6, 10));
+			int chId = CommUtil.byteToInt(Arrays.copyOfRange(data, 6, 10));
 
-            Channel newChannel = new Channel(chId);
-            mClient.getServer(sId).addChannel(newChannel);
+			Channel newChannel = new Channel(chId);
+			mClient.getServer(sId).addChannel(newChannel);
 
-            try {
-                requestRoomDisplayName(sId, chId);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+			try {
+				requestRoomDisplayName(sId, chId);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
-        }
+		}
 
 		else if (data[0] == CommUtil.RECIEVE_ROOM_DISPLAY_NAME) {
-            int sId = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
-            int chId = CommUtil.byteToInt(Arrays.copyOfRange(data, 6, 10));
+			int sId = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+			int chId = CommUtil.byteToInt(Arrays.copyOfRange(data, 6, 10));
 			String displayName = new String(Arrays.copyOfRange(data, 11, data.length));
 
-            mClient.getServer(sId).getChannel(chId).setName(displayName);
+			mClient.getServer(sId).getChannel(chId).setName(displayName);
 		}
-		else if (data[0] == CommUtil.REVIEVE_USER_IP){
+		else if (data[0] == CommUtil.REVIEVE_USER_IP) {
 			byte[] address = new byte[data.length - 5];
-			for (int i = 0; i < address.length; i++){
-				address [i] = data [i + 4];
+			for (int i = 0; i < address.length; i++) {
+				address[i] = data[i + 4];
 			}
 			IP = new String(address);
+		}
+		
+		else if (data[0] == CommUtil.RECIEVE_USER_STATUS){
+			byte[] userIDb = new byte[4];
+			
+			for (int i = 0; i < userIDb.length; i++){
+				userIDb[i] = data [i + 1];
+			}
+			
+			int userID = CommUtil.byteToInt(userIDb);
+			
+			User user = mClient.findUser(userID);
+			if (user == null){
+				//TODO ask about the best way to add a user
+				return;
+			}
+			
+			if (data[5] == (byte) 0){
+				user.setStatus(CommUtil.UserStatus.OFFLINE);
+			}
+			else if (data[5] == (byte) 1){
+				user.setStatus(CommUtil.UserStatus.ONLINE);
+			}
+			else{
+				user.setStatus(CommUtil.UserStatus.AWAY);
+			}
+			
+			if (data[6] == (byte) 0){
+				user.setIsMuted(false);
+			}
+			else{
+				user.setIsMuted(true);
+			}
+			
+			if (data[7] == (byte) 0){
+				user.setVoiceStatus(false);
+			}
+			else{
+				user.setVoiceStatus(true);
+			}
 		}
 
 	}
 
-
-    /**
+	/**
 	 * Submits a login request to the server. If the login is a success, the
 	 * user ID of the client that it passed to this parser when initalized will
 	 * get set to the user's userID
@@ -307,7 +339,6 @@ public class Client_ParseData implements IPARSER {
 
 	}
 
-	// TODO SQL error?? pretty sure my code is right
 	public void requestDisplayName(User user) throws IOException {
 
 		byte[] toServer = new byte[5];
@@ -343,7 +374,6 @@ public class Client_ParseData implements IPARSER {
 		Comm.sendToServer(toServer);
 	}
 
-	// TODO test this
 	/**
 	 * Request all of the userID that are members of the connected server (35)
 	 * 
@@ -413,9 +443,12 @@ public class Client_ParseData implements IPARSER {
 	}
 
 	/**
-	 * Request the IP address of a user. If the client did not recieve data, it will return "FAIL"
-	 * @param User The user to get the IP of
-	 * @return The 
+	 * Request the IP address of a user. If the client did not recieve data, it
+	 * will return "FAIL"
+	 * 
+	 * @param User
+	 *            The user to get the IP of
+	 * @return The
 	 * @throws IOException
 	 */
 	public String getUserIP(User User) throws IOException {
@@ -429,59 +462,105 @@ public class Client_ParseData implements IPARSER {
 
 		}
 		Comm.sendToServer(toServer);
-		
+
 		long oldTime = System.currentTimeMillis();
-		
-		while (IP.isEmpty() && System.currentTimeMillis() - oldTime < CommUtil.TIME_OUT_MILLI){
+
+		while (IP.isEmpty() && System.currentTimeMillis() - oldTime < CommUtil.TIME_OUT_MILLI) {
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
-		
-		if (IP.isEmpty()){
+
+		if (IP.isEmpty()) {
 			return "FAIL";
 		}
-		
+
 		return IP;
-		
+
 	}
 
-    private void requestAllRoomsInServer(Server server) {
-        byte[] toSend = new byte[5];
-        toSend[0] = CommUtil.REQUEST_ALL_ROOM_ID;
+	private void requestAllRoomsInServer(Server server) {
+		byte[] toSend = new byte[5];
+		toSend[0] = CommUtil.REQUEST_ALL_ROOM_ID;
 
-        byte[] idInByte = CommUtil.intToByteArr(server.getId());
-        for (int i = 1; i < idInByte.length; i++) {
-            toSend[i] = idInByte[i];
-        }
+		byte[] idInByte = CommUtil.intToByteArr(server.getId());
+		for (int i = 1; i < idInByte.length; i++) {
+			toSend[i] = idInByte[i];
+		}
 
-        try {
-            Comm.sendToServer(toSend);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+		try {
+			Comm.sendToServer(toSend);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-    public void requestServerDisplayName(Server server){
-        byte[] toSend = new byte[5];
-        toSend[0] = CommUtil.RECIEVE_SERVER_DISPLAY_NAME;
+	public void requestServerDisplayName(Server server) {
+		byte[] toSend = new byte[5];
+		toSend[0] = CommUtil.RECIEVE_SERVER_DISPLAY_NAME;
 
-        byte[] idInByte = CommUtil.intToByteArr(server.getId());
-        for (int i = 1; i < idInByte.length; i++) {
-            toSend[i] = idInByte[i];
-        }
+		byte[] idInByte = CommUtil.intToByteArr(server.getId());
+		for (int i = 1; i < idInByte.length; i++) {
+			toSend[i] = idInByte[i];
+		}
 
-        try {
-            Comm.sendToServer(toSend);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+		try {
+			Comm.sendToServer(toSend);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public Client getClient() {
 		return this.mClient;
+	}
+
+	/**
+	 * Send the status of the user to the server. This should be called whenever a status change is made from the user
+	 */
+	public void sendUserStatusChange() {
+		byte status = (byte) 0;
+		byte muted = (byte) 0;
+		byte voice = (byte) 0;
+
+		if (mClient.getIsMuted()) {
+			muted = (byte) 1;
+		}
+		else {
+			muted = (byte) 0;
+		}
+
+		if (mClient.getVoiceStatus()) {
+			voice = (byte) 1;
+		}
+		else {
+			voice = (byte) 0;
+		}
+		
+		if (mClient.getStatus() == CommUtil.UserStatus.OFFLINE){
+			status = (byte) 0;
+		}
+		else if (mClient.getStatus() == CommUtil.UserStatus.ONLINE){
+			status = (byte) 1;
+		}
+		else{
+			status = (byte) 2;
+		}
+		
+		byte[] toServer = new byte[4];
+		
+		toServer[0] = CommUtil.SEND_STAUTS_CHANGE;
+		toServer[1] = status;
+		toServer[2] = muted;
+		toServer[3] = voice;
+		
+		try {
+			Comm.sendToServer(toServer);
+		} catch (IOException e) {
+			
+		}
+		
+		
 	}
 }

@@ -33,23 +33,14 @@ public class testSelfVoice {
 		Cl.addUser(Nate);
 		Nate.setChannelID(1);
 		Cl.setCurrentChannelID(1);
-		Cl.addUser(Nate);
+		//Cl.addUser(Nate);
 		
 		
 		VoiceChat test = new VoiceChat(7800, false, Cl, Parser);
 		
-		
+		test.connectToVoice();
 		test.startBrodcast();
 
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		test.endBrodcast();
-		test.disconnectFromVoice();
 		while (true){
 			try {
 				Thread.sleep(500);
