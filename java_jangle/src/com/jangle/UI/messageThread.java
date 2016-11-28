@@ -45,7 +45,6 @@ public class messageThread implements Runnable {
 
 
         while(true) {
-            //System.out.println(mClient.getServer(1).getChannels().size());
 
             if (mSize == mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).size()){
                 try {
@@ -72,6 +71,10 @@ public class messageThread implements Runnable {
                         }
                     });
                 }
+                mSize = mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).size();
+            }
+
+            else {
                 mSize = mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).size();
             }
 

@@ -591,4 +591,23 @@ public class Client_ParseData implements IPARSER {
 		
 	}
 
+    public void changeLocation() {
+        byte[] toSend = new byte[9];
+        toSend[0] = CommUtil.SEND_ROOM_LOCATION_CHANGE;
+
+        byte[] serverID = CommUtil.intToByteArr(mClient.getCurrentServerID());
+        byte[] channelID = CommUtil.intToByteArr(mClient.getCurrentChannelID());
+
+        for (int i = 0; i < serverID.length; i++){
+            toSend[i+1] = serverID[i];
+            toSend[i+5] = channelID[i];
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
