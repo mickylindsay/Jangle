@@ -10,9 +10,9 @@ import (
 )
 
 type Client struct {
-
 	debug bool
 }
+
 var client Client;
 
 func main(){
