@@ -357,3 +357,29 @@ func Set_New_Server_Icon(serverid uint, url string) error {
 	}
 	return nil
 }
+
+func Get_Member_Userid(serverid uint) ([]uint, error){
+	var userid uint
+	i := 0
+	ids := make([]uint, 50)
+	if !jangle.no_database {
+		rows, err := jangle.db.Query("SELECT userid FROM members WHERE serverid = ?", serverid)
+		if err != nil {
+			return nil, err
+		}
+		defer rows.Close()
+		//Iterate through the rows
+		for rows.Next() {
+			//Scan the columns into variables
+			err := rows.Scan(&userid)
+			if err != nil {
+				return nil, err
+			}
+			ids[i] = userid
+			i++
+		}
+		//Return array of messages
+		return ids[:i], err
+	}
+	return nil, nil
+}
