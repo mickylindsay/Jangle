@@ -39,8 +39,9 @@ public class Channel {
     }
 
     public void addMessage(Message message) {
-        if (mMessages.contains(message))
-            return;
+        if (mMessages.contains(message)) {
+            //System.out.print("here");
+            return; }
         //keeps messages chronologically ordered
         if (mMessages.size() == 0)
             mMessages.add(message);

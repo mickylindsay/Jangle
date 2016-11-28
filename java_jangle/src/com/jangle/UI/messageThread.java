@@ -72,7 +72,7 @@ public class messageThread implements Runnable {
                         }
                     });
                 }
-                mSize = mClient.getMessages(1,1).size();
+                mSize = mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).size();
             }
 
 

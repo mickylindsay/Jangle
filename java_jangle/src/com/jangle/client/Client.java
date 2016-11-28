@@ -94,6 +94,7 @@ public class Client {
             System.out.println("Trying to add message to server: " + sId + " in channel: " + chId
                     + " failed. Server does not exist");
         }
+        mMessages.add(message);
     }
 
     public void addUser(User user) {
@@ -126,6 +127,7 @@ public class Client {
         return mMessages;
     }
 
+    //At the moment this is redundant
     public List<Message> getMessageListCustom(int sId, int chID) {
         ArrayList<Message> list = new ArrayList<>();
         for(Message m : mMessages) {

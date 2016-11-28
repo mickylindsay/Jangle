@@ -46,7 +46,8 @@ public class Server {
     }
 
     public void addChannel(Channel channel) {
-        channels.put(channel.getId(), channel);
+        if (channels.get(channel.getId()) == null)
+            channels.put(channel.getId(), channel);
     }
 
     public Channel getChannel(int id) {

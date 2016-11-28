@@ -79,7 +79,7 @@ public class FXMLController implements Initializable {
         }
         // Send the string to the server
         try {
-            mClientParseData.sendMessage(new Message(mClient.getUserID(), message, 1, 1));
+            mClientParseData.sendMessage(new Message(mClient.getUserID(), message, mClient.getCurrentServerID(), mClient.getCurrentChannelID()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -138,13 +138,6 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleSettings(ActionEvent actionEvent) {
-
-        try {
-            mClientParseData.requestAllUsersTiedToServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         Stage settingsStage = new Stage();
         settingsStage.setScene(new Scene(createSettingsDialog()));
         settingsStage.showAndWait();
@@ -277,6 +270,8 @@ public class FXMLController implements Initializable {
             public void handle(MouseEvent event) {
                 if (userList.getSelectionModel().getSelectedItem().isChannel()){
                     mClient.changeChannel(userList.getSelectionModel().getSelectedItem().getId()-1000);
+                    //Change the messages to the ones in the current channel
+                    updateMessages(FXCollections.observableArrayList(mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID())));
                 }
             }
         });

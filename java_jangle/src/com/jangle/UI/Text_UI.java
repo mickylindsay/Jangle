@@ -75,7 +75,7 @@ public class Text_UI extends Application {
         mClientParseData.request50MessagesWithOffset(1);
         mClientParseData.requestAllUsersTiedToServer();
         //TODO: Fix requesting servers
-        //mClientParseData.requestAllServers(new User("", mClient.getUserID()));
+        mClientParseData.requestAllServers(new User("", mClient.getUserID()));
         primaryStage.setScene(new Scene(createContent()));
         primaryStage.show();
 
