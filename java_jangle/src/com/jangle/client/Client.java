@@ -1,5 +1,6 @@
 package com.jangle.client;
 
+import com.jangle.communicate.CommUtil;
 import com.jangle.communicate.CommUtil.*;
 
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class Client {
     private int userID;
     private String displayName;
     private String IP;
+    private boolean voice;
+    private CommUtil.UserStatus status;
+    private boolean isMuted;
 
 
 
@@ -37,6 +41,7 @@ public class Client {
         this.mLoginTime = 0;
         this.IP = "";
         this.mServers = new HashMap<>();
+        this.status = CommUtil.UserStatus.ONLINE;
     }
 
     public Client(ArrayList<User> users, ArrayList<Message> messages) {
@@ -47,6 +52,7 @@ public class Client {
         this.mLoginTime = 0;
         this.IP = "";
         this.mServers = new HashMap<>();
+        this.status = CommUtil.UserStatus.ONLINE;
     }
 
     public Client(int currentServerID, int currentChannelID) {
@@ -58,6 +64,7 @@ public class Client {
         this.mLoginTime = 0;
         this.IP = "";
         this.mServers = new HashMap<>();
+        this.status = CommUtil.UserStatus.ONLINE;
     }
 
     public Client() {
@@ -70,6 +77,7 @@ public class Client {
         this.mLoginTime = 0;
         this.IP = "";
         this.mServers = new HashMap<>();
+        this.status = CommUtil.UserStatus.ONLINE;
     }
 
     public void addMessage(Message message, int sId, int chId) {
@@ -248,6 +256,30 @@ public class Client {
 
     public Server getServer(int id) {
         return mServers.get(id);
+    }
+    
+    public void setIsMuted(boolean status){
+    	this.isMuted = status;
+    }
+    
+    public boolean getIsMuted(){
+    	return this.isMuted;
+    }
+    
+    public void setVoiceStatus(boolean status){
+    	this.voice = status;
+    }
+    
+    public boolean getVoiceStatus(){
+    	return this.voice;
+    }
+    
+    public CommUtil.UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CommUtil.UserStatus status) {
+        this.status = status;
     }
 
     public void changeChannel(int id) {

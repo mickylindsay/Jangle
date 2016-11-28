@@ -28,11 +28,11 @@ public class Test {
 	public static void main(String[] args) throws IOException, InterruptedException, LineUnavailableException {
 
 		Client Cl = new Client();
-		Client_ParseData Parse = null;
+		Client_ParseData Parser = null;
 		TestServer server = new TestServer(9090);
 
 		try {
-			Parse = new Client_ParseData(Cl, "localhost", 9090);
+			Parser = new Client_ParseData(Cl, "localhost", 9090);
 			//System.out.println("generated client");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -40,14 +40,27 @@ public class Test {
 		}
 		
 		
-		User Nate =  TestUtil.newNathan();
+		User Nate = TestUtil.newNathan();
+		Nate.setIP("localhost");
+		Cl.addUser(Nate);
 		
-		Nate.setId(2);
-		//TODO: Commented out from method being void now
-		//System.out.println(Parse.requestDisplayName(Nate));
+		Cl.setCurrentChannelID(1);
+		Cl.setVoiceStatus(true);
 		
+		Nate.setVoiceStatus(true);
+		Nate.setChannelID(1);
+		Nate.setIsMuted(false);
 		
-	  while(true){ }
+		VoiceChat test = new VoiceChat(7800, false, Cl, Parser);
+		
+		test.connectToVoice();
+		test.startBrodcast();
+		
+		System.out.println("here");
+		
+	  while(true){ 
+		  Thread.sleep(500);
+	  }
 		  
 		 
 

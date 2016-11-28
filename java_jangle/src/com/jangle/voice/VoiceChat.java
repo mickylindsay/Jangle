@@ -142,6 +142,7 @@ public class VoiceChat implements Runnable {
 		broadcasting = false;
 	}
 
+	/* IS NOT USED. DO NOT USE THIS
 	/**
 	 * Add a user. This adds a VoiceChatSocket. for Testing, you can put in
 	 * local host, and hear yourself
@@ -150,11 +151,12 @@ public class VoiceChat implements Runnable {
 	 *            IP of the user.
 	 * @throws IOException
 	 * @throws UnknownHostException
-	 */
+	 
 	private void addUserToChat(User gUser) throws UnknownHostException, IOException {
 		connections.add(new VoiceChatSocket(gUser, port, Parser));
 	}
-
+	*/
+	
 	/**
 	 * Start the output of audio. Will play the sound to the default device of
 	 * the operating systems
@@ -185,6 +187,23 @@ public class VoiceChat implements Runnable {
 	private void stopRecieve() {
 		isReceiving = false;
 	}
+	
+	/**
+	 * Calculate the number of users in the same channel that are talking
+	 * Assuming that the user array list is all of the users in the same server
+	 * @return
+	 */
+	private int numUsersInSameChannel(){
+		int ret = 0;
+		
+		for (int i = 0; i < Cl.getUsersArrayList().size(); i++){
+			if (Cl.getUsersArrayList().get(i).getChannelID() == Cl.getCurrentChannelID() && Cl.getUsersArrayList().get(i).getVoiceStatus()){
+				ret += 1;
+			}
+		}
+		
+		return ret;
+	}
 
 	@Override
 	public void run() {
@@ -192,6 +211,7 @@ public class VoiceChat implements Runnable {
 		byte[] toSpeaker = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
 		DatagramPacket packet = new DatagramPacket(data, data.length);
 		int loop = 1;
+		int numUsers = 0;
 
 		while (isReceiving) {
 			try {
@@ -199,8 +219,19 @@ public class VoiceChat implements Runnable {
 			} catch (IOException e) {
 
 			}
-
-			if (loop % Cl.getUsers().size() == 0) {
+			
+			numUsers = numUsersInSameChannel();
+			if (numUsers == 0){
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+				continue;
+			}
+			
+			if (loop % numUsers == 0) {
 				loop = 0;
 
 				for (int i = 0; i < toSpeaker.length; i++) {
@@ -217,7 +248,7 @@ public class VoiceChat implements Runnable {
 			loop += 1;
 
 			try {
-				Thread.sleep(20);
+				Thread.sleep(VoiceUtil.SLEEP_MILLI_LENGTH);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
