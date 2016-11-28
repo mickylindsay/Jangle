@@ -68,7 +68,7 @@ public class FXMLController implements Initializable {
         String message = messageStage.getText();
         if (message.equals("Gimmie dat messages")){
             try {
-                mClientParseData.request50MessagesWithOffset(0);
+                mClientParseData.request50MessagesWithOffset(mClient.getMessages().size());
                 messageStage.clear();
                 return;
             } catch (IOException e) {
