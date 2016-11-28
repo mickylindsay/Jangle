@@ -1,5 +1,6 @@
 package main
 
+import "fmt"
 //Master function: takes paramaters type User struct and byte array
 //byte array is the message that is recieved from the client
 //the type User struct is a reference to the connection that represents
@@ -229,7 +230,12 @@ func Location_Message(user *User, data []byte) Message {
 //TODO
 func User_Ip_Message(user *User, data []byte) Message {
 	m := Create_Message(request_user_ip, data[1:5])
-	address := Get_User_From_Userid(Byte_Converter(m.userid)).Get_Local_Address()
+	u := Get_User_From_Userid(Byte_Converter(m.userid))
+	if u == nil{
+		fmt.Println("Cannot request IP of user who is not logged in.")
+		return m;
+	}
+	address := u.Get_Local_Address()
 	m = Create_Message(recieve_user_ip, m.userid, String_Converter(address))
 	Send_Message(user, m)
 	return m

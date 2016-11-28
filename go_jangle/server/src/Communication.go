@@ -30,7 +30,7 @@ func Listen_To_Clients(user *User, e *list.Element) {
 		}
 
 		if jangle.debug {
-			fmt.Println("Size: ", packet_size[:], "\nConverted: ", Byte_Converter(packet_size[:]))
+			//fmt.Println("Size: ", packet_size[:], "\nConverted: ", Byte_Converter(packet_size[:]))
 		}
 		if len < 4 {
 			continue
