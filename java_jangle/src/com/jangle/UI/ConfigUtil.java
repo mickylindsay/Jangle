@@ -38,27 +38,25 @@ public class ConfigUtil {
             boolean i = configDir.mkdir();
             System.out.print(i);
         }
+
+        configFile = new File(path + "config.cfg");
+        if (configFile.exists()){
+            readConfig(configFile);
+        }
         else {
-            configFile = new File(path + "config.cfg");
-            if (configFile.exists()){
-                readConfig(configFile);
+            boolean created = false;
+            try {
+                created = configFile.createNewFile();
+            } catch (IOException e) {
+                    e.printStackTrace();
+            }
+            if (created) {
+                makeConfig(configFile);
             }
             else {
-                boolean created = false;
-                try {
-                    created = configFile.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (created) {
-                    makeConfig(configFile);
-                }
-                else {
-                    failed = true;
-                }
+                failed = true;
             }
         }
-
     }
 
     private void makeConfig(File configFile) {
