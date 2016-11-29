@@ -68,7 +68,7 @@ public class Client_ParseData implements IPARSER {
 
 		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
 			Message newMess = new Message(data);
-			System.out.println("Server id: " + newMess.getServerID() + " channelid: " + newMess.getChannelID());
+			//System.out.println("Server id: " + newMess.getServerID() + " channelid: " + newMess.getChannelID());
 			if (!mClient.isDuplicateMessage(newMess))
 				mClient.addMessage(newMess, newMess.getServerID(), newMess.getChannelID());
 			/*
@@ -128,6 +128,7 @@ public class Client_ParseData implements IPARSER {
 
 			try {
 				requestDisplayName(tmp);
+                requestAvatarURL(tmp);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -140,6 +141,7 @@ public class Client_ParseData implements IPARSER {
 			mClient.addServer(newServer);
 			requestServerDisplayName(newServer);
 			requestAllRoomsInServer(newServer);
+            requestServerIcon(newServer);
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_SERVER_DISPLAY_NAME) {
@@ -157,8 +159,10 @@ public class Client_ParseData implements IPARSER {
 
 			Channel newChannel = new Channel(chId);
 			mClient.getServer(sId).addChannel(newChannel);
-            if (sId == mClient.getCurrentServerID())
-			    mClient.addUser(new User(newChannel));
+            if (sId == mClient.getCurrentServerID() && mClient.findUser(chId + 1000) == null){
+                mClient.addUser(new User(newChannel));
+            }
+
 
 			try {
 				requestRoomDisplayName(sId, chId);
@@ -167,6 +171,15 @@ public class Client_ParseData implements IPARSER {
 			}
 
 		}
+
+        else if (data[0] == CommUtil.RECIEVE_USER_LOCATION) {
+            //System.out.println("Recieved user location change");
+            int serverID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+            int channelID = CommUtil.byteToInt(Arrays.copyOfRange(data, 5, 9));
+            int userID = CommUtil.byteToInt(Arrays.copyOfRange(data, 9, 13));
+            mClient.updateUserPosition(userID, serverID, channelID);
+            mClient.setLocationChanged(true);
+        }
 
 		else if (data[0] == CommUtil.RECIEVE_ROOM_DISPLAY_NAME) {
 			int sId = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
@@ -187,18 +200,19 @@ public class Client_ParseData implements IPARSER {
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_USER_STATUS) {
-			byte[] userIDb = new byte[4];
 
-			for (int i = 0; i < userIDb.length; i++) {
-				userIDb[i] = data[i + 1];
-			}
-
-			int userID = CommUtil.byteToInt(userIDb);
+			int userID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
 
 			User user = mClient.findUser(userID);
 			if (user == null) {
-				// TODO ask about the best way to add a user
-				return;
+                User newUser = new User("" + userID, userID);
+				mClient.addUser(newUser);
+                try {
+                    requestDisplayName(newUser);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
 			}
 
 			if (data[5] == (byte) 0) {
@@ -226,9 +240,45 @@ public class Client_ParseData implements IPARSER {
 			}
 		}
 
+        else if(data[0] == CommUtil.RECIEVE_SERVER_ICON) {
+            int serverID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+            String Img = new String(Arrays.copyOfRange(data, 5, data.length));
+
+            mClient.getServer(serverID).setAvatarURL(Img);
+        }
+
+        else if(data[0] == CommUtil.RECIEVE_USER_ICON) {
+            int userID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+            String img = new String(Arrays.copyOfRange(data, 5, data.length));
+
+            mClient.findUser(userID).setAvatar(img);
+        }
+
+        else if(data[0] == CommUtil.RECIEVE_ERROR) {
+            String error = new String(Arrays.copyOfRange(data, 1, data.length));
+            System.out.println("ERROR RECEIVED FROM SERVER: " + error);
+        }
+
 	}
 
-	/**
+    private void requestServerIcon(Server newServer) {
+        byte[] toSend = new byte[5];
+        toSend[0] = CommUtil.REQUEST_SERVER_ICON;
+
+        byte[] idInByte = CommUtil.intToByteArr(newServer.getId());
+
+        for (int i = 0; i < idInByte.length; i++) {
+            toSend[i + 1] = idInByte[i];
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
 	 * Submits a login request to the server. If the login is a success, the
 	 * user ID of the client that it passed to this parser when initalized will
 	 * get set to the user's userID
@@ -482,6 +532,7 @@ public class Client_ParseData implements IPARSER {
 			return "FAIL";
 		}
 
+		IP = IP.trim();
 		return IP;
 
 	}
@@ -538,7 +589,7 @@ public class Client_ParseData implements IPARSER {
 			muted = (byte) 0;
 		}
 
-		if (mClient.getVoiceStatus()) {
+		if (mClient.isConnectedToVoice()) {
 			voice = (byte) 1;
 		}
 		else {
@@ -610,5 +661,20 @@ public class Client_ParseData implements IPARSER {
             e.printStackTrace();
         }
 
+    }
+
+    public void sendNewUserIcon(String newIcon) {
+        byte[] toSend = new byte[1+newIcon.length()];
+        toSend[0] = CommUtil.SEND_NEW_USER_ICON;
+
+        for (int i=0; i<newIcon.length(); i++) {
+            toSend[i + 1] = newIcon.getBytes()[i];
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

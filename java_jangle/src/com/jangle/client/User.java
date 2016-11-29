@@ -10,6 +10,7 @@ import com.jangle.communicate.CommUtil;
 public class User {
 
     private final String DEFAULT_AVATAR = "http://res.freestockphotos.biz/pictures/17/17384-illustration-of-a-red-santa-hat-pv.png";
+    public final String OFFLINE_AVATAR = "https://s-media-cache-ak0.pinimg.com/originals/cf/d1/af/cfd1affd6cdb9b79c0822518f8dc4a1e.gif";
 
     private int id;
     private CommUtil.UserStatus status;
@@ -39,7 +40,7 @@ public class User {
     public User(String displayName, String userName, int id, int status){
     	this.displayName = displayName;
         this.id = id;
-        this.status = CommUtil.UserStatus.ONLINE;
+        this.status = CommUtil.UserStatus.OFFLINE;
         this.userName = userName;
         this.avatarURL = DEFAULT_AVATAR;
         this.IP = "";
@@ -52,7 +53,7 @@ public class User {
     public User(String displayName, int id) {
         this.displayName = displayName;
         this.id = id;
-        this.status = CommUtil.UserStatus.ONLINE;
+        this.status = CommUtil.UserStatus.OFFLINE;
         this.userName = "";
         this.avatarURL = DEFAULT_AVATAR;
         this.IP = "";

@@ -90,12 +90,31 @@ public class messageThread implements Runnable {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            mUserList = FXCollections.observableArrayList(mUsers);
+                            mUserList = FXCollections.observableArrayList(mClient.getUsers());
                             ui.updateUsers(mUserList);
                         }
                     });
                 }
                 uSize = mClient.getUsers().size();
+            }
+
+            if (mClient.isLocationChanged()){
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ui.updateUsers(FXCollections.observableArrayList(mClient.getUsers()));
+                    }
+                });
+                mClient.setLocationChanged(false);
+            }
+
+            if (mClient.isStatusChanged()) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ui.updateUsers(FXCollections.observableArrayList(mClient.getUsers()));
+                    }
+                });
             }
         }
     }

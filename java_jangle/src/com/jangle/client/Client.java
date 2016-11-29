@@ -3,9 +3,7 @@ package com.jangle.client;
 import com.jangle.communicate.CommUtil;
 import com.jangle.communicate.CommUtil.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Jess on 9/28/2016.
@@ -28,6 +26,9 @@ public class Client {
     private boolean voice;
     private CommUtil.UserStatus status;
     private boolean isMuted;
+    private boolean locationChanged;
+    private boolean connectedToVoice;
+    private boolean statusChanged;
 
 
 
@@ -43,6 +44,7 @@ public class Client {
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
         this.voice = false;
+        this.connectedToVoice = false;
     }
 
     public Client(ArrayList<User> users, ArrayList<Message> messages) {
@@ -55,6 +57,7 @@ public class Client {
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
         this.voice = false;
+        this.connectedToVoice = false;
     }
 
     public Client(int currentServerID, int currentChannelID) {
@@ -68,6 +71,7 @@ public class Client {
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
         this.voice = false;
+        this.connectedToVoice = false;
     }
 
     public Client() {
@@ -82,6 +86,9 @@ public class Client {
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
         this.voice = false;
+        this.locationChanged = false;
+        this.connectedToVoice = false;
+        this.statusChanged = false;
     }
 
     public void addMessage(Message message, int sId, int chId) {
@@ -103,6 +110,7 @@ public class Client {
 
     public void addUser(User user) {
         mUsers.add(user);
+        sortUsers();
     }
 
     public void removeUser(User user) {
@@ -229,6 +237,22 @@ public class Client {
     	this.IP = gIP;
     }
 
+    public boolean isLocationChanged() {
+        return locationChanged;
+    }
+
+    public void setLocationChanged(boolean locationChanged) {
+        this.locationChanged = locationChanged;
+    }
+
+    public boolean isStatusChanged() {
+        return statusChanged;
+    }
+
+    public void setStatusChanged(boolean statusChanged) {
+        this.statusChanged = statusChanged;
+    }
+
     public User findUser(int id) {
 
         for (User mUser : mUsers) {
@@ -300,4 +324,45 @@ public class Client {
             //TODO: Looking into making mMessages dynamic for messages that SHOULD be displayed at the time
         }
     }
+
+    public void updateUserPosition(int userID, int newServerID, int newChannelID) {
+        findUser(userID).setChannelID(newChannelID);
+        sortUsers();
+    }
+
+    private void sortUsers(){
+        Collections.sort(mUsers, new Comparator<User>() {
+            @Override
+            public int compare(User u1, User u2) {
+                //System.out.println("here boi");
+                if (u1.isChannel() && u1.getChannelID() <= u2.getChannelID())
+                    return -1;
+
+                else if (u1.isChannel() && u1.getChannelID() > u2.getChannelID())
+                    return 1;
+
+                else if (u2.isChannel() && u2.getChannelID() <= u1.getChannelID())
+                    return 1;
+
+                else if (u2.isChannel() && u2.getChannelID() > u1.getChannelID())
+                    return -1;
+
+                else if (u1.getChannelID() <= u2.getChannelID())
+                    return -1;
+
+                else
+                    return 1;
+            }
+        });
+    }
+    
+    public boolean isConnectedToVoice(){
+    	return this.connectedToVoice;
+    }
+    
+    public void setConnectedToVocie(boolean value){
+    	this.connectedToVoice = value;
+    }
+    
+    
 }

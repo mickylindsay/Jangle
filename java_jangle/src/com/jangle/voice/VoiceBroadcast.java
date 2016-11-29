@@ -113,6 +113,7 @@ public class VoiceBroadcast implements Runnable {
 			 */
 
 			for (int i = 0; i < Users.size(); i++) {
+				Parser.requestUserStatus(Cl.getUsersArrayList().get(i));
 				if (Cl.getCurrentChannelID() == Users.get(i).getChannelID() && Users.get(i).getIsMuted() == false) {
 					/*
 					 * NOTE, this does not care if the user wants to receive

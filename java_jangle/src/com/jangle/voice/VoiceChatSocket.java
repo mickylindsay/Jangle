@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -22,7 +23,7 @@ import com.jangle.communicate.Client_ParseData;
 public class VoiceChatSocket implements Runnable {
 
 	private DatagramSocket socket;
-	private InetAddress Address;
+	private String Address;
 	private int port;
 	private Client_ParseData Parser;
 	
@@ -45,15 +46,12 @@ public class VoiceChatSocket implements Runnable {
 	public VoiceChatSocket(User gUser, int gport, Client_ParseData gParser)
 			throws UnknownHostException, IOException {
 		User = gUser;
-		port = gport;
-		socket = new DatagramSocket();
-		if (User.getIP() == "" || User.getIP() == "FAIL"){
-			Address = null;
-		}
-		else{
-			Address = InetAddress.getByName(User.getIP());
-		}
 		Parser = gParser;
+		port = gport;
+		User.setIP(Parser.getUserIP(User));
+		socket = new DatagramSocket();
+		Address = User.getIP();
+		
 		
 	}
 	
@@ -71,7 +69,7 @@ public class VoiceChatSocket implements Runnable {
 			try {
 				
 				User.setIP(Parser.getUserIP(User));
-				Address = InetAddress.getByName(User.getIP());
+				Address = User.getIP();
 			} catch (IOException e) {
 				//Happens if a communication error occurs. 
 			}
@@ -79,8 +77,14 @@ public class VoiceChatSocket implements Runnable {
 		if (User.getIP() == "" || User.getIP() == "FAIL" || Address == null){
 			return;
 		}
-		DatagramPacket packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, Address, port);
-		System.out.println(User.getId() + "    " + User.getIP());
+		
+		DatagramPacket packet = null;
+		try {
+			packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, InetAddress.getByAddress(VoiceUtil.byteIP(User.getIP())), port);
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			socket.send(packet);
 		} catch (IOException e) {
