@@ -246,6 +246,13 @@ public class Client_ParseData implements IPARSER {
             mClient.getServer(serverID).setAvatarURL(Img);
         }
 
+        else if(data[0] == CommUtil.RECIEVE_USER_ICON) {
+            int userID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+            String img = new String(Arrays.copyOfRange(data, 5, data.length));
+
+            mClient.findUser(userID).setAvatar(img);
+        }
+
 	}
 
     private void requestServerIcon(Server newServer) {
