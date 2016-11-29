@@ -46,9 +46,9 @@ public class Test {
 		Jess.setVoiceStatus(true);
 		Jess.setIsMuted(false);
 		
-		//Parser.submitLogIn("nathan", "password");
+		Parser.submitLogIn("nathan", "password");
 		System.out.println(Parser.getUserIP(Nate));
-		Parser.submitLogIn("jess", "password");
+		//Parser.submitLogIn("jess", "password");
 		
 		VoiceChat voice = new VoiceChat(7800, false, Cl, Parser);
 		
@@ -58,8 +58,9 @@ public class Test {
 		voice.connectToVoice();
 		voice.startBrodcast();
 		
+		System.out.println(Parser.getUserIP(Jess));
 		
-		Cl.addUser(Nate);
+		Cl.addUser(Jess);
 		Jess.setVoiceStatus(true);
 		Jess.setIsMuted(false);
 		
