@@ -27,6 +27,7 @@ public class Client {
     private CommUtil.UserStatus status;
     private boolean isMuted;
     private boolean locationChanged;
+    private boolean statusChanged;
 
 
 
@@ -82,6 +83,7 @@ public class Client {
         this.status = CommUtil.UserStatus.ONLINE;
         this.voice = false;
         this.locationChanged = false;
+        this.statusChanged = false;
     }
 
     public void addMessage(Message message, int sId, int chId) {
@@ -237,6 +239,14 @@ public class Client {
         this.locationChanged = locationChanged;
     }
 
+    public boolean isStatusChanged() {
+        return statusChanged;
+    }
+
+    public void setStatusChanged(boolean statusChanged) {
+        this.statusChanged = statusChanged;
+    }
+
     public User findUser(int id) {
 
         for (User mUser : mUsers) {
@@ -318,7 +328,7 @@ public class Client {
         Collections.sort(mUsers, new Comparator<User>() {
             @Override
             public int compare(User u1, User u2) {
-                System.out.println("here boi");
+                //System.out.println("here boi");
                 if (u1.isChannel() && u1.getChannelID() <= u2.getChannelID())
                     return -1;
 

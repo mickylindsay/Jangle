@@ -107,6 +107,15 @@ public class messageThread implements Runnable {
                 });
                 mClient.setLocationChanged(false);
             }
+
+            if (mClient.isStatusChanged()) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ui.updateUsers(FXCollections.observableArrayList(mClient.getUsers()));
+                    }
+                });
+            }
         }
     }
 }
