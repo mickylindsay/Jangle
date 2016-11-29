@@ -301,7 +301,7 @@ public class Client {
         }
     }
 
-    public void updateUserPositions() {
+    public void updateUserPosition(int userID, int newServerID, int newChannelID) {
 
     }
 }
