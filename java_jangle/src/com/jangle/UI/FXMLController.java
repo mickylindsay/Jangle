@@ -112,6 +112,7 @@ public class FXMLController implements Initializable {
         }
         else {
             String extension = splitPath[1];
+            extension = extension.toLowerCase();
             if (extension.equals("png") || extension.equals("jpeg") || extension.equals("jpg") || extension.equals("bmp") || extension.equals("gif")) {
                 //Cloudinary maven path: cloudinary-http
                 Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap("cloud_name", "jangle", "api_key", "786816698113964", "api_secret", "vFTEtCmW_tOWLyXAia19UtIude4"));
