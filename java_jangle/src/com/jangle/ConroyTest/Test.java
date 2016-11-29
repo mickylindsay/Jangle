@@ -41,24 +41,27 @@ public class Test {
 		
 		
 		User Nate = TestUtil.newNathan();
+		User Jess = TestUtil.newJess();
 		
-		Cl.addUser(Nate);
-		Nate.setVoiceStatus(true);
-		Nate.setIsMuted(false);
+		Jess.setVoiceStatus(true);
+		Jess.setIsMuted(false);
 		
-		Parser.requestUserStatus(Nate);
-		
-		
-		
-		Parser.sendUserStatusChange();
-		
-		Parser.submitLogIn("nathan", "password");
+		//Parser.submitLogIn("nathan", "password");
+		System.out.println(Parser.getUserIP(Nate));
+		Parser.submitLogIn("jess", "password");
 		
 		VoiceChat voice = new VoiceChat(7800, false, Cl, Parser);
+		
+		
+		
 		
 		voice.connectToVoice();
 		voice.startBrodcast();
 		
+		
+		Cl.addUser(Nate);
+		Jess.setVoiceStatus(true);
+		Jess.setIsMuted(false);
 		
 	  while(true){ 
 		  Thread.sleep(500);

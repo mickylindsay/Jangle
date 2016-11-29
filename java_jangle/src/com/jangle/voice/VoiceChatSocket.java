@@ -64,6 +64,7 @@ public class VoiceChatSocket implements Runnable {
 		// TODO Auto-generated method stub
 		if (User.getIP() == "" || User.getIP() == "Fail"){
 			try {
+				
 				User.setIP(Parser.getUserIP(User));
 				Address = InetAddress.getByName(User.getIP());
 			} catch (IOException e) {
