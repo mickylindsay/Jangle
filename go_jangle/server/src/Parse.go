@@ -53,6 +53,9 @@ func Create_User_Message(user *User, data []byte) Message {
 		user.id = id
 		m = Create_Message(login_success, Int_Converter(id))
 		Send_Message(user, m)
+		user.status = uint(online);
+		m = Create_Message(recieve_status, Int_Converter(user.id), byte(user.status), byte(user.muted), byte(user.voice))
+		Send_Broadcast_Server(user.serverid, m)
 	} else {
 		m = Create_Message(create_user_fail)
 		user.Write(m.Build_Message())
@@ -68,6 +71,10 @@ func Login_Message(user *User, data []byte) Message {
 		user.id = id
 		m = Create_Message(login_success, Int_Converter(id))
 		Send_Message(user, m)
+		user.status = uint(online);
+		m = Create_Message(recieve_status, Int_Converter(user.id), byte(user.status), byte(user.muted), byte(user.voice))
+		Send_Broadcast_Server(user.serverid, m)
+	
 	} else {
 		m = Create_Message(login_fail)
 		user.Write(m.Build_Message())

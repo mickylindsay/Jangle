@@ -300,4 +300,8 @@ public class Client {
             //TODO: Looking into making mMessages dynamic for messages that SHOULD be displayed at the time
         }
     }
+
+    public void updateUserPositions() {
+
+    }
 }

@@ -90,7 +90,7 @@ func Message_Create(user *User, messagetext []byte) (uint, error) {
 	if !jangle.no_database {
 		i := Next_Messageid()
 		var err error
-		_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", 1, Milli_Time(), i, string(messagetext), user.serverid, user.roomid)
+		_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", user.id, Milli_Time(), i, string(messagetext), user.serverid, user.roomid)
 		return i, err
 	}
 	return i, nil
