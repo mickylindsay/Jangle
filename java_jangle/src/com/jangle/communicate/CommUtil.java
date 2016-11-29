@@ -31,10 +31,11 @@ public final class CommUtil {
 	public static final byte REQUEST_ROOM_DISPALY_NAME = (byte) 38;
 	public static final byte REQUEST_USER_STATUS = (byte) 40;
 	public static final byte REQUEST_USER_IP = (byte) 43;
-    public static final byte REQUEST_USER_ICON = (byte) 45;
-
+    public static final byte REQUEST_USER_ICON = (byte) 44;
+    public static final byte REQUEST_SERVER_ICON = (byte) 45;
 	public static final byte RECIEVE_USERID = (byte) 48;
 	public static final byte RECIEVE_DISPLAY_NAME = (byte) 49;
+
 	public static final byte RECIEVE_SERVER_ID = (byte) 50;
 	public static final byte RECIEVE_SERVER_DISPLAY_NAME = (byte) 51;
 	public static final byte RECIEVE_ROOM_ID = (byte) 52;
@@ -42,16 +43,16 @@ public final class CommUtil {
 	public static final byte RECIEVE_USER_STATUS = (byte) 55;
     public static final byte RECIEVE_USER_LOCATION = (byte) 56;
 	public static final byte RECIEVE_USER_IP = (byte) 57;
-    public static final byte REQUEST_SERVER_ICON = (byte) 45;
     public static final byte RECIEVE_SERVER_ICON = (byte) 59;
     public static final byte RECIEVE_USER_ICON = (byte) 58;
-	
+
 	public static final byte SEND_NEW_DISPLAY_NAME = (byte) 64;
-	
+    public static final byte SEND_NEW_USER_ICON = (byte) 68;
+
 	public static final byte SEND_STAUTS_CHANGE = (byte) 80;
 	public static final byte SEND_ROOM_LOCATION_CHANGE = (byte) 81;
 
-	
+	public static final byte RECIEVE_ERROR = (byte) 255;
 	
 	
 	public static final long TIME_OUT_MILLI = 3000;

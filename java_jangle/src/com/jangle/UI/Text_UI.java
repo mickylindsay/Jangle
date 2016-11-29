@@ -82,8 +82,11 @@ public class Text_UI extends Application {
         mClientParseData.requestAllUsersTiedToServer();
         //TODO: Fix requesting servers
         mClientParseData.requestAllServers(new User("", mClient.getUserID()));
+        mClient.changeChannel(1);
+        mClientParseData.changeLocation();
         mClient.setStatus(CommUtil.UserStatus.ONLINE);
         mClientParseData.sendUserStatusChange();
+
 
         primaryStage.setScene(new Scene(createContent()));
         primaryStage.show();

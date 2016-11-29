@@ -128,6 +128,7 @@ public class Client_ParseData implements IPARSER {
 
 			try {
 				requestDisplayName(tmp);
+                requestAvatarURL(tmp);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -251,6 +252,11 @@ public class Client_ParseData implements IPARSER {
             String img = new String(Arrays.copyOfRange(data, 5, data.length));
 
             mClient.findUser(userID).setAvatar(img);
+        }
+
+        else if(data[0] == CommUtil.RECIEVE_ERROR) {
+            String error = new String(Arrays.copyOfRange(data, 1, data.length));
+            System.out.println("ERROR RECEIVED FROM SERVER: " + error);
         }
 
 	}
@@ -657,4 +663,18 @@ public class Client_ParseData implements IPARSER {
 
     }
 
+    public void sendNewUserIcon(String newIcon) {
+        byte[] toSend = new byte[1+newIcon.length()];
+        toSend[0] = CommUtil.SEND_NEW_USER_ICON;
+
+        for (int i=0; i<newIcon.length(); i++) {
+            toSend[i + 1] = newIcon.getBytes()[i];
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

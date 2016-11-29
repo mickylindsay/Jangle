@@ -110,6 +110,7 @@ public class Client {
 
     public void addUser(User user) {
         mUsers.add(user);
+        sortUsers();
     }
 
     public void removeUser(User user) {
