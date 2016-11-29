@@ -47,7 +47,12 @@ public class VoiceChatSocket implements Runnable {
 		User = gUser;
 		port = gport;
 		socket = new DatagramSocket();
-		Address = InetAddress.getByName(User.getIP());
+		if (User.getIP() == "" || User.getIP() == "FAIL"){
+			Address = null;
+		}
+		else{
+			Address = InetAddress.getByName(User.getIP());
+		}
 		Parser = gParser;
 		
 	}
@@ -62,7 +67,7 @@ public class VoiceChatSocket implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		if (User.getIP() == "" || User.getIP() == "Fail"){
+		if (User.getIP() == "" || User.getIP() == "FAIL" || Address == null){
 			try {
 				
 				User.setIP(Parser.getUserIP(User));
@@ -71,7 +76,11 @@ public class VoiceChatSocket implements Runnable {
 				//Happens if a communication error occurs. 
 			}
 		}
+		if (User.getIP() == "" || User.getIP() == "FAIL" || Address == null){
+			return;
+		}
 		DatagramPacket packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, Address, port);
+		System.out.println(User.getId() + "    " + User.getIP());
 		try {
 			socket.send(packet);
 		} catch (IOException e) {
