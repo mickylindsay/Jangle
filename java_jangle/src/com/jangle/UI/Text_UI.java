@@ -72,7 +72,7 @@ public class Text_UI extends Application {
 		loginStage.setScene(new Scene(createLoginDialog()));
 		loginStage.showAndWait();
 
-        mClientParseData.request50MessagesWithOffset(1);
+        mClientParseData.request50MessagesWithOffset(0);
         mClientParseData.requestAllUsersTiedToServer();
         //TODO: Fix requesting servers
         mClientParseData.requestAllServers(new User("", mClient.getUserID()));
