@@ -42,6 +42,8 @@ public final class CommUtil {
 	public static final byte RECIEVE_USER_STATUS = (byte) 55;
     public static final byte RECIEVE_USER_LOCATION = (byte) 56;
 	public static final byte RECIEVE_USER_IP = (byte) 57;
+    public static final byte REQUEST_SERVER_ICON = (byte) 45;
+    public static final byte RECIEVE_SERVER_ICON = (byte) 59;
 	
 	public static final byte SEND_NEW_DISPLAY_NAME = (byte) 64;
 	

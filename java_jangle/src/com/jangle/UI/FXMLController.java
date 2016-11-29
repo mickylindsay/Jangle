@@ -4,8 +4,10 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.jangle.client.Client;
 import com.jangle.client.Message;
+import com.jangle.client.Server;
 import com.jangle.client.User;
 import com.jangle.communicate.Client_ParseData;
+import com.jangle.communicate.CommUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -35,8 +37,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by Jess on 10/3/2016.
@@ -61,6 +62,8 @@ public class FXMLController implements Initializable {
     private Button settingsButton;
     @FXML
     protected ImageView chatBackground;
+    @FXML
+    private ListView<Server> serverList;
 
 
     @FXML
@@ -161,6 +164,18 @@ public class FXMLController implements Initializable {
 
     private void setServerListCellFactory() {
         //TODO: make server list factory
+        serverList.setCellFactory(listView -> new ListCell<Server>() {
+            private ImageView imageview = new ImageView();
+            @Override
+            public void updateItem(Server server, boolean empty) {
+                super.updateItem(server, empty);
+                if(empty){
+                    setText(null);
+                    setGraphic(null);
+                    return;
+                }
+            }
+        });
     }
 
     private void setUserListCellFactory() {
@@ -187,7 +202,13 @@ public class FXMLController implements Initializable {
                         setGraphic(null);
                     }
                     else {
-                        Image image = new Image(user.getAvatarURL());
+                        Image image;
+                        if (user.getStatus() == CommUtil.UserStatus.OFFLINE){
+                            image = new Image(user.OFFLINE_AVATAR);
+                        }
+                        else {
+                            image = new Image(user.getAvatarURL());
+                        }
                         imageView.setImage(image);
                         imageView.setPreserveRatio(true);
                         imageView.setFitWidth(20);
@@ -196,6 +217,7 @@ public class FXMLController implements Initializable {
                         setAlignment(Pos.CENTER_LEFT);
                         //setTextAlignment(TextAlignment.LEFT);
                     }
+
                     setText(user.getDisplayName());
                 }
             });
