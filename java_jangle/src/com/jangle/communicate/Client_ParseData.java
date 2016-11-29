@@ -157,7 +157,8 @@ public class Client_ParseData implements IPARSER {
 
 			Channel newChannel = new Channel(chId);
 			mClient.getServer(sId).addChannel(newChannel);
-			mClient.addUser(new User(newChannel));
+            if (sId == mClient.getCurrentServerID())
+			    mClient.addUser(new User(newChannel));
 
 			try {
 				requestRoomDisplayName(sId, chId);
