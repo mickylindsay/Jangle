@@ -44,7 +44,7 @@ public class Test {
 		User Jess = TestUtil.newJess();
 		
 		
-		
+		Cl.addUser(Nate);
 		Parser.submitLogIn("nathan", "password");
 		//System.out.println(Parser.getUserIP(Nate));
 		//Parser.submitLogIn("jess", "password");
@@ -56,7 +56,7 @@ public class Test {
 		voice.startBrodcast();
 		
 		//System.out.println(Parser.getUserIP(Jess));
-		Cl.addUser(Jess);
+		
 		
 	  while(true){ 
 		  Thread.sleep(500);
