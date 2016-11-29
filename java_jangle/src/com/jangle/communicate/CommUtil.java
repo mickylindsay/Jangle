@@ -40,6 +40,7 @@ public final class CommUtil {
 	public static final byte RECIEVE_ROOM_ID = (byte) 52;
 	public static final byte RECIEVE_ROOM_DISPLAY_NAME = (byte) 53;
 	public static final byte RECIEVE_USER_STATUS = (byte) 55;
+    public static final byte RECIEVE_USER_LOCATION = (byte) 56;
 	public static final byte RECIEVE_USER_IP = (byte) 57;
 	
 	public static final byte SEND_NEW_DISPLAY_NAME = (byte) 64;

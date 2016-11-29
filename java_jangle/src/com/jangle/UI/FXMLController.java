@@ -272,13 +272,16 @@ public class FXMLController implements Initializable {
                 if (userList.getSelectionModel().getSelectedItem().isChannel()){
                     mClient.changeChannel(userList.getSelectionModel().getSelectedItem().getId()-1000);
                     mClientParseData.changeLocation();
-                    try {
-                        mClientParseData.request50MessagesWithOffset(0);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID()).size() == 0) {
+                        try {
+                            mClientParseData.request50MessagesWithOffset(0);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                     //Change the messages to the ones in the current channel
                     updateMessages(FXCollections.observableArrayList(mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID())));
+                    updateUsers(FXCollections.observableList(mClient.getUsers()));
                 }
             }
         });
@@ -318,4 +321,5 @@ public class FXMLController implements Initializable {
     public void handleVoipConnection(ActionEvent actionEvent) {
         //TODO: Initialize voice client... NEED Conroy
     }
+
 }

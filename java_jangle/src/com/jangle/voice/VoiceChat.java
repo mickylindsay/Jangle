@@ -108,9 +108,6 @@ public class VoiceChat implements Runnable {
 			// start recieving data
 			recieveData();
 			connectedToVoice = true;
-			
-			Cl.setVoiceStatus(true);
-			Parser.sendUserStatusChange();
 		}
 	}
 
@@ -135,6 +132,8 @@ public class VoiceChat implements Runnable {
 		if (!broadcasting && connectedToVoice){
 			Madden.startBrodcast();
 			broadcasting = true;
+			Cl.setVoiceStatus(true);
+			Parser.sendUserStatusChange();
 		}
 	}
 

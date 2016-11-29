@@ -3,9 +3,7 @@ package com.jangle.client;
 import com.jangle.communicate.CommUtil;
 import com.jangle.communicate.CommUtil.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Jess on 9/28/2016.
@@ -28,6 +26,7 @@ public class Client {
     private boolean voice;
     private CommUtil.UserStatus status;
     private boolean isMuted;
+    private boolean locationChanged;
 
 
 
@@ -82,6 +81,7 @@ public class Client {
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
         this.voice = false;
+        this.locationChanged = false;
     }
 
     public void addMessage(Message message, int sId, int chId) {
@@ -229,6 +229,14 @@ public class Client {
     	this.IP = gIP;
     }
 
+    public boolean isLocationChanged() {
+        return locationChanged;
+    }
+
+    public void setLocationChanged(boolean locationChanged) {
+        this.locationChanged = locationChanged;
+    }
+
     public User findUser(int id) {
 
         for (User mUser : mUsers) {
@@ -299,5 +307,36 @@ public class Client {
             currentChannelID = id;
             //TODO: Looking into making mMessages dynamic for messages that SHOULD be displayed at the time
         }
+    }
+
+    public void updateUserPosition(int userID, int newServerID, int newChannelID) {
+        findUser(userID).setChannelID(newChannelID);
+        sortUsers();
+    }
+
+    private void sortUsers(){
+        Collections.sort(mUsers, new Comparator<User>() {
+            @Override
+            public int compare(User u1, User u2) {
+                System.out.println("here boi");
+                if (u1.isChannel() && u1.getChannelID() <= u2.getChannelID())
+                    return -1;
+
+                else if (u1.isChannel() && u1.getChannelID() > u2.getChannelID())
+                    return 1;
+
+                else if (u2.isChannel() && u2.getChannelID() <= u1.getChannelID())
+                    return 1;
+
+                else if (u2.isChannel() && u2.getChannelID() > u1.getChannelID())
+                    return -1;
+
+                else if (u1.getChannelID() <= u2.getChannelID())
+                    return -1;
+
+                else
+                    return 1;
+            }
+        });
     }
 }
