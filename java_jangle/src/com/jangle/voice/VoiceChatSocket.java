@@ -85,7 +85,6 @@ public class VoiceChatSocket implements Runnable {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println(" Adress is " + Address.toString());
 		try {
 			socket.send(packet);
 		} catch (IOException e) {
