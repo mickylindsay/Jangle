@@ -57,8 +57,8 @@ public class Test {
 		
 		//System.out.println(Parser.getUserIP(Jess));
 		
-		Parser.requestUserStatus(Jess);
-		Cl.addUser(Jess);
+		Parser.requestUserStatus(Nate);
+		Cl.addUser(Nate);
 		
 	  while(true){ 
 		  Thread.sleep(500);

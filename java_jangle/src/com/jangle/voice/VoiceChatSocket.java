@@ -46,10 +46,12 @@ public class VoiceChatSocket implements Runnable {
 	public VoiceChatSocket(User gUser, int gport, Client_ParseData gParser)
 			throws UnknownHostException, IOException {
 		User = gUser;
+		Parser = gParser;
 		port = gport;
+		User.setIP(Parser.getUserIP(User));
 		socket = new DatagramSocket();
 		Address = User.getIP();
-		Parser = gParser;
+		
 		
 	}
 	
@@ -76,17 +78,14 @@ public class VoiceChatSocket implements Runnable {
 			return;
 		}
 		
-		Inet4Address tmp = null;
+		DatagramPacket packet = null;
 		try {
-			tmp = (Inet4Address) Inet4Address.getByName(Address);
+			packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, InetAddress.getByAddress(VoiceUtil.byteIP(User.getIP())), port);
 		} catch (UnknownHostException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		System.out.println(tmp.getHostAddress());
-		DatagramPacket packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, tmp, port);
-		System.out.println(Address.toString());
+		System.out.println(" Adress is " + Address.toString());
 		try {
 			socket.send(packet);
 		} catch (IOException e) {

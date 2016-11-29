@@ -491,7 +491,7 @@ public class Client_ParseData implements IPARSER {
 			return "FAIL";
 		}
 
-		System.out.println(IP);
+		IP = IP.trim();
 		return IP;
 
 	}
