@@ -27,7 +27,7 @@ func Listen_To_Clients(user *User, e *list.Element) {
 
 			Logln("User Disconncete from address:", user.Get_Remote_Address())
 			user.status = uint(offline)
-			m := Create_Message(recieve_status, Int_Converter(user.id), user.status, user.muted, user.voice)
+			m := Create_Message(recieve_status, Int_Converter(user.id), byte(user.status), byte(user.muted), byte(user.voice))
 			Send_Broadcast_Server(user.serverid, m)
 			
 			break
