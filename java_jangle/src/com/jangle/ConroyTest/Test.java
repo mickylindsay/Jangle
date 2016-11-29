@@ -56,9 +56,7 @@ public class Test {
 		voice.startBrodcast();
 		
 		//System.out.println(Parser.getUserIP(Jess));
-		
-		Parser.requestUserStatus(Nate);
-		Cl.addUser(Nate);
+		Cl.addUser(Jess);
 		
 	  while(true){ 
 		  Thread.sleep(500);
