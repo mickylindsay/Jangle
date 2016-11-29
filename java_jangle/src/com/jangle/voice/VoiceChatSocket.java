@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -22,7 +23,7 @@ import com.jangle.communicate.Client_ParseData;
 public class VoiceChatSocket implements Runnable {
 
 	private DatagramSocket socket;
-	private InetAddress Address;
+	private String Address;
 	private int port;
 	private Client_ParseData Parser;
 	
@@ -47,12 +48,7 @@ public class VoiceChatSocket implements Runnable {
 		User = gUser;
 		port = gport;
 		socket = new DatagramSocket();
-		if (User.getIP() == "" || User.getIP() == "FAIL"){
-			Address = null;
-		}
-		else{
-			Address = InetAddress.getByName(User.getIP());
-		}
+		Address = User.getIP();
 		Parser = gParser;
 		
 	}
@@ -71,7 +67,7 @@ public class VoiceChatSocket implements Runnable {
 			try {
 				
 				User.setIP(Parser.getUserIP(User));
-				Address = InetAddress.getByName(User.getIP());
+				Address = User.getIP();
 			} catch (IOException e) {
 				//Happens if a communication error occurs. 
 			}
@@ -79,8 +75,16 @@ public class VoiceChatSocket implements Runnable {
 		if (User.getIP() == "" || User.getIP() == "FAIL" || Address == null){
 			return;
 		}
-		DatagramPacket packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, Address, port);
-		System.out.println(User.getId() + "    " + User.getIP());
+		
+		Inet4Address tmp = null;
+		try {
+			tmp = (Inet4Address) Inet4Address.getByName(Address);
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		DatagramPacket packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, tmp, port);
+		System.out.println(Address.toString());
 		try {
 			socket.send(packet);
 		} catch (IOException e) {
