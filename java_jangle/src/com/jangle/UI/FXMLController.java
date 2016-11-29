@@ -318,4 +318,5 @@ public class FXMLController implements Initializable {
     public void handleVoipConnection(ActionEvent actionEvent) {
         //TODO: Initialize voice client... NEED Conroy
     }
+
 }
