@@ -83,6 +83,8 @@ public class VoiceChatSocket implements Runnable {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		System.out.println(tmp.getHostAddress());
 		DatagramPacket packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, tmp, port);
 		System.out.println(Address.toString());
 		try {
