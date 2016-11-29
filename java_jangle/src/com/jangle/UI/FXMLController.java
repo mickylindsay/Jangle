@@ -281,6 +281,7 @@ public class FXMLController implements Initializable {
                     }
                     //Change the messages to the ones in the current channel
                     updateMessages(FXCollections.observableArrayList(mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID())));
+                    updateUsers(FXCollections.observableList(mClient.getUsers()));
                 }
             }
         });

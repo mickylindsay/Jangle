@@ -170,6 +170,11 @@ public class Client_ParseData implements IPARSER {
 
         else if (data[0] == CommUtil.RECIEVE_USER_LOCATION) {
             System.out.println("Recieved user location change");
+            int serverID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
+            int channelID = CommUtil.byteToInt(Arrays.copyOfRange(data, 5, 9));
+            int userID = CommUtil.byteToInt(Arrays.copyOfRange(data, 9, 13));
+            mClient.updateUserPosition(userID, serverID, channelID);
+            mClient.setLocationChanged(true);
         }
 
 		else if (data[0] == CommUtil.RECIEVE_ROOM_DISPLAY_NAME) {
