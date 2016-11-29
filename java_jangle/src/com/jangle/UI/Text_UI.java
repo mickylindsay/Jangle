@@ -6,7 +6,7 @@ import com.jangle.client.Server;
 import com.jangle.client.User;
 import com.jangle.communicate.Client_ParseData;
 import com.jangle.voice.VoiceChat;
-
+import com.jangle.communicate.CommUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -82,6 +82,9 @@ public class Text_UI extends Application {
         mClientParseData.requestAllUsersTiedToServer();
         //TODO: Fix requesting servers
         mClientParseData.requestAllServers(new User("", mClient.getUserID()));
+        mClient.setStatus(CommUtil.UserStatus.ONLINE);
+        mClientParseData.sendUserStatusChange();
+
         primaryStage.setScene(new Scene(createContent()));
         primaryStage.show();
 
