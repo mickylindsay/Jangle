@@ -5,6 +5,8 @@ import com.jangle.client.Client;
 import com.jangle.client.Server;
 import com.jangle.client.User;
 import com.jangle.communicate.Client_ParseData;
+import com.jangle.voice.VoiceChat;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +27,7 @@ public class Text_UI extends Application {
 	private Client mClient;
     private ConfigUtil mConfigUtil;
     private String[] serverIP;
+    private VoiceChat mVoice;
 
 	private Parent createContent() throws IOException {
 
@@ -33,6 +36,7 @@ public class Text_UI extends Application {
 		FXMLController controller = loader.getController();
 		controller.setmClientParseData(mClientParseData);
         controller.setConfigUtil(mConfigUtil);
+        controller.setVoiceChat(mVoice);
 
 		return mainUI;
 	}
@@ -44,6 +48,8 @@ public class Text_UI extends Application {
         Channel channel = new Channel(1);
         mClient.addServer(server);
         mClient.getServer(1).addChannel(channel);
+        
+        this.mVoice = new VoiceChat(7800, false, mClient, mClientParseData);
 
 		try {
 			this.mClientParseData = new Client_ParseData(mClient, serverIP[0], new Integer(serverIP[1]));

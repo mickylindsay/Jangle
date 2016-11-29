@@ -48,6 +48,7 @@ public class Test {
 		Parser.submitLogIn("nathan", "password");
 		//System.out.println(Parser.getUserIP(Nate));
 		//Parser.submitLogIn("jess", "password");
+		Cl.addUser(Nate);
 		
 		VoiceChat voice = new VoiceChat(7800, false, Cl, Parser);
 		
@@ -56,7 +57,7 @@ public class Test {
 		voice.startBrodcast();
 		
 		//System.out.println(Parser.getUserIP(Jess));
-		
+		System.out.println("here");
 		
 	  while(true){ 
 		  Thread.sleep(500);

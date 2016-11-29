@@ -548,7 +548,7 @@ public class Client_ParseData implements IPARSER {
 			muted = (byte) 0;
 		}
 
-		if (mClient.getVoiceStatus()) {
+		if (mClient.isConnectedToVoice()) {
 			voice = (byte) 1;
 		}
 		else {

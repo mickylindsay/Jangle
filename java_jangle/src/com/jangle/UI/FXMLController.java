@@ -6,6 +6,8 @@ import com.jangle.client.Client;
 import com.jangle.client.Message;
 import com.jangle.client.User;
 import com.jangle.communicate.Client_ParseData;
+import com.jangle.voice.VoiceChat;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -48,6 +50,7 @@ public class FXMLController implements Initializable {
     private messageThread messageThread;
     private ConfigUtil mConfigUtil;
     private ObservableList<Message> testlist;
+    private VoiceChat mVoice;
 
     @FXML
     public ListView<Message> messageArea;
@@ -315,11 +318,28 @@ public class FXMLController implements Initializable {
     @FXML
     public void handleMute(ActionEvent actionEvent) {
         //TODO: Toggles the mute on voice in but not out from the client
+    	if (mClient.getVoiceStatus()){
+    		mVoice.endBrodcast();
+    	}
+    	else{
+    		mVoice.startBrodcast();
+    	}
     }
 
     @FXML
     public void handleVoipConnection(ActionEvent actionEvent) {
         //TODO: Initialize voice client... NEED Conroy
+    	
+    	if (mClient.isConnectedToVoice()){
+    		mVoice.disconnectFromVoice();
+    	}
+    	else{
+    		mVoice.connectToVoice();
+    	}
+    }
+    
+    public void setVoiceChat(VoiceChat gVoice){
+    	this.mVoice = gVoice;
     }
 
 }

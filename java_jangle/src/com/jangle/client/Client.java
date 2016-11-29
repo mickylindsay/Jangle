@@ -27,6 +27,7 @@ public class Client {
     private CommUtil.UserStatus status;
     private boolean isMuted;
     private boolean locationChanged;
+    private boolean connectedToVoice;
 
 
 
@@ -42,6 +43,7 @@ public class Client {
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
         this.voice = false;
+        this.connectedToVoice = false;
     }
 
     public Client(ArrayList<User> users, ArrayList<Message> messages) {
@@ -54,6 +56,7 @@ public class Client {
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
         this.voice = false;
+        this.connectedToVoice = false;
     }
 
     public Client(int currentServerID, int currentChannelID) {
@@ -67,6 +70,7 @@ public class Client {
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
         this.voice = false;
+        this.connectedToVoice = false;
     }
 
     public Client() {
@@ -82,6 +86,7 @@ public class Client {
         this.status = CommUtil.UserStatus.ONLINE;
         this.voice = false;
         this.locationChanged = false;
+        this.connectedToVoice = false;
     }
 
     public void addMessage(Message message, int sId, int chId) {
@@ -339,4 +344,14 @@ public class Client {
             }
         });
     }
+    
+    public boolean isConnectedToVoice(){
+    	return this.connectedToVoice;
+    }
+    
+    public void setConnectedToVocie(boolean value){
+    	this.connectedToVoice = value;
+    }
+    
+    
 }

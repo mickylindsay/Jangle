@@ -34,7 +34,7 @@ public final class TestUtil {
 	}
 	
 	public static User newMicky(){
-		User ret = new User("micky", 3);
+		User ret = new User("micky", 2);
 		return ret;
 	}
 	
@@ -44,7 +44,7 @@ public final class TestUtil {
 	}
 	
 	public static User newTom(){
-		User ret = new User("tom", 5);
+		User ret = new User("tom", 3);
 		return ret;
 		
 	}
