@@ -54,7 +54,7 @@ public class FXMLController implements Initializable {
     @FXML
     private TextField messageStage;
     @FXML
-    private ListView<User> users;
+    private ListView<User> userList;
     @FXML
     private Button attachButton;
     @FXML
@@ -68,7 +68,7 @@ public class FXMLController implements Initializable {
         String message = messageStage.getText();
         if (message.equals("Gimmie dat messages")){
             try {
-                mClientParseData.request50MessagesWithOffset(0);
+                mClientParseData.request50MessagesWithOffset(mClient.getMessages().size());
                 messageStage.clear();
                 return;
             } catch (IOException e) {
@@ -79,7 +79,7 @@ public class FXMLController implements Initializable {
         }
         // Send the string to the server
         try {
-            mClientParseData.sendMessage(new Message(mClient.getUserID(), message, 1, 1));
+            mClientParseData.sendMessage(new Message(mClient.getUserID(), message, mClient.getCurrentServerID(), mClient.getCurrentChannelID()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -112,8 +112,8 @@ public class FXMLController implements Initializable {
         }
         else {
             String extension = splitPath[1];
+            extension = extension.toLowerCase();
             if (extension.equals("png") || extension.equals("jpeg") || extension.equals("jpg") || extension.equals("bmp") || extension.equals("gif")) {
-                //TODO: upload the file to the hosting site
                 //Cloudinary maven path: cloudinary-http
                 Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap("cloud_name", "jangle", "api_key", "786816698113964", "api_secret", "vFTEtCmW_tOWLyXAia19UtIude4"));
                 try {
@@ -144,10 +144,65 @@ public class FXMLController implements Initializable {
         settingsStage.showAndWait();
     }
 
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         testlist = FXCollections.observableArrayList();
 
+        setMessageAreaCellFactory();
+        setServerListCellFactory();
+        setUserListCellFactory();
+
+
+        initializeListViewEventHandler();
+
+    }
+
+    private void setServerListCellFactory() {
+        //TODO: make server list factory
+    }
+
+    private void setUserListCellFactory() {
+        {
+            userList.setCellFactory(listView -> new ListCell<User>() {
+                private ImageView imageView = new ImageView();
+                @Override
+                public void updateItem(User user, boolean empty) {
+                    super.updateItem(user, empty);
+                    if (empty) {
+                        setText(null);
+                        setGraphic(null);
+                        return;
+                    }
+                    else if(user.getDisplayName() == null) {
+                        try {
+                            mClientParseData.requestDisplayName(user);
+                            mClientParseData.requestAvatarURL(user);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else if (user.isChannel()){
+                        setGraphic(null);
+                    }
+                    else {
+                        Image image = new Image(user.getAvatarURL());
+                        imageView.setImage(image);
+                        imageView.setPreserveRatio(true);
+                        imageView.setFitWidth(20);
+                        setGraphic(imageView);
+                        setContentDisplay(ContentDisplay.LEFT);
+                        setAlignment(Pos.CENTER_LEFT);
+                        //setTextAlignment(TextAlignment.LEFT);
+                    }
+                    setText(user.getDisplayName());
+                }
+            });
+        }
+    }
+
+    private void setMessageAreaCellFactory() {
         messageArea.setCellFactory(listView -> new ListCell<Message>() {
             private ImageView imageView = new ImageView();
             @Override
@@ -167,12 +222,12 @@ public class FXMLController implements Initializable {
                         setAlignment(Pos.CENTER_LEFT);
                         //setTextAlignment(TextAlignment.LEFT);
                     }
-                    setText(message.toString());
+                    else
+                        setGraphic(null);
+                    setText(formatMessage(message));
                 }
             }
         });
-        initializeListViewEventHandler();
-
     }
 
     public void updateMessages(ObservableList messages) {
@@ -180,7 +235,7 @@ public class FXMLController implements Initializable {
     }
 
     public void updateUsers(ObservableList userList){
-        this.users.setItems(userList);
+        this.userList.setItems(userList);
     }
 
     public void setmClientParseData(Client_ParseData clientParseData){
@@ -210,6 +265,24 @@ public class FXMLController implements Initializable {
                 }
             }
         });
+
+        userList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (userList.getSelectionModel().getSelectedItem().isChannel()){
+                    mClient.changeChannel(userList.getSelectionModel().getSelectedItem().getId()-1000);
+                    mClientParseData.changeLocation();
+                    try {
+                        mClientParseData.request50MessagesWithOffset(0);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //Change the messages to the ones in the current channel
+                    updateMessages(FXCollections.observableArrayList(mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID())));
+                }
+            }
+        });
+
     }
 
     private Parent createSettingsDialog() {
@@ -225,5 +298,24 @@ public class FXMLController implements Initializable {
         mSettings.setBackgroundImageView(chatBackground);
 
         return dialog;
+    }
+
+    private String formatMessage(Message message) {
+        User sender = mClient.findUser(message.getUserID());
+
+        if(sender == null)
+            return message.getUserID() + "\n" + message.getMessageContent() + "    " + message.getTimeStamp();
+
+        return sender.getDisplayName() + "\n" + message.getMessageContent() + "    " + message.getTimeStamp();
+    }
+
+    @FXML
+    public void handleMute(ActionEvent actionEvent) {
+        //TODO: Toggles the mute on voice in but not out from the client
+    }
+
+    @FXML
+    public void handleVoipConnection(ActionEvent actionEvent) {
+        //TODO: Initialize voice client... NEED Conroy
     }
 }

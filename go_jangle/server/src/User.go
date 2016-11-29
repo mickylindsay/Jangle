@@ -84,10 +84,12 @@ func (u *User) Has_Permission(perm uint) bool {
 
 //Returns string representing the ip address of the local side of connection
 func (u *User) Get_Local_Address() string {
-	return (*(*u).c).LocalAddr().String()
+	//return (*(*u).c).LocalAddr().String()
+	return (*(*u).c).RemoteAddr().String()
 }
 
 //Returns string representing the ip address of the remote side of connection
 func (u *User) Get_Remote_Address() string {
-	return (*(*u).c).RemoteAddr().String()
+	return (*(*u).c).LocalAddr().String()
+	//return (*(*u).c).RemoteAddr().String()
 }

@@ -26,6 +26,10 @@ func Listen_To_Clients(user *User, e *list.Element) {
 			Color_Println("orange", "User Disconnected")
 
 			Logln("User Disconncete from address:", user.Get_Remote_Address())
+			user.status = uint(offline)
+			m := Create_Message(recieve_status, Int_Converter(user.id), user.status, user.muted, user.voice)
+			Send_Broadcast_Server(user.serverid, m)
+			
 			break
 		}
 

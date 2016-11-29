@@ -11,3 +11,8 @@
 .list-view {
     -fx-background-color: #3f3f3f;
 }
+
+.list-cell:filled:hover {
+    -fx-background-color: #3c3c3c55;
+    -fx-text-fill: white;
+}

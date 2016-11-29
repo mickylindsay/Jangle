@@ -15,9 +15,14 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
+import com.jangle.client.Client;
+import com.jangle.client.User;
+import com.jangle.communicate.Client_ParseData;
+
 /**
- * Handles the creation of the voice chat. The recieving and playing to speakers are handled in this class.
- * So far, this class will handle the recieving. It can only handle one user at the moment.
+ * Handles the creation of the voice chat. The recieving and playing to speakers
+ * are handled in this class. So far, this class will handle the recieving. It
+ * can only handle one user at the moment.
  * 
  * @author Nathan Conroy
  *
@@ -27,20 +32,26 @@ public class VoiceChat implements Runnable {
 	private SourceDataLine speakers;
 
 	private AudioFormat format;
-	private int dataWidth;
-
-	private int numChatWith;
 	private ArrayList<VoiceChatSocket> connections;
 	private DatagramSocket Recieving;
 	private VoiceBroadcast Madden;
-	
+	private Client Cl;
+	private Client_ParseData Parser;
+
+	private ArrayList<User> Users;
+
 	private boolean isReceiving;
 
 	private InetAddress Address;
 	private int port;
+	private int userID;
 
-	public VoiceChat(int gport) throws SocketException {
-		format = new AudioFormat(8000.0f, 16, 1, true, true);
+	// error checking variabltes
+	private boolean connectedToVoice;
+	private boolean broadcasting;
+
+	public VoiceChat(int gport, boolean speak, Client gCl, Client_ParseData gParser) throws SocketException {
+		format = VoiceUtil.genFormat();
 		try {
 			// init speakers
 			DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, format);
@@ -50,10 +61,14 @@ public class VoiceChat implements Runnable {
 			e.printStackTrace();
 		}
 
-		numChatWith = 0;
 		isReceiving = false;
 		connections = new ArrayList<VoiceChatSocket>();
 		port = gport;
+		Cl = gCl;
+		Users = Cl.getUsersArrayList();
+		Parser = gParser;
+		broadcasting = false;
+		connectedToVoice = false;
 
 		try {
 			Address = InetAddress.getLocalHost();
@@ -61,43 +76,92 @@ public class VoiceChat implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		Madden = new VoiceBroadcast(connections, format);
+
+		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser);
 		Recieving = new DatagramSocket(gport);
-		dataWidth = Madden.getDataWidth();
+
+		// If speak is true, the user wants to start speaking right away
+		if (speak) {
+			connectToVoice();
+			startBrodcast();
+		}
 
 	}
 
+	/**
+	 * Want connect the user to the voice chat. Does not start broadcasting
+	 * voice. However, data that is sent from users in the voice chat will play
+	 * though the device's default audio device
+	 * 
+	 * To start sending voice to other users, call the function StartBrodcast();
+	 */
+	public void connectToVoice() {
+		if (!connectedToVoice) {
+
+			// Start speakers
+			try {
+				startSpeakers();
+			} catch (LineUnavailableException e) {
+				// Speakers are not ready to broadcast to.
+			}
+
+			// start recieving data
+			recieveData();
+			connectedToVoice = true;
+			
+			Cl.setVoiceStatus(true);
+			Parser.sendUserStatusChange();
+		}
+	}
+
+	/**
+	 * Disconnect the user from Voice chat. The user does not want to be part of
+	 * the voice chat
+	 */
+	public void disconnectFromVoice() {
+		connections.clear();
+		stopSpeakers();
+		stopRecieve();
+		endBrodcast();
+		connectedToVoice = false;
+		Cl.setVoiceStatus(false);
+		Parser.sendUserStatusChange();
+	}
+
+	/**
+	 * Start sending voice to other users. You can only send voice data to other users if you are connected to voice chat 
+	 */
+	public void startBrodcast() {
+		if (!broadcasting && connectedToVoice){
+			Madden.startBrodcast();
+			broadcasting = true;
+		}
+	}
+
+	/**
+	 * Stop sending voice to other users. However, user is still connected to
+	 * the voice chat, and will still be receiving voice data
+	 */
+	public void endBrodcast() {
+		Madden.stopBrodcast();
+		broadcasting = false;
+	}
+
+	/* IS NOT USED. DO NOT USE THIS
 	/**
 	 * Add a user. This adds a VoiceChatSocket. for Testing, you can put in
 	 * local host, and hear yourself
 	 * 
 	 * @param IP
 	 *            IP of the user.
-	 */
-	public void addUserToChat(String IP) {
-		try {
-			connections.add(new VoiceChatSocket(IP, port, dataWidth));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		numChatWith++;
+	 * @throws IOException
+	 * @throws UnknownHostException
+	 
+	private void addUserToChat(User gUser) throws UnknownHostException, IOException {
+		connections.add(new VoiceChatSocket(gUser, port, Parser));
 	}
-
-	public void closeAllConctions() {
-
-	}
+	*/
 	
-	public void startBrodcast(){
-		try {
-			Madden.startMicInput();
-		} catch (LineUnavailableException e) {
-			System.out.println("Failed to start mic");
-			e.printStackTrace();
-		}
-		Madden.brodcastToAll();
-	}
-
 	/**
 	 * Start the output of audio. Will play the sound to the default device of
 	 * the operating systems
@@ -106,7 +170,7 @@ public class VoiceChat implements Runnable {
 	 *             If the speaker is not instantiation. Could be due to the
 	 *             speaker was removed from now and this object's instantiation
 	 */
-	public void startSpeakers() throws LineUnavailableException {
+	private void startSpeakers() throws LineUnavailableException {
 		speakers.open(format);
 		speakers.start();
 	}
@@ -114,43 +178,86 @@ public class VoiceChat implements Runnable {
 	/**
 	 * Stop playing to the speakers.
 	 */
-	public void stopSpeakers() {
+	private void stopSpeakers() {
 		speakers.drain();
 		speakers.close();
 	}
 
-	public void recieveData() {
+	private void recieveData() {
 		isReceiving = true;
 		Thread th = new Thread(this);
 		th.start();
 	}
-	
-	public void stopRecieve(){
+
+	private void stopRecieve() {
 		isReceiving = false;
+	}
+	
+	/**
+	 * Calculate the number of users in the same channel that are talking
+	 * Assuming that the user array list is all of the users in the same server
+	 * @return
+	 */
+	private int numUsersInSameChannel(){
+		int ret = 0;
+		
+		for (int i = 0; i < Cl.getUsersArrayList().size(); i++){
+			if (Cl.getUsersArrayList().get(i).getChannelID() == Cl.getCurrentChannelID() && Cl.getUsersArrayList().get(i).getVoiceStatus()){
+				ret += 1;
+			}
+		}
+		
+		return ret;
 	}
 
 	@Override
 	public void run() {
+		byte[] data = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
+		byte[] toSpeaker = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
+		DatagramPacket packet = new DatagramPacket(data, data.length);
+		int loop = 1;
+		int numUsers = 0;
 
-		// TODO with code below in a thead from main, this works. Need to put in
-		// differnet code from the voice part. Think about a differnet class.
-		// Also remove SYSO
-		while (true) {
-			byte[] data = new byte[1024];
-			DatagramPacket packet = new DatagramPacket(data, data.length);
+		while (isReceiving) {
 			try {
 				Recieving.receive(packet);
 			} catch (IOException e) {
-				e.printStackTrace();
-			}
 
-			speakers.write(data, 0, data.length);
+			}
+			
+			numUsers = numUsersInSameChannel();
+			if (numUsers == 0){
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+				continue;
+			}
+			
+			if (loop % numUsers == 0) {
+				loop = 0;
+
+				for (int i = 0; i < toSpeaker.length; i++) {
+					toSpeaker[i] = (byte) ((data[i] + toSpeaker[i]) >> 1);
+				}
+				speakers.write(toSpeaker, 0, toSpeaker.length);
+
+			}
+			else {
+				for (int i = 0; i < toSpeaker.length; i++) {
+					toSpeaker[i] = (byte) ((data[i] + toSpeaker[i]) >> 1);
+				}
+			}
+			loop += 1;
 
 			try {
-				Thread.sleep(20);
+				Thread.sleep(VoiceUtil.SLEEP_MILLI_LENGTH);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+
 		}
 	}
 
