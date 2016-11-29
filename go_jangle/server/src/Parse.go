@@ -72,9 +72,6 @@ func Login_Message(user *User, data []byte) Message {
 	id, err := User_Login(m.username, m.password)
 	if err == nil {
 		user.id = id
-		user.serverid = 1
-		user.roomid = 1
-		Join_Server(user)
 		m = Create_Message(login_success, Int_Converter(id))
 		Send_Message(user, m)
 		user.status = uint(online);

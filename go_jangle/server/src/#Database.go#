@@ -77,7 +77,7 @@ func Next_Messageid() uint {
 func User_Create(u []byte, p []byte) (uint, error) {
 	if !jangle.no_database {
 		i := Next_Userid()
-		_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);", i, string(u[:Byte_Array_Length(u)]), string(u), "http://i.imgur.com/iZ3Y4sz.png", string(p), "0000")
+		_, err := jangle.db.Exec("INSERT INTO users (userid, username, displayname, imagepath, passwordhash, salt) VALUES (?,?,?,?,?,?);", i, string(ug[:Byte_Array_Length(u)]), string(u), "http://i.imgur.com/iZ3Y4sz.png", string(p), "0000")
 		return i, err
 	}
 	return 1, nil
