@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+//Interface used for objects that can be Read and Written to
 type Communicator interface {
 	Read(read_data []byte) (int, error)
 	Write(write_data []byte) (int, error)
@@ -32,20 +33,22 @@ func Listen_To_Clients(user *User, e *list.Element) {
 			
 			break
 		}
-
-		if jangle.debug {
-			//fmt.Println("Size: ", packet_size[:], "\nConverted: ", Byte_Converter(packet_size[:]))
-		}
+		//If data is recieved by the server with a length of less than 4 bytes, ignore them
 		if len < 4 {
 			continue
 		}
+		//Use the 4 bytes read to determine the size of the following message packet
 		message_len := Byte_Converter(packet_size[:])
+		//Create array to store the entire packet
 		read_data := make([]byte, message_len)
+		//Read into the new array
 		read_len, err := (*user).Read(read_data)
+		//If the array has not been filled, the following data needs to be appended to the end
 		if uint(read_len) < message_len {
 			continue
 		}
-
+		
+		//Entire message packet has been read then print the debug statment if necessary and parse the message.
 		if jangle.debug {
 			fmt.Println("In: ", read_data[:])
 		}
@@ -73,6 +76,7 @@ func Send_Broadcast(message Message) {
 	if jangle.debug {
 		fmt.Println("OUT: ", write_data)
 	}
+	//Iterate through all users and write the data to each user
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
 		e.Value.(*User).Write(write_data)
 	}
@@ -84,6 +88,7 @@ func Send_Broadcast_Server(serverid uint, message Message) {
 	if jangle.debug {
 		fmt.Println(serverid, ": OUT: ", write_data)
 	}
+	//Iterate through all users and write the data to each user who is in the corresponding server.
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
 		if e.Value.(*User).serverid == serverid {
 			e.Value.(*User).Write(write_data)
@@ -97,6 +102,7 @@ func Send_Broadcast_Server_Room(serverid uint, roomid uint, message Message) {
 	if jangle.debug {
 		fmt.Println(serverid, "-", roomid, ": OUT: ", write_data)
 	}
+	//Iterate through all users and write the data to each user who is in the corresponding server and room.
 	for e := jangle.userlist.Front(); e != nil; e = e.Next() {
 		if e.Value.(*User).serverid == serverid && e.Value.(*User).roomid == roomid {
 			e.Value.(*User).Write(write_data)
@@ -104,13 +110,15 @@ func Send_Broadcast_Server_Room(serverid uint, roomid uint, message Message) {
 	}
 }
 
-//TODO
+//Broadcasts a message to all users who are members of a specific server.
 func Send_Broadcast_Members(serverid uint, message Message) {
+	//Create list of members from a specific server
 	ids, err :=  Get_Member_Userid(serverid);
 	if err == nil{
 		fmt.Println("Unable to find members of server", serverid);
 		return;
 	}
+	//Attempt to send the message to each member
 	for i := 0; i < len(ids); i++ {
 		Send_Message(Get_User_From_Userid(ids[i]), message);
 	}
