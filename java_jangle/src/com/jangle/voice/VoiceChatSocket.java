@@ -48,7 +48,7 @@ public class VoiceChatSocket implements Runnable {
 		User = gUser;
 		Parser = gParser;
 		port = gport;
-		User.setIP(Parser.getUserIP(User));
+		Address = User.getIP();
 		socket = new DatagramSocket();
 		Address = User.getIP();
 		

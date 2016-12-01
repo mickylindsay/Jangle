@@ -346,7 +346,7 @@ public class FXMLController implements Initializable {
     @FXML
     public void handleMute(ActionEvent actionEvent) {
         //TODO: Toggles the mute on voice in but not out from the client
-    	if (mClient.getVoiceStatus()){
+    	if (!mClient.getVoiceStatus()){
     		mVoice.endBrodcast();
             muteButton.setText("Unmute");
     	}
