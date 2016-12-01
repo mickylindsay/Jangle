@@ -31,7 +31,8 @@ public class VoiceBroadcast implements Runnable {
 	private int userID;
 	private int port;
 
-	public VoiceBroadcast(ArrayList<User> gUsers, AudioFormat gformat, Client gCl, int gport, Client_ParseData gParser) {
+	public VoiceBroadcast(ArrayList<User> gUsers, AudioFormat gformat, Client gCl, int gport,
+			Client_ParseData gParser) {
 		Users = gUsers;
 		// connections = gConnections;
 		sendAll = false;
@@ -114,24 +115,28 @@ public class VoiceBroadcast implements Runnable {
 
 			for (int i = 0; i < Users.size(); i++) {
 				Parser.requestUserStatus(Cl.getUsersArrayList().get(i));
-				if (Cl.getCurrentChannelID() == Users.get(i).getChannelID() && Users.get(i).getIsMuted() == false && Users.get(i).getChannelID() != 0 ) {
-					/*
-					 * NOTE, this does not care if the user wants to receive
-					 * data, it will send it to users with the same channel ID.
-					 * If the recieving user does not have their recieving
-					 * enabled, the packet will get ignored on the reciever's
-					 * end
-					 */
+				if (!Users.get(i).isChannel()) {
+					if (Cl.getCurrentChannelID() == Users.get(i).getChannelID() && Users.get(i).getIsMuted() == false
+							&& Users.get(i).getChannelID() != 0) {
+						/*
+						 * NOTE, this does not care if the user wants to receive
+						 * data, it will send it to users with the same channel
+						 * ID. If the recieving user does not have their
+						 * recieving enabled, the packet will get ignored on the
+						 * reciever's end
+						 */
 
-					try {
-						connections.add(new VoiceChatSocket(Users.get(i), port, Parser));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						try {
+							connections.add(new VoiceChatSocket(Users.get(i), port, Parser));
+						} catch (IOException e) {
+							System.out.println("failed");
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						connections.get(i).sendVoice(micData);
 					}
-					connections.get(i).sendVoice(micData);
-				}
 
+				}
 			}
 
 			try {
