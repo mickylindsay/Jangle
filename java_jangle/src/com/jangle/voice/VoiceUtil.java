@@ -24,7 +24,6 @@ public final class VoiceUtil {
 	public static byte[] byteIP(String IP){
 		String tmp = IP.concat(".");
 		
-		System.out.println(tmp);
 		Scanner scan = new Scanner(tmp);
 		scan.useDelimiter("\\.");
 		byte[] ret = new byte[4];
