@@ -97,9 +97,10 @@ public class VoiceBroadcast implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		
 
 		while (sendAll) {
-
+			int sum = 0;
 			connections = new ArrayList<VoiceChatSocket>();
 
 			microphone.read(micData, 0, micData.length);
@@ -112,7 +113,7 @@ public class VoiceBroadcast implements Runnable {
 			 * for (int i = 0; i < connections.size(); i++){
 			 * connections.get(i).sendVoice(micData); }
 			 */
-
+			
 			for (int i = 0; i < Users.size(); i++) {
 				Parser.requestUserStatus(Cl.getUsersArrayList().get(i));
 				if (!Users.get(i).isChannel()) {
@@ -125,10 +126,10 @@ public class VoiceBroadcast implements Runnable {
 						 * recieving enabled, the packet will get ignored on the
 						 * reciever's end
 						 */
-
 						try {
 							connections.add(new VoiceChatSocket(Users.get(i), port, Parser));
-							connections.get(i).sendVoice(micData);
+							connections.get(sum).sendVoice(micData);
+							sum += 1;
 						} catch (IOException e) {
 							System.out.println("failed");
 							// TODO Auto-generated catch block
