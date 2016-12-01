@@ -5,6 +5,7 @@ import com.jangle.client.Client;
 import com.jangle.client.Server;
 import com.jangle.client.User;
 import com.jangle.communicate.Client_ParseData;
+import com.jangle.voice.VoiceChat;
 import com.jangle.communicate.CommUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -26,6 +27,7 @@ public class Text_UI extends Application {
 	private Client mClient;
     private ConfigUtil mConfigUtil;
     private String[] serverIP;
+    private VoiceChat mVoice;
 
 	private Parent createContent() throws IOException {
 
@@ -34,6 +36,7 @@ public class Text_UI extends Application {
 		FXMLController controller = loader.getController();
 		controller.setmClientParseData(mClientParseData);
         controller.setConfigUtil(mConfigUtil);
+        controller.setVoiceChat(mVoice);
 
 		return mainUI;
 	}
@@ -52,6 +55,7 @@ public class Text_UI extends Application {
 			e.printStackTrace();
 		}
 
+        this.mVoice = new VoiceChat(7800, false, mClient, mClientParseData);
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/login.fxml"));
 		AnchorPane dialog = loader.load();
 		loginController mLogin = loader.getController();
@@ -77,8 +81,11 @@ public class Text_UI extends Application {
         mClientParseData.requestAllUsersTiedToServer();
         //TODO: Fix requesting servers
         mClientParseData.requestAllServers(new User("", mClient.getUserID()));
+        mClient.changeChannel(1);
+        mClientParseData.changeLocation();
         mClient.setStatus(CommUtil.UserStatus.ONLINE);
         mClientParseData.sendUserStatusChange();
+
 
         primaryStage.setScene(new Scene(createContent()));
         primaryStage.show();

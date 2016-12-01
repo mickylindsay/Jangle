@@ -7,6 +7,8 @@ import com.jangle.client.Message;
 import com.jangle.client.Server;
 import com.jangle.client.User;
 import com.jangle.communicate.Client_ParseData;
+import com.jangle.voice.VoiceChat;
+
 import com.jangle.communicate.CommUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -49,6 +51,7 @@ public class FXMLController implements Initializable {
     private messageThread messageThread;
     private ConfigUtil mConfigUtil;
     private ObservableList<Message> testlist;
+    private VoiceChat mVoice;
 
     @FXML
     public ListView<Message> messageArea;
@@ -64,6 +67,10 @@ public class FXMLController implements Initializable {
     protected ImageView chatBackground;
     @FXML
     private ListView<Server> serverList;
+    @FXML
+    private Button connectButton;
+    @FXML
+    private Button muteButton;
 
 
     @FXML
@@ -96,7 +103,7 @@ public class FXMLController implements Initializable {
         fileChooser.setTitle("Choose a file to attach.");
         File attachment = fileChooser.showOpenDialog(messageArea.getScene().getWindow());
 
-        System.out.println(attachment);
+        //System.out.println(attachment);
         if (attachment == null)
             return;
 
@@ -106,12 +113,7 @@ public class FXMLController implements Initializable {
             //System.out.println(splitPath[i]);
 
         if (splitPath.length != 2){
-            //more than one period in file path
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Invalid File Path");
-            alert.setHeaderText("You chose an invalid file path");
-            alert.setContentText("Error: (> 1 . in file path) Make sure that none of the folders are hidden.");
-            alert.showAndWait();
+            createAttatchmentErrorDialog();
         }
         else {
             String extension = splitPath[1];
@@ -131,14 +133,11 @@ public class FXMLController implements Initializable {
 
             }
             else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Invalid Filetype");
-                alert.setHeaderText("You chose an filetype that is not yet supported.");
-                alert.setContentText("Error: The only currently supported filetpyes are: png, jpeg, jpg, bmp and gif");
-                alert.showAndWait();
+                createAttatchmentFileFormatErrorDialog();
             }
         }
     }
+
 
     @FXML
     private void handleSettings(ActionEvent actionEvent) {
@@ -174,6 +173,9 @@ public class FXMLController implements Initializable {
                     setGraphic(null);
                     return;
                 }
+                else {
+
+                }
             }
         });
     }
@@ -203,7 +205,7 @@ public class FXMLController implements Initializable {
                     }
                     else {
                         Image image;
-                        if (user.getStatus() == CommUtil.UserStatus.OFFLINE){
+                        if (user.getChannelID() == 0){
                             image = new Image(user.OFFLINE_AVATAR);
                         }
                         else {
@@ -238,7 +240,12 @@ public class FXMLController implements Initializable {
                         Image image = new Image(message.getMessageContent());
                         imageView.setImage(image);
                         imageView.setPreserveRatio(true);
-                        imageView.setFitWidth(500);
+                        if (imageView.getFitHeight() >= imageView.getFitWidth()) {
+                                imageView.setFitHeight(300);
+                        }
+                        else{
+                                imageView.setFitWidth(500);
+                        }
                         setGraphic(imageView);
                         setContentDisplay(ContentDisplay.BOTTOM);
                         setAlignment(Pos.CENTER_LEFT);
@@ -320,6 +327,8 @@ public class FXMLController implements Initializable {
         }
         settingsController mSettings = loader.getController();
         mSettings.setConfigUtil(mConfigUtil);
+        mSettings.setmClient(mClient);
+        mSettings.setClientParseData(mClientParseData);
         mSettings.setBackgroundImageView(chatBackground);
 
         return dialog;
@@ -337,11 +346,49 @@ public class FXMLController implements Initializable {
     @FXML
     public void handleMute(ActionEvent actionEvent) {
         //TODO: Toggles the mute on voice in but not out from the client
+    	if (mClient.getVoiceStatus()){
+    		mVoice.endBrodcast();
+            muteButton.setText("Unmute");
+    	}
+    	else{
+    		mVoice.startBrodcast();
+            muteButton.setText("Mute");
+    	}
     }
 
     @FXML
     public void handleVoipConnection(ActionEvent actionEvent) {
         //TODO: Initialize voice client... NEED Conroy
+    	
+    	if (mClient.isConnectedToVoice()){
+    		mVoice.disconnectFromVoice();
+            connectButton.setText("Connect");
+    	}
+    	else{
+    		mVoice.connectToVoice();
+            connectButton.setText("Disconnect");
+    	}
     }
+    
+    public void setVoiceChat(VoiceChat gVoice){
+    	this.mVoice = gVoice;
+    }
+
+    private void createAttatchmentErrorDialog() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Invalid File Path");
+        alert.setHeaderText("You chose an invalid file path");
+        alert.setContentText("Error: (> 1 . in file path) Make sure that none of the folders are hidden.");
+        alert.showAndWait();
+    }
+
+    private void createAttatchmentFileFormatErrorDialog() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Invalid Filetype");
+        alert.setHeaderText("You chose an filetype that is not yet supported.");
+        alert.setContentText("Error: The only currently supported filetpyes are: png, jpeg, jpg, bmp and gif");
+        alert.showAndWait();
+    }
+
 
 }

@@ -122,13 +122,6 @@ func Int_Converter(num uint) []byte {
 	return data
 }
 
-//TODO
-func String_Converter(str string) []byte {
-	data := make([]byte, 4)
-	data = []byte(str)
-	return data
-}
-
 //Returns Current Millisecond time as unsigned int
 func Milli_Time() uint {
 	return uint(time.Now().UnixNano() / 1000000000)

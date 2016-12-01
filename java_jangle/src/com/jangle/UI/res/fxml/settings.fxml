@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: #3f3f3f;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jangle.UI.settingsController">
    <children>
       <Label layoutX="15.0" layoutY="10.0" text="Settings" textFill="WHITE" />
       <Label layoutX="15.0" layoutY="50.0" text="Background:" textFill="WHITE" />
       <Label fx:id="pathToBackground" layoutX="85.0" layoutY="50.0" prefHeight="17.0" prefWidth="132.0" text="path" textFill="WHITE" />
-      <Button fx:id="backgroundButton" onAction="#handleBackgroundChange" layoutX="230.0" layoutY="46.0" mnemonicParsing="false" scaleX="0.8" scaleY="0.75" text="Change" />
+      <Button fx:id="backgroundButton" layoutX="230.0" layoutY="46.0" mnemonicParsing="false" onAction="#handleBackgroundChange" scaleX="0.8" scaleY="0.75" text="Change" />
+      <Button fx:id="userIconButton" layoutX="233.0" layoutY="144.0" mnemonicParsing="false" onAction="#handleUserIconChange" text="Change">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Button>
+      <Label layoutX="15.0" layoutY="82.0" prefHeight="17.0" prefWidth="246.0" text="Profile Icon (Change applies on Settings close)" textFill="WHITE" />
+      <ImageView fx:id="userIcon" fitHeight="106.0" fitWidth="211.0" layoutX="14.0" layoutY="103.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>

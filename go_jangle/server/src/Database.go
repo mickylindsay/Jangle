@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"errors"
 )
 
 //Returns a connection to the mysql database at the location either prompted or found in the file .databasedsn in the directory of the executable
@@ -46,7 +47,7 @@ func Connect_Database() (*sql.DB, error) {
 func User_Login(u []byte, p []byte) (uint, error) {
 	if !jangle.no_database {
 		var userid uint
-		err := jangle.db.QueryRow("SELECT userid FROM users WHERE username =? AND passwordhash=?", string(u[:Byte_Array_Length(u)]), string(p)).Scan(&userid)
+		err := jangle.db.QueryRow("SELECT userid FROM users WHERE username = ? AND passwordhash = ?", string(u[:Byte_Array_Length(u)]), string(p)).Scan(&userid)
 		return userid, err
 	}
 	return 1, nil
@@ -83,8 +84,8 @@ func User_Create(u []byte, p []byte) (uint, error) {
 	return 1, nil
 }
 
-//Inserts a new Message into the database
-//TODO implement roomid and serverid
+//Inserts a new Message from the current user in the users room and server into the database
+//The message is time stamped when the server handles the message, not when the messages is sent by the user
 func Message_Create(user *User, messagetext []byte) (uint, error) {
 	var i uint
 	if !jangle.no_database {
@@ -113,7 +114,9 @@ func Get_Server_Owner_Id(serverid uint) (uint, error) {
 func Get_Offset_Messages(user *User, offset uint) ([]Message, error) {
 	if !jangle.no_database {
 		i := 0
+		//Array to store messages up to 50
 		messages := make([]Message, 50)
+		//Temp variables used to scan the database row
 		var (
 			time_read   uint
 			text_read   string
@@ -121,8 +124,10 @@ func Get_Offset_Messages(user *User, offset uint) ([]Message, error) {
 		)
 		//Query 50 rows of messages
 		rows, err := jangle.db.Query("SELECT userid, time, messagetext FROM messages WHERE serverid = ? AND roomid = ? ORDER BY messageid DESC LIMIT 50 OFFSET  ?", user.serverid, user.roomid, offset*50)
-		Check_Error(err)
-		defer rows.Close()
+		if err != nil {
+			return nil, err;
+		}
+		defer rows.Close();
 		//Iterate through the rows
 		for rows.Next() {
 			//Scan the columns into variables
@@ -150,7 +155,7 @@ func Get_Userid_Messages(serverid uint) ([]Message, error) {
 		i := 0
 		messages := make([]Message, 50)
 		//Query 50 rows of messages
-		rows, err := jangle.db.Query("SELECT userid FROM members  WHERE ? = serverid", serverid)
+		rows, err := jangle.db.Query("SELECT userid FROM members WHERE ? = serverid", serverid)
 		if err != nil {
 			return nil, err
 		}
@@ -257,13 +262,12 @@ func Get_Room_Display_Name(serverid uint, roomid uint) ([]byte, error) {
 func Get_Display_Name(serverid uint, userid uint) ([]byte, error) {
 	if !jangle.no_database {
 		var temp string
+		//Attempts to find the server specific display name
 		fmt.Println("Attempting Server Unique Display Name.")
 		err := jangle.db.QueryRow("SELECT displayname FROM display WHERE serverid = ? and userid = ?", serverid, userid).Scan(&temp)
-
+		//If server specific display name does not exist, request the master display name.
 		if err != nil {
-
 			fmt.Println("Attempting Master Unique Display Name.")
-
 			return Get_Master_Display_Name(userid)
 		}
 		return []byte(temp), err
@@ -281,11 +285,14 @@ func Get_Master_Display_Name(userid uint) ([]byte, error) {
 //Inserts or update a new server specific display name
 func Set_New_Display_Name(serverid uint, userid uint, name []byte) error {
 	if !jangle.no_database {
+		//Checks if user has server specific display name for current server
 		err := jangle.db.QueryRow("SELECT displayname FROM display WHERE serverid = ? and userid = ?", serverid, userid)
 		if err != nil {
+			//Changes existing display name if it exists
 			_, e := jangle.db.Exec("UPDATE display  SET displayname = ? WHERE userid = ? AND serverid = ?;", string(name), userid, serverid)
 			return e
 		} else {
+			//Creates new display name if not exists
 			_, e := jangle.db.Exec("INSERT INTO display (userid, serverid, displayname) VALUES (?,?,?);", userid, serverid, string(name))
 			return e
 		}
@@ -326,22 +333,25 @@ func Join_Server(user *User) error {
 	return nil
 }
 
-//TODO
+//Returns url string for the user's icon
 func Get_User_Icon(userid uint) (string, error) {
 	var temp string
 	err := jangle.db.QueryRow("SELECT imagepath FROM users WHERE userid = ?", userid).Scan(&temp)
 	return temp, err
 }
 
-//TODO
+//Returns url string for the server's icon
 func Get_Server_Icon(serverid uint) (string, error) {
 	var temp string
 	err := jangle.db.QueryRow("SELECT imagepath FROM servers WHERE userid = ?", serverid).Scan(&temp)
 	return temp, err
 }
 
-//TODO
+//Updates the user's icon to a new string. 
 func Set_New_User_Icon(userid uint, url string) error {
+	if len(url) > 256{
+		return errors.New("Cannot use URL longer than 256 characters");
+	}
 	if !jangle.no_database {
 		_, e := jangle.db.Exec("UPDATE users SET imagepath = ? WHERE userid = ?", url, userid)
 		return e
@@ -349,15 +359,19 @@ func Set_New_User_Icon(userid uint, url string) error {
 	return nil
 }
 
-//TODO
+//Updates the server's icon to a new string. 
 func Set_New_Server_Icon(serverid uint, url string) error {
-		if !jangle.no_database {
+	if len(url) > 256{
+		return errors.New("Cannot use URL longer than 256 characters");
+	}
+	if !jangle.no_database {
 		_, e := jangle.db.Exec("UPDATE servers SET imagepath = ? WHERE serverid = ?", url, serverid)
 		return e
 	}
 	return nil
 }
 
+//Returns an array of user ids if they belong to a given server
 func Get_Member_Userid(serverid uint) ([]uint, error){
 	var userid uint
 	i := 0

@@ -10,7 +10,7 @@ import com.jangle.communicate.CommUtil;
 public class User {
 
     private final String DEFAULT_AVATAR = "http://res.freestockphotos.biz/pictures/17/17384-illustration-of-a-red-santa-hat-pv.png";
-    public final String OFFLINE_AVATAR = "https://s-media-cache-ak0.pinimg.com/originals/cf/d1/af/cfd1affd6cdb9b79c0822518f8dc4a1e.gif";
+    public final String OFFLINE_AVATAR = "https://d30y9cdsu7xlg0.cloudfront.net/png/215345-200.png";
 
     private int id;
     private CommUtil.UserStatus status;
