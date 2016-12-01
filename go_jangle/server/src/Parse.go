@@ -247,12 +247,18 @@ func User_Ip_Message(user *User, data []byte) Message {
 	m := Create_Message(request_user_ip, data[1:5])
 	u := Get_User_From_Userid(Byte_Converter(m.userid))
 	if u == nil{
+<<<<<<< HEAD
+		m = Create_Message(error_check, []byte("Cannot request IP of user who is not logged in."))
+		Send_Message(user, m)
+		return m;
+=======
 		m = Create_Message(error_check, []byte("Failed to retrieve ip from user that is not logged in"))
 		Send_Message(user, m)
 	} else {
 		address := u.Get_Local_Address()
 		m = Create_Message(recieve_user_ip, m.userid, []byte(address))
 		Send_Message(user, m)
+>>>>>>> 8893d2bc3ef2e3b71853b757cd7e2afe1d55d97b
 	}
 	return m
 }
