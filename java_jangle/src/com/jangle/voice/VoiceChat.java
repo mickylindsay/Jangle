@@ -68,8 +68,9 @@ public class VoiceChat implements Runnable {
 		broadcasting = false;
 		connectedToVoice = false;
 
-		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser);
 		Recieving = new DatagramSocket(gport);
+		
+		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser, Recieving);
 
 		// If speak is true, the user wants to start speaking right away
 		if (speak) {
@@ -210,10 +211,9 @@ public class VoiceChat implements Runnable {
 
 	@Override
 	public void run() {
-		byte[] data = new byte[VoiceUtil.VOICE_DATA_SIZE + 4];
 		byte[] toSpeaker = new byte[VoiceUtil.VOICE_DATA_SIZE];
 		byte[] amb = new byte[4];
-		DatagramPacket packet = new DatagramPacket(data, data.length);
+		DatagramPacket packet = new DatagramPacket(toSpeaker, toSpeaker.length);
 		int loop = 1;
 		int numUsers = 0;
 		int amountRead = 0;
@@ -225,29 +225,32 @@ public class VoiceChat implements Runnable {
 
 			try {
 				Recieving.receive(packet);
-				data = packet.getData();
+				toSpeaker = packet.getData();
 			} catch (IOException e) {
 				//stuff
 			}
-			
+			/**
 			amb[0] = data[0];
 			amb[1] = data[1];
 			amb[2] = data[2];
 			amb[3] = data[3];
 			
 			amountRead += VoiceUtil.byteToInt(amb);
-			
+			*/
 			numUsers = numUsersInSameChannel();
 			if (numUsers == 0) {
 				continue;
 			}
-
+			
+			speakers.write(toSpeaker, 0, toSpeaker.length);
+			
+			/*
 			if (loop % numUsers == 0) {
 				loop = 0;
 
 				for (int i = 0; i < toSpeaker.length; i++) {
 					//toSpeaker[i] = (byte) ((data[i + 4] + toSpeaker[i]) >> 1);
-					toSpeaker[i] = data[i + 4];
+					toSpeaker[i] = data[i];
 				} 
 
 				speakers.write(toSpeaker, 0, amountRead);
@@ -260,6 +263,7 @@ public class VoiceChat implements Runnable {
 				}
 			}
 			loop += 1;
+			*/
 
 		}
 	}

@@ -1,6 +1,11 @@
 package com.jangle.voice;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFormat;
@@ -24,6 +29,7 @@ public class VoiceBroadcast implements Runnable {
 	private Client Cl;
 	private ArrayList<User> Users;
 	private Client_ParseData Parser;
+	private DatagramSocket Send;
 
 	private boolean sendAll;
 	private int dataWidth;
@@ -32,7 +38,7 @@ public class VoiceBroadcast implements Runnable {
 	private int port;
 
 	public VoiceBroadcast(ArrayList<User> gUsers, AudioFormat gformat, Client gCl, int gport,
-			Client_ParseData gParser) {
+			Client_ParseData gParser, DatagramSocket gSend) {
 		Users = gUsers;
 		// connections = gConnections;
 		sendAll = false;
@@ -40,6 +46,12 @@ public class VoiceBroadcast implements Runnable {
 		Cl = gCl;
 		port = gport;
 		Parser = gParser;
+		try {
+			Send = new DatagramSocket();
+		} catch (SocketException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		try {
 
@@ -51,7 +63,6 @@ public class VoiceBroadcast implements Runnable {
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public void startBrodcast() {
@@ -97,12 +108,14 @@ public class VoiceBroadcast implements Runnable {
 	@Override
 	public void run() {
 		int amount;
+		DatagramPacket packet;
 		
 		while (sendAll) {
 			int sum = 0;
 			connections = new ArrayList<VoiceChatSocket>();
 
-			amount = microphone.read(micData, 0, VoiceUtil.VOICE_DATA_BUFFER_SIZE);
+			amount = microphone.read(micData, 0, VoiceUtil.VOICE_DATA_SIZE);
+			
 			
 			
 			/*
@@ -119,6 +132,35 @@ public class VoiceBroadcast implements Runnable {
 				if (!Users.get(i).isChannel()) {
 					if (Cl.getCurrentChannelID() == Users.get(i).getChannelID() && Users.get(i).getIsMuted() == false
 							&& Users.get(i).getChannelID() != 0) {
+						
+						if (Users.get(i).getIP() == "" || Users.get(i).getIP() == "FAIL"){
+							try {
+								
+								Users.get(i).setIP(Parser.getUserIP(Users.get(i)));
+
+							} catch (IOException e) {
+								//Happens if a communication error occurs. 
+							}
+						}
+						
+						
+						try {
+							packet = new DatagramPacket(micData, micData.length, InetAddress.getByAddress(VoiceUtil.byteIP(Users.get(i).getIP())), port);
+							//packet = new DatagramPacket(micData, micData.length, InetAddress.getLocalHost(), port);
+						} catch (UnknownHostException e1) {
+							// TODO Auto-generated catch block
+							continue;
+						}
+						
+						try {
+							Send.send(packet);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+						// old code that I am to attached to to delete
+						
 						/*
 						 * NOTE, this does not care if the user wants to receive
 						 * data, it will send it to users with the same channel
@@ -126,15 +168,15 @@ public class VoiceBroadcast implements Runnable {
 						 * recieving enabled, the packet will get ignored on the
 						 * reciever's end
 						 */
-						try {
-							connections.add(new VoiceChatSocket(Users.get(i), port, Parser));
-							connections.get(sum).sendVoice(micData, amount);
-							sum += 1;
-						} catch (IOException e) {
-							System.out.println("failed");
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+//						try {
+//							connections.add(new VoiceChatSocket(Users.get(i), port, Parser));
+//							connections.get(sum).sendVoice(micData, amount);
+//							sum += 1;
+//						} catch (IOException e) {
+//							System.out.println("failed");
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
 						
 					}
 
