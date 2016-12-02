@@ -337,13 +337,14 @@ func Join_Server(user *User) error {
 func Get_User_Icon(userid uint) (string, error) {
 	var temp string
 	err := jangle.db.QueryRow("SELECT imagepath FROM users WHERE userid = ?", userid).Scan(&temp)
+	fmt.Println(temp);
 	return temp, err
 }
 
 //Returns url string for the server's icon
 func Get_Server_Icon(serverid uint) (string, error) {
 	var temp string
-	err := jangle.db.QueryRow("SELECT imagepath FROM servers WHERE userid = ?", serverid).Scan(&temp)
+	err := jangle.db.QueryRow("SELECT imagepath FROM servers WHERE serverid = ?", serverid).Scan(&temp)
 	return temp, err
 }
 
