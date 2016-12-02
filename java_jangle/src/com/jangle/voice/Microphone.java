@@ -17,6 +17,7 @@ public class Microphone {
 		AudioFormat format = new AudioFormat(8000.0f, 16, 1, true, true);
 		TargetDataLine microphone;
 		SourceDataLine speakers;
+		int i = 0;
 		try {
 			microphone = AudioSystem.getTargetDataLine(format);
 
@@ -27,7 +28,7 @@ public class Microphone {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			int numBytesRead;
 			int CHUNK_SIZE = 1024;
-			byte[] data = new byte[1024 * 5];
+			byte[] data = new byte[microphone.getBufferSize() / 6];
 			microphone.start();
 
 			int bytesRead = 0;
@@ -40,7 +41,7 @@ public class Microphone {
 			
 			
 			
-			while (bytesRead < 100000) {
+			while (i > -1) {
 				numBytesRead = microphone.read(data, 0, CHUNK_SIZE);
 				bytesRead += numBytesRead;
 				// write the mic data to a stream for use later

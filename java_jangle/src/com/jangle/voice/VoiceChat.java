@@ -256,7 +256,7 @@ public class VoiceChat implements Runnable {
 			}
 			else {
 				for (int i = 0; i < toSpeaker.length; i++) {
-					toSpeaker[i] = (byte) ((packet.getData()[i] + toSpeaker[i]) >> 1);
+					toSpeaker[i] = data[i + 4];
 				}
 			}
 			loop += 1;
