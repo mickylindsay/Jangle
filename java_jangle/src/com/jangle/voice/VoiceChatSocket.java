@@ -34,6 +34,7 @@ public class VoiceChatSocket implements Runnable {
 	private User User;
 
 	private String adress;
+	private int amount;
 
 	/**
 	 * Create socket to communicate with
@@ -55,8 +56,9 @@ public class VoiceChatSocket implements Runnable {
 		
 	}
 	
-	public void sendVoice(byte[] data){
+	public void sendVoice(byte[] data, int gamount){
 		Data = data;
+		amount = gamount;
 		Thread th = new Thread(this);
 		th.start();
 	}
@@ -80,9 +82,22 @@ public class VoiceChatSocket implements Runnable {
 			return;
 		}
 		
+		byte[] toClient = new byte[Data.length + 4];
+		byte[] amb = VoiceUtil.intToByteArr(amount);
+		
+		for (int i = 0; i < Data.length; i++){
+			toClient[4 + i] = Data[i];
+		}
+		
+		toClient[0] = amb[0];
+		toClient[1] = amb[1];
+		toClient[2] = amb[2];
+		toClient[3] = amb[3];
+		
 		DatagramPacket packet = null;
 		try {
-			packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, InetAddress.getByAddress(VoiceUtil.byteIP(Address)), port);
+			//packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_SIZE, InetAddress.getByAddress(VoiceUtil.byteIP(Address)), port);
+			packet = new DatagramPacket(toClient, toClient.length, InetAddress.getLocalHost(), port);
 		} catch (UnknownHostException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

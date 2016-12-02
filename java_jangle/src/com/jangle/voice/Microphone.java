@@ -27,7 +27,7 @@ public class Microphone {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			int numBytesRead;
 			int CHUNK_SIZE = 1024;
-			byte[] data = new byte[microphone.getBufferSize() / 5];
+			byte[] data = new byte[1024 * 5];
 			microphone.start();
 
 			int bytesRead = 0;

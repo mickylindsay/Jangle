@@ -46,7 +46,7 @@ public class VoiceBroadcast implements Runnable {
 			// init microphone
 			DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 			microphone = (TargetDataLine) AudioSystem.getLine(info);
-			micData = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
+			micData = new byte[VoiceUtil.VOICE_DATA_SIZE];
 
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
@@ -96,14 +96,15 @@ public class VoiceBroadcast implements Runnable {
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		int amount;
 		
-
 		while (sendAll) {
 			int sum = 0;
 			connections = new ArrayList<VoiceChatSocket>();
 
-			microphone.read(micData, 0, micData.length);
+			amount = microphone.read(micData, 0, VoiceUtil.VOICE_DATA_BUFFER_SIZE);
+			
+			
 			/*
 			 * This block is used if an external class/thread manages the
 			 * connections ArrayList
@@ -127,7 +128,7 @@ public class VoiceBroadcast implements Runnable {
 						 */
 						try {
 							connections.add(new VoiceChatSocket(Users.get(i), port, Parser));
-							connections.get(sum).sendVoice(micData);
+							connections.get(sum).sendVoice(micData, amount);
 							sum += 1;
 						} catch (IOException e) {
 							System.out.println("failed");
@@ -140,12 +141,7 @@ public class VoiceBroadcast implements Runnable {
 				}
 			}
 
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 		}
 
 	}
