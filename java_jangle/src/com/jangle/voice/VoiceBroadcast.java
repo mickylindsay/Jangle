@@ -115,7 +115,6 @@ public class VoiceBroadcast implements Runnable {
 			 */
 			
 			for (int i = 0; i < Users.size(); i++) {
-				Parser.requestUserStatus(Cl.getUsersArrayList().get(i));
 				if (!Users.get(i).isChannel()) {
 					if (Cl.getCurrentChannelID() == Users.get(i).getChannelID() && Users.get(i).getIsMuted() == false
 							&& Users.get(i).getChannelID() != 0) {

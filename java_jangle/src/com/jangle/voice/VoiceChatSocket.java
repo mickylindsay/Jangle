@@ -65,6 +65,7 @@ public class VoiceChatSocket implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		
 		if (User.getIP() == "" || User.getIP() == "FAIL" || Address == null){
 			try {
 				
@@ -74,13 +75,14 @@ public class VoiceChatSocket implements Runnable {
 				//Happens if a communication error occurs. 
 			}
 		}
+		
 		if (User.getIP() == "" || User.getIP() == "FAIL" || Address == null){
 			return;
 		}
 		
 		DatagramPacket packet = null;
 		try {
-			packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, InetAddress.getByAddress(VoiceUtil.byteIP(User.getIP())), port);
+			packet = new DatagramPacket(Data, VoiceUtil.VOICE_DATA_BUFFER_SIZE, InetAddress.getByAddress(VoiceUtil.byteIP(Address)), port);
 		} catch (UnknownHostException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
