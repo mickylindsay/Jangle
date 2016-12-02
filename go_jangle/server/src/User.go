@@ -71,10 +71,13 @@ func (u *User) Read(read_data []byte) (int, error) {
 }
 
 func (u *User) Write(write_data []byte) (int, error) {
-	data := make([]byte, len(write_data)+4)
-	copy(data[:3], Int_Converter(uint(len(write_data))))
-	copy(data[4:], write_data[:])
-	return (*(*u).c).Write(data)
+	if u.logged_in || (write_data[0] == login_success){
+		data := make([]byte, len(write_data)+4)
+		copy(data[:3], Int_Converter(uint(len(write_data))))
+		copy(data[4:], write_data[:])
+		return (*(*u).c).Write(data)
+	}
+	return 0,nil
 }
 
 //Returns true if user has permission passed into function

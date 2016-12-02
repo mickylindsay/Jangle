@@ -71,6 +71,7 @@ func Login_Message(user *User, data []byte) Message {
 	id, err := User_Login(m.username, m.password)
 	if err == nil {
 		user.id = id
+		user.logged_in = true;
 		m = Create_Message(login_success, Int_Converter(id))
 		Send_Message(user, m)
 		user.status = uint(online);
