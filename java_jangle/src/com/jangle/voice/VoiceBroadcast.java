@@ -126,7 +126,7 @@ public class VoiceBroadcast implements Runnable {
 			for (int i = 0; i < Users.size(); i++) {
 				if (!Users.get(i).isChannel()) {
 					if (Cl.getCurrentChannelID() == Users.get(i).getChannelID() && Users.get(i).getIsMuted() == false
-							&& Users.get(i).getChannelID() != 0) {
+							&& Users.get(i).getChannelID() != 0 && Users.get(i).getId() != Cl.getUserID()) {
 						
 						if (Users.get(i).getIP() == "" || Users.get(i).getIP() == "FAIL"){
 							try {
@@ -138,7 +138,7 @@ public class VoiceBroadcast implements Runnable {
 							}
 						}
 						
-						
+						System.out.println("Broaddcasting to " + Cl.getUserID() + " isChannel" + Users.get(i).isChannel());
 						try {
 							packet = new DatagramPacket(micData, micData.length, InetAddress.getByAddress(VoiceUtil.byteIP(Users.get(i).getIP())), port);
 							//packet = new DatagramPacket(micData, micData.length, InetAddress.getLocalHost(), port);

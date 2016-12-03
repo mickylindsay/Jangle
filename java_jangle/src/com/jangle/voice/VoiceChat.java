@@ -99,7 +99,6 @@ public class VoiceChat implements Runnable {
 
 			// start recieving data
 			recieveData();
-			connectedToVoice = true;
 			Cl.setConnectedToVocie(true);
 			Parser.sendUserStatusChange();
 
@@ -114,8 +113,9 @@ public class VoiceChat implements Runnable {
 		connections.clear();
 		stopSpeakers();
 		stopRecieve();
-		endBrodcast();
-		connectedToVoice = false;
+		if (broadcasting){
+			endBrodcast();
+		}
 		Cl.setConnectedToVocie(false);
 		Parser.sendUserStatusChange();
 	}
@@ -125,10 +125,9 @@ public class VoiceChat implements Runnable {
 	 * users if you are connected to voice chat
 	 */
 	public void startBrodcast() {
-		if (!broadcasting && connectedToVoice) {
+		if (!Cl.getBroadcastStatus() && Cl.isConnectedToVoice()) {
 			Madden.startBrodcast();
-			broadcasting = true;
-			Cl.setVoiceStatus(true);
+			Cl.setBroadcastStatus(true);
 			Parser.sendUserStatusChange();
 		}
 	}
@@ -138,9 +137,8 @@ public class VoiceChat implements Runnable {
 	 * the voice chat, and will still be receiving voice data
 	 */
 	public void endBrodcast() {
-		// Madden.stopBrodcast();
-		broadcasting = false;
-		Cl.setVoiceStatus(false);
+		Madden.stopBrodcast();
+		Cl.setBroadcastStatus(false);
 		Parser.sendUserStatusChange();
 	}
 
