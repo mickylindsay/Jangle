@@ -46,12 +46,7 @@ public class VoiceBroadcast implements Runnable {
 		Cl = gCl;
 		port = gport;
 		Parser = gParser;
-		try {
-			Send = new DatagramSocket();
-		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		Send = gSend;
 
 		try {
 

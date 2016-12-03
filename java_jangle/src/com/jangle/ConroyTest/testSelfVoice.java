@@ -29,7 +29,7 @@ public class testSelfVoice {
 		
 		Cl.getUsersArrayList();
 		
-		User Nate = TestUtil.newNathan();
+		User Nate = TestUtil.newTom();
 		Nate.setIP("localhost");
 		Cl.addUser(Nate);
 		Nate.setChannelID(1);
