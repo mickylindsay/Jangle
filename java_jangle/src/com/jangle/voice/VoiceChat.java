@@ -44,10 +44,6 @@ public class VoiceChat implements Runnable {
 	private int port;
 	private int userID;
 
-	// error checking variabltes
-	private boolean connectedToVoice;
-	private boolean broadcasting;
-
 	public VoiceChat(int gport, boolean speak, Client gCl, Client_ParseData gParser) throws SocketException {
 		format = VoiceUtil.genFormat();
 		try {
@@ -65,9 +61,6 @@ public class VoiceChat implements Runnable {
 		Cl = gCl;
 		Users = Cl.getUsersArrayList();
 		Parser = gParser;
-		broadcasting = false;
-		connectedToVoice = false;
-
 		Recieving = new DatagramSocket(gport);
 		
 		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser, Recieving);
@@ -88,7 +81,7 @@ public class VoiceChat implements Runnable {
 	 * To start sending voice to other users, call the function StartBrodcast();
 	 */
 	public void connectToVoice() {
-		if (!connectedToVoice) {
+		if (!Cl.isConnectedToVoice()) {
 
 			// Start speakers
 			try {
@@ -113,7 +106,7 @@ public class VoiceChat implements Runnable {
 		connections.clear();
 		stopSpeakers();
 		stopRecieve();
-		if (broadcasting){
+		if (Cl.getBroadcastStatus()){
 			endBrodcast();
 		}
 		Cl.setConnectedToVocie(false);

@@ -138,7 +138,6 @@ public class VoiceBroadcast implements Runnable {
 							}
 						}
 						
-						System.out.println("Broaddcasting to " + Cl.getUserID() + " isChannel" + Users.get(i).isChannel());
 						try {
 							packet = new DatagramPacket(micData, micData.length, InetAddress.getByAddress(VoiceUtil.byteIP(Users.get(i).getIP())), port);
 							//packet = new DatagramPacket(micData, micData.length, InetAddress.getLocalHost(), port);
