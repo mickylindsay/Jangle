@@ -23,6 +23,7 @@ public class messageThread implements Runnable {
     private ArrayList<Message> messages;
     private ArrayList<User> mUsers;
     private ObservableList<User> mUserList;
+    private Thread t;
 
 
     public messageThread(Client client, FXMLController ui){
@@ -32,7 +33,7 @@ public class messageThread implements Runnable {
         this.messages = new ArrayList<>();
         this.mUserList = FXCollections.observableArrayList();
         this.mUsers = new ArrayList<>();
-        Thread t = new Thread(this);
+        this.t = new Thread(this);
         t.start();
     }
 
@@ -84,9 +85,6 @@ public class messageThread implements Runnable {
                 int difference = mClient.getUsers().size() - uSize;
                 for (int i = 0; i < difference; i++) {
                     mUsers.add(mClient.getUsers().get(mClient.getUsers().size() - difference + i));
-                    //TODO: Display name updates and caching
-                    //TODO: Look into displaying the channels and adding an on click handler
-                    //TODO: Chack out using the clients user list instead for possible memory saving
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -117,5 +115,9 @@ public class messageThread implements Runnable {
                 });
             }
         }
+    }
+
+    public void stopThread() {
+        t.interrupt();
     }
 }

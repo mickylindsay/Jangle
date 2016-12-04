@@ -22,6 +22,9 @@ public class Client_ParseData implements IPARSER {
 	private String RoomDisplayName;
 	private String IP;
 
+    //TODO: When user logs in echo to all other online users
+    //TODO: When user exits handle shutdown
+
 	/**
 	 * Create a parser object with no Client_Commmunicator attached to it.
 	 * 
@@ -251,7 +254,7 @@ public class Client_ParseData implements IPARSER {
             int userID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
             String img = new String(Arrays.copyOfRange(data, 5, data.length));
 
-            mClient.findUser(userID).setAvatar(img);
+            mClient.findUser(userID).setImage(img);
         }
 
         else if(data[0] == CommUtil.RECIEVE_ERROR) {

@@ -9,7 +9,6 @@ import com.jangle.client.User;
 import com.jangle.communicate.Client_ParseData;
 import com.jangle.voice.VoiceChat;
 
-import com.jangle.communicate.CommUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -28,11 +27,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.print.DocFlavor;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +45,7 @@ public class FXMLController implements Initializable {
 
     private Client_ParseData mClientParseData;
     private Client mClient;
-    private messageThread messageThread;
+    private messageThread mMessageThread;
     private ConfigUtil mConfigUtil;
     private ObservableList<Message> testlist;
     private VoiceChat mVoice;
@@ -71,18 +68,8 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleSendMessage(ActionEvent actionEvent) {
+        //TODO: Carriage return algorithm
         String message = messageStage.getText();
-        if (message.equals("Gimmie dat messages")){
-            try {
-                mClientParseData.request50MessagesWithOffset(mClient.getMessages().size());
-                messageStage.clear();
-                return;
-            } catch (IOException e) {
-                e.printStackTrace();
-                messageStage.clear();
-                return;
-            }
-        }
         // Send the string to the server
         try {
             mClientParseData.sendMessage(new Message(mClient.getUserID(), message, mClient.getCurrentServerID(), mClient.getCurrentChannelID()));
@@ -196,27 +183,32 @@ public class FXMLController implements Initializable {
                             e.printStackTrace();
                         }
                     }
-                    else if (user.isChannel()){
-                        setGraphic(null);
-                    }
                     else {
-                        Image image;
-                        if (user.getChannelID() == 0){
-                            image = new Image(user.OFFLINE_AVATAR);
+                        if (user.isChannel()) {
+                            setGraphic(null);
+                            setText(user.toString());
+                        } else {
+                            Image image;
+                            if (user.getChannelID() == 0) {
+                                image = new Image(user.OFFLINE_AVATAR, 20, 20, false, true);
+                            }
+                            else {
+                                if (isImg(user.getAvatarURL()))
+                                    image = user.getImage();
+                                else
+                                    image = new Image(user.DEFAULT_AVATAR, 20, 20, false, true);
+                            }
+                            imageView.setImage(image);
+                            setGraphic(imageView);
+                            setContentDisplay(ContentDisplay.LEFT);
+                            setAlignment(Pos.CENTER_LEFT);
+                            //setTextAlignment(TextAlignment.LEFT);
                         }
-                        else {
-                            image = new Image(user.getAvatarURL());
-                        }
-                        imageView.setImage(image);
-                        imageView.setPreserveRatio(true);
-                        imageView.setFitWidth(20);
-                        setGraphic(imageView);
-                        setContentDisplay(ContentDisplay.LEFT);
-                        setAlignment(Pos.CENTER_LEFT);
-                        //setTextAlignment(TextAlignment.LEFT);
                     }
-
-                    setText(user.getDisplayName());
+                    if(user.isChannel())
+                        setText(user.getChannel().toString());
+                    else
+                        setText(user.getDisplayName());
                 }
             });
         }
@@ -233,15 +225,7 @@ public class FXMLController implements Initializable {
                     setGraphic(null);
                 } else {
                     if (message.isImg()) {
-                        Image image = new Image(message.getMessageContent());
-                        imageView.setImage(image);
-                        imageView.setPreserveRatio(true);
-                        if (imageView.getFitHeight() >= imageView.getFitWidth()) {
-                                imageView.setFitHeight(300);
-                        }
-                        else{
-                                imageView.setFitWidth(500);
-                        }
+                        imageView.setImage(message.getImage());
                         setGraphic(imageView);
                         setContentDisplay(ContentDisplay.BOTTOM);
                         setAlignment(Pos.CENTER_LEFT);
@@ -266,7 +250,7 @@ public class FXMLController implements Initializable {
     public void setmClientParseData(Client_ParseData clientParseData){
         this.mClientParseData = clientParseData;
         this.mClient = mClientParseData.getClient();
-        this.messageThread = new messageThread(mClient, this);
+        this.mMessageThread = new messageThread(mClient, this);
     }
 
     public void setConfigUtil(ConfigUtil configUtil){
@@ -382,5 +366,12 @@ public class FXMLController implements Initializable {
         alert.showAndWait();
     }
 
+    public boolean isImg(String s) {
+        return s.contains("http://") && (s.contains(".png") || s.contains(".jpg") || s.contains(".gif") || s.contains("jpeg") || s.contains(".bmp"));
+    }
+
+    public messageThread getMessageThread() {
+        return mMessageThread;
+    }
 
 }

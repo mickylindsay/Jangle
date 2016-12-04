@@ -3,14 +3,15 @@ package com.jangle.client;
 import java.io.InputStream;
 
 import com.jangle.communicate.CommUtil;
+import javafx.scene.image.Image;
 
 /**
  * Created by Jess on 9/28/2016.
  */
 public class User {
 
-    private final String DEFAULT_AVATAR = "http://res.freestockphotos.biz/pictures/17/17384-illustration-of-a-red-santa-hat-pv.png";
-    public final String OFFLINE_AVATAR = "https://s-media-cache-ak0.pinimg.com/originals/cf/d1/af/cfd1affd6cdb9b79c0822518f8dc4a1e.gif";
+    public final String DEFAULT_AVATAR = "http://res.freestockphotos.biz/pictures/17/17384-illustration-of-a-red-santa-hat-pv.png";
+    public final String OFFLINE_AVATAR = "https://cdn4.iconfinder.com/data/icons/xmas-icons/100/christmas-1-35-512.png";
 
     private int id;
     private CommUtil.UserStatus status;
@@ -22,6 +23,8 @@ public class User {
     private int channelID;
     private boolean voice;
     private boolean isChannel;
+    private Channel channel;
+    private Image mImage;
     
 
     public User(String displayName, int id, int status) {
@@ -35,6 +38,7 @@ public class User {
         this.isMuted = false;
         this.voice = false;
         this.isChannel = false;
+        this.mImage = new Image(DEFAULT_AVATAR, 20, 20, true, true);
     }
     
     public User(String displayName, String userName, int id, int status){
@@ -48,6 +52,7 @@ public class User {
         this.isMuted = false;
         this.voice = false;
         this.isChannel = false;
+        this.mImage = new Image(DEFAULT_AVATAR, 20, 20, true, true);
     }
 
     public User(String displayName, int id) {
@@ -61,6 +66,7 @@ public class User {
         this.isMuted = false;
         this.voice = false;
         this.isChannel = false;
+        this.mImage = new Image(DEFAULT_AVATAR, 20, 20, true, true);
     }
 
     public User(Channel channel){
@@ -71,6 +77,7 @@ public class User {
         this.IP = "";
         this.channelID = channel.getId();
         this.isChannel = true;
+        this.channel = channel;
     }
 
     public String getDisplayName() {
@@ -165,6 +172,28 @@ public class User {
 
     public boolean isChannel() {
         return isChannel;
+    }
+
+    public Channel getChannel() {
+        if (isChannel)
+            return channel;
+        else
+            return null;
+    }
+
+    public Image getImage() {
+        return mImage;
+    }
+
+    public void setImage(String newImage) {
+        if (isImg(newImage)) {
+            this.mImage = new Image(newImage, 20, 20, true, true);
+            this.avatarURL = newImage;
+        }
+    }
+
+    public boolean isImg(String s) {
+        return s.contains("http://") && (s.contains(".png") || s.contains(".jpg") || s.contains(".gif") || s.contains("jpeg") || s.contains(".bmp"));
     }
 }
 

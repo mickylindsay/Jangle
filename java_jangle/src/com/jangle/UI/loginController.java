@@ -131,7 +131,7 @@ public class loginController implements Initializable {
         if (rememberUsername.isSelected()) {
             mConfigUtil.setUserName(usernameField.getText());
         }
-
+        mLoginThread.stopThread();
         Stage here = (Stage) logInButton.getScene().getWindow();
         here.close();
     }

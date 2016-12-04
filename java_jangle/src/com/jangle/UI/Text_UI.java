@@ -78,19 +78,22 @@ public class Text_UI extends Application {
 		loginStage.setScene(new Scene(createLoginDialog()));
 		loginStage.showAndWait();
 
-        mClientParseData.request50MessagesWithOffset(0);
-        mClientParseData.requestAllUsersTiedToServer();
-        //TODO: Fix requesting servers
-        mClientParseData.requestAllServers(new User("", mClient.getUserID()));
-        mClient.changeChannel(1);
-        mClientParseData.changeLocation();
-        mClient.setStatus(CommUtil.UserStatus.ONLINE);
-        mClientParseData.sendUserStatusChange();
+        if(mClient.getUserID() != 0) {
+            mClientParseData.request50MessagesWithOffset(0);
+            mClientParseData.requestAllUsersTiedToServer();
+            mClientParseData.requestAllServers(new User("", mClient.getUserID()));
+            mClient.changeChannel(1);
+            mClientParseData.changeLocation();
+            mClient.setStatus(CommUtil.UserStatus.ONLINE);
+            mClientParseData.sendUserStatusChange();
+            mClientParseData.requestAvatarURL(new User("", mClient.getUserID()));
 
 
-        primaryStage.setScene(new Scene(createContent()));
-        primaryStage.show();
+            primaryStage.setScene(new Scene(createContent()));
+            primaryStage.setResizable(false);
+            primaryStage.show();
 
+        }
 	}
 
 }

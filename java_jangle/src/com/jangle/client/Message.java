@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import com.jangle.communicate.CommUtil;
+import javafx.scene.image.Image;
 //import com.jangle.communicate.CommUtil.*;
 
 /**
@@ -17,6 +18,8 @@ public class Message {
 	private long timeStamp;
 	private int serverID;
 	private int channelID;
+    private boolean hasImg;
+    private Image mImage;
 
 	public Message(int userID, String messageContent, long timeStamp, int serverID, int channelID, int messageID) {
 		this.channelID = channelID;
@@ -25,6 +28,11 @@ public class Message {
 		this.timeStamp = timeStamp;
 		this.serverID = serverID;
         this.messageID = messageID;
+
+        if (isImg()){
+            hasImg = true;
+            mImage = new Image(messageContent, 500, 250, true, true);
+        }
 	}
 
 	public Message(int userID, String messageContent, int serverID, int channelID) {
@@ -33,6 +41,11 @@ public class Message {
 		this.serverID = serverID;
 		this.channelID = channelID;
 		this.timeStamp = 0;
+
+        if (isImg()){
+            hasImg = true;
+            mImage = new Image(messageContent, 500, 250, true, true);
+        }
 	}
 
 	/**
@@ -69,6 +82,11 @@ public class Message {
 		this.timeStamp = (long) CommUtil.byteToInt(time);
 		this.messageContent = new String(content);
         this.messageID = CommUtil.byteToInt(messageID);
+
+        if (isImg()){
+            hasImg = true;
+            mImage = new Image(messageContent, 500, 250, true, true);
+        }
 	}
 
 	public Message() {
@@ -123,7 +141,19 @@ public class Message {
 		return userID + "\n" + messageContent + "    " + timeStamp;
 	}
 
-	/**
+    public boolean isHasImg() {
+        return hasImg;
+    }
+
+    public Image getImage() {
+        return mImage;
+    }
+
+    public int getMessageID() {
+        return messageID;
+    }
+
+    /**
 	 * Creates a byte array of this message, in the format required to send the
 	 * message to the server.
 	 * 

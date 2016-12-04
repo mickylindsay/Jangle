@@ -277,7 +277,6 @@ public class Client {
     }
 
     public void addServer(Server server) {
-        //TODO: Add server if server not already added
         if (mServers.get(server.getId()) != null) {
             return;
         }
@@ -321,7 +320,6 @@ public class Client {
         }
         else{
             currentChannelID = id;
-            //TODO: Looking into making mMessages dynamic for messages that SHOULD be displayed at the time
         }
     }
 
@@ -335,21 +333,23 @@ public class Client {
             @Override
             public int compare(User u1, User u2) {
                 //System.out.println("here boi");
-                if (u1.isChannel() && u1.getChannelID() <= u2.getChannelID())
+                if (u1.isChannel() && u1.getChannelID() < u2.getChannelID())
                     return -1;
 
                 else if (u1.isChannel() && u1.getChannelID() > u2.getChannelID())
                     return 1;
 
-                else if (u2.isChannel() && u2.getChannelID() <= u1.getChannelID())
+                else if (u2.isChannel() && u2.getChannelID() < u1.getChannelID())
                     return 1;
 
                 else if (u2.isChannel() && u2.getChannelID() > u1.getChannelID())
                     return -1;
 
-                else if (u1.getChannelID() <= u2.getChannelID())
+                else if (u1.getChannelID() < u2.getChannelID())
                     return -1;
 
+                else if (u1.getChannelID() == u2.getChannelID())
+                    return u1.getDisplayName().compareTo(u2.getDisplayName());
                 else
                     return 1;
             }
