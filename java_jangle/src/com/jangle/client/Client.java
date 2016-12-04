@@ -23,7 +23,7 @@ public class Client {
     private int userID;
     private String displayName;
     private String IP;
-    private boolean voice;
+    private boolean isBroadcasting;
     private CommUtil.UserStatus status;
     private boolean isMuted;
     private boolean locationChanged;
@@ -43,7 +43,7 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
-        this.voice = false;
+        this.isBroadcasting = false;
         this.connectedToVoice = false;
     }
 
@@ -56,7 +56,7 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
-        this.voice = false;
+        this.isBroadcasting = false;
         this.connectedToVoice = false;
     }
 
@@ -70,7 +70,7 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
-        this.voice = false;
+        this.isBroadcasting = false;
         this.connectedToVoice = false;
     }
 
@@ -85,7 +85,7 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
-        this.voice = false;
+        this.isBroadcasting = false;
         this.locationChanged = false;
         this.connectedToVoice = false;
         this.statusChanged = false;
@@ -295,12 +295,12 @@ public class Client {
     	return this.isMuted;
     }
     
-    public void setVoiceStatus(boolean status){
-    	this.voice = status;
+    public void setBroadcastStatus(boolean status){
+    	this.isBroadcasting = status;
     }
     
-    public boolean getVoiceStatus(){
-    	return this.voice;
+    public boolean getBroadcastStatus(){
+    	return this.isBroadcasting;
     }
     
     public CommUtil.UserStatus getStatus() {

@@ -1,19 +1,14 @@
 package main
 
-import "fmt"
-//Master function: takes paramaters type User struct and byte array
-//byte array is the message that is recieved from the client
-//the type User struct is a reference to the connection that represents
-//the client side user that is associated with the byte array message
-//this function determines what type of message is being recieved
-//and calls the appropriate function based off the code type
+//Master function: takes parameters type User and byte array. The byte array is the data in from the client and
+//the type User represents the client connection that sent the byte array. Passes these parameters to a specific
+//function in the below array of funtions corresponding to the first byte (code value) of the byte arrray.
 func Parse_Data(user *User, data []byte) Message {
 	m := jangle.Parsers[data[0]](user, data)
 	return m
 }
 
-//Initializes function array that contains all the functions necessary to handle every
-//message code
+//Initializes function array that contains all the functions necessary to handle every message code.
 func Init_Parse() {
 	Parsers := make([]func(user *User, data []byte) Message, 256)
 
@@ -45,7 +40,9 @@ func Init_Parse() {
 	jangle.Parsers = Parsers
 }
 
-//TODO
+//Reads message code type 0, create user; creates a message with code type 4, login success, if the new user succeeds
+//to be created the sends the message to the client; creates a message with code type 1, create user fail, if the new
+//user fails to be created then writes the data to the user.
 func Create_User_Message(user *User, data []byte) Message {
 	m := Create_Message(create_user, data[1:21], data[21:])
 	id, err := User_Create(m.username, m.password)
@@ -66,18 +63,20 @@ func Create_User_Message(user *User, data []byte) Message {
 	return m
 }
 
-//TODO
+//Reads message code type 2, login; creates a message with code type 4, login success, if the user succeeds to login
+//then sends the message to the client; creates a message with code type 3, login fail, if the user fails to login then
+//writes the data to the user.
 func Login_Message(user *User, data []byte) Message {
 	m := Create_Message(login, data[1:21], data[21:])
 	id, err := User_Login(m.username, m.password)
 	if err == nil {
 		user.id = id
+		user.logged_in = true;
 		m = Create_Message(login_success, Int_Converter(id))
 		Send_Message(user, m)
 		user.status = uint(online);
 		m = Create_Message(recieve_status, Int_Converter(user.id), byte(user.status), byte(user.muted), byte(user.voice))
 		Send_Broadcast_Server(user.serverid, m)
-	
 	} else {
 		m = Create_Message(login_fail)
 		user.Write(m.Build_Message())
@@ -85,13 +84,16 @@ func Login_Message(user *User, data []byte) Message {
 	return m
 }
 
-//TODO
+//Reads message code type 16, message client send; if user is not muted; creates a message with code type 17, message
+//client recieve, if the new message succeeds to be created then broadcasts the message to the server that the user is
+//connected to; checks if the text from the message type is a command; creates a message with code type 255,
+//error check, if the new message fails to be created then sends the message to the client.
 func Standard_Message(user *User, data []byte) Message {
 	m := Create_Message(message_client_send, data[1:5], data[5:9], data[9:13], data[13:])
-	if user.muted != 1 {
+	if user.muted != uint(user_muted) {
 		messageid, err := Message_Create(user, m.text)
 		if err != nil {
-			m = Create_Message(error_check, []byte("Failed to insert message into database"))
+			m = Create_Message(error_check, []byte("Failed to insert new message into database"))
 			Send_Message(user, m)
 		} else {
 			check := Check_Command(user, m.text)
@@ -105,7 +107,9 @@ func Standard_Message(user *User, data []byte) Message {
 	return m
 }
 
-//TODO
+//Reads message code type 32, request n messages; creates multiple messages with code type 17, message client recieve,
+//if the offset messages succeed to be retrieved then sends the messages to the client; creates a message with code type
+//255, error check, if the offset messages fail to be retrieved then sends the message to the client.
 func Offset_Message(user *User, data []byte) Message {
 	m := Create_Message(request_n_messages, data[1])
 	messages, err := Get_Offset_Messages(user, uint(m.offset))
@@ -120,7 +124,9 @@ func Offset_Message(user *User, data []byte) Message {
 	return m
 }
 
-//TODO
+//Reads message code type 33, request all userid; creates multiple messages with code type 48, recieve userid, if the
+//userid messages succeed to be retrieved then sends the messages to the client; creates a message with code type 255,
+//error check, if the userid messages fail to be retrieved then sends the message to the client.
 func Multi_Userid_Message(user *User, data []byte) Message {
 	m := Create_Message(request_all_userid)
 	messages, err := Get_Userid_Messages(user.serverid)
@@ -135,7 +141,7 @@ func Multi_Userid_Message(user *User, data []byte) Message {
 	return m
 }
 
-//I HAVE NO FUCKING IDEA
+//TODO
 func Display_Name_Message(user *User, data []byte) Message {
 	m := Create_Message(request_display_name, data[1:5])
 	requested_display_name, err := Get_Display_Name(user.serverid, Byte_Converter(m.userid))
@@ -242,12 +248,13 @@ func User_Ip_Message(user *User, data []byte) Message {
 	m := Create_Message(request_user_ip, data[1:5])
 	u := Get_User_From_Userid(Byte_Converter(m.userid))
 	if u == nil{
-		fmt.Println("Cannot request IP of user who is not logged in.")
-		return m;
+		m = Create_Message(error_check, []byte("Failed to retrieve ip from user that is not logged in"))
+		Send_Message(user, m)
+	} else {
+		address := u.Get_Local_Address()
+		m = Create_Message(recieve_user_ip, m.userid, []byte(address))
+		Send_Message(user, m)
 	}
-	address := u.Get_Local_Address()
-	m = Create_Message(recieve_user_ip, m.userid, String_Converter(address))
-	Send_Message(user, m)
 	return m
 }
 
@@ -259,7 +266,7 @@ func User_Icon_Message(user *User, data []byte) Message {
 		m = Create_Message(error_check, []byte("Failed to retrieve user icon from database"))
 		Send_Message(user, m)
 	} else {
-		m = Create_Message(recieve_user_icon, m.userid, String_Converter(url))
+		m = Create_Message(recieve_user_icon, m.userid, []byte(url))
 		Send_Message(user, m)
 	}
 	return m

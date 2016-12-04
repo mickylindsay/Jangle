@@ -27,9 +27,17 @@ public class Test {
 
 	public static void main(String[] args) throws IOException, InterruptedException, LineUnavailableException {
 
+		
+		Microphone mic = new Microphone();
+		
+		while (true){
+			
+		}
+		
+		/*
 		Client Cl = new Client();
 		Client_ParseData Parser = null;
-		//TestServer server = new TestServer(9090);
+		TestServer server = new TestServer(9090);
 
 		try {
 			Parser = new Client_ParseData(Cl, "10.25.70.96", 9090);
@@ -64,7 +72,7 @@ public class Test {
 	  }
 		  
 		 
-
+*/
 	}
 
 }

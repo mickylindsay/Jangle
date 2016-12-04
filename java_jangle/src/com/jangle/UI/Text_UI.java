@@ -48,8 +48,6 @@ public class Text_UI extends Application {
         Channel channel = new Channel(1);
         mClient.addServer(server);
         mClient.getServer(1).addChannel(channel);
-        
-        this.mVoice = new VoiceChat(7800, false, mClient, mClientParseData);
 
 		try {
 			this.mClientParseData = new Client_ParseData(mClient, serverIP[0], new Integer(serverIP[1]));
@@ -57,6 +55,7 @@ public class Text_UI extends Application {
 			e.printStackTrace();
 		}
 
+        this.mVoice = new VoiceChat(7800, false, mClient, mClientParseData);
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/login.fxml"));
 		AnchorPane dialog = loader.load();
 		loginController mLogin = loader.getController();

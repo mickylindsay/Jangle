@@ -13,7 +13,7 @@ public final class VoiceUtil {
 	
 	//Constants
 	
-	public static final int VOICE_DATA_BUFFER_SIZE = 1024;
+	public static final int VOICE_DATA_SIZE = 1024;
 	public static final int SLEEP_MILLI_LENGTH = 50;
 	
 	//The audio format used in voice chat. It is passed from voice chat to the other classes.
@@ -24,7 +24,6 @@ public final class VoiceUtil {
 	public static byte[] byteIP(String IP){
 		String tmp = IP.concat(".");
 		
-		System.out.println(tmp);
 		Scanner scan = new Scanner(tmp);
 		scan.useDelimiter("\\.");
 		byte[] ret = new byte[4];
@@ -38,5 +37,25 @@ public final class VoiceUtil {
 		scan.close();
 		
 		return ret;
+	}
+	
+	public static byte[] intToByteArr(int data) {
+		byte[] ret = new byte[4];
+
+		for (int i = 0; i < ret.length; i++){
+			ret[i] = (byte) (data % 256);
+			data = data / 256;
+		}
+		return ret;
+	}
+	
+	public static int byteToInt(byte[] data) {
+
+		return (unsignByte(data[0]) * 1) + (unsignByte(data[1]) * 256) + (unsignByte(data[2]) * 256 * 256)
+				+ (unsignByte(data[3]) * 256 * 256 * 256);
+	}
+	
+	public static int unsignByte(byte data) {
+		return data & 0xFF;
 	}
 }

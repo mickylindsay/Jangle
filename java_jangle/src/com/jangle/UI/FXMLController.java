@@ -64,6 +64,10 @@ public class FXMLController implements Initializable {
     protected ImageView chatBackground;
     @FXML
     private ListView<Server> serverList;
+    @FXML
+    private Button connectButton;
+    @FXML
+    private Button muteButton;
 
 
     @FXML
@@ -326,11 +330,18 @@ public class FXMLController implements Initializable {
     @FXML
     public void handleMute(ActionEvent actionEvent) {
         //TODO: Toggles the mute on voice in but not out from the client
-    	if (mClient.getVoiceStatus()){
-    		mVoice.endBrodcast();
+    	if (!mClient.isConnectedToVoice()){
+    		return;
+    	}
+    	
+    	if (mClient.getBroadcastStatus()){
+            mVoice.endBrodcast();
+            muteButton.setText("Unmute");
+    		
     	}
     	else{
     		mVoice.startBrodcast();
+            muteButton.setText("Mute");
     	}
     }
 
@@ -340,9 +351,11 @@ public class FXMLController implements Initializable {
     	
     	if (mClient.isConnectedToVoice()){
     		mVoice.disconnectFromVoice();
+            connectButton.setText("Connect");
     	}
     	else{
     		mVoice.connectToVoice();
+            connectButton.setText("Disconnect");
     	}
     }
     

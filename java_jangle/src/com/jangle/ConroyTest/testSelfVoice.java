@@ -19,6 +19,7 @@ public class testSelfVoice {
 
 		Client Cl = new Client();
 		Client_ParseData Parser = null;
+		TestServer server = new TestServer(9090);
 		try {
 			Parser = new Client_ParseData(Cl, "localhost", 9090);
 		} catch (IOException e) {
@@ -28,11 +29,13 @@ public class testSelfVoice {
 		
 		Cl.getUsersArrayList();
 		
-		User Nate = TestUtil.newNathan();
-		Nate.setIP("localhost");
+		User Nate = TestUtil.newTom();
+		Nate.setIP("10.1.40.163");
 		Cl.addUser(Nate);
 		Nate.setChannelID(1);
 		Cl.setCurrentChannelID(1);
+		Nate.setIsMuted(false);
+		Nate.setVoiceStatus(true);
 		//Cl.addUser(Nate);
 		
 		
@@ -42,12 +45,6 @@ public class testSelfVoice {
 		test.startBrodcast();
 
 		while (true){
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 
 		

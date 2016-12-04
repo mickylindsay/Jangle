@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
  * Created by Jess on 9/28/2016.
  */
 public class User {
-
+    
     public final String DEFAULT_AVATAR = "http://res.freestockphotos.biz/pictures/17/17384-illustration-of-a-red-santa-hat-pv.png";
     public final String OFFLINE_AVATAR = "https://cdn4.iconfinder.com/data/icons/xmas-icons/100/christmas-1-35-512.png";
 
