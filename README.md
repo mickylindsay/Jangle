@@ -9,6 +9,7 @@ Written by:
 	Jess Walters
 
 Client: Java, JavaFX UI
+
 Server: GoLang, MySQL
 
 
