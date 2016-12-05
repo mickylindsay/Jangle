@@ -78,6 +78,7 @@ public class Text_UI extends Application {
 
 		Stage loginStage = new Stage();
 		loginStage.setScene(new Scene(createLoginDialog()));
+        setOnClose(loginStage);
 		loginStage.showAndWait();
 
         if(mClient.getUserID() != 0) {
@@ -103,7 +104,8 @@ public class Text_UI extends Application {
             @Override
             public void handle(WindowEvent event) {
                 mClientParseData.getComm().endThread();
-                mMainController.getMessageThread().stopThread();
+                if(mMainController != null)
+                    mMainController.getMessageThread().stopThread();
                 Platform.exit();
                 System.exit(0);
             }
