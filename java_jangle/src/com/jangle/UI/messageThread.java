@@ -3,12 +3,9 @@ package com.jangle.UI;
 import com.jangle.client.Client;
 import com.jangle.client.Message;
 import com.jangle.client.User;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.Initializable;
-import javafx.scene.control.TextArea;
 
 import java.util.ArrayList;
 
@@ -24,6 +21,8 @@ public class messageThread implements Runnable {
     private ArrayList<User> mUsers;
     private ObservableList<User> mUserList;
     private Thread t;
+    private long lastMessageTime;
+    private boolean loadingOn;
 
 
     public messageThread(Client client, FXMLController ui){
@@ -33,6 +32,8 @@ public class messageThread implements Runnable {
         this.messages = new ArrayList<>();
         this.mUserList = FXCollections.observableArrayList();
         this.mUsers = new ArrayList<>();
+        this.loadingOn = true;
+        this.lastMessageTime = System.currentTimeMillis();
         this.t = new Thread(this);
         t.start();
     }
@@ -50,6 +51,13 @@ public class messageThread implements Runnable {
             if (mSize == mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).size()){
                 try {
                     Thread.sleep(200);
+
+                    //Removes loading screen if active and thread is silent for 1 second.
+                    if (loadingOn && System.currentTimeMillis() - lastMessageTime > 1000){
+                        ui.finishedLoading();
+                        loadingOn = false;
+                    }
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -73,6 +81,8 @@ public class messageThread implements Runnable {
                     });
                 }
                 mSize = mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).size();
+                if(loadingOn)
+                    lastMessageTime = System.currentTimeMillis();
             }
 
             else {
@@ -94,6 +104,8 @@ public class messageThread implements Runnable {
                     });
                 }
                 uSize = mClient.getUsers().size();
+                if(loadingOn)
+                    lastMessageTime = System.currentTimeMillis();
             }
 
             if (mClient.isLocationChanged()){
@@ -106,7 +118,8 @@ public class messageThread implements Runnable {
                         mClient.setLocationChanged(false);
                     }
                 });
-
+                if(loadingOn)
+                    lastMessageTime = System.currentTimeMillis();
             }
 
             if (mClient.isStatusChanged()) {
@@ -119,6 +132,8 @@ public class messageThread implements Runnable {
                         mClient.setStatusChanged(false);
                     }
                 });
+                if(loadingOn)
+                    lastMessageTime = System.currentTimeMillis();
             }
         }
     }

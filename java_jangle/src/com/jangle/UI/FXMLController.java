@@ -22,6 +22,7 @@ import javafx.scene.control.*;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -68,6 +69,12 @@ public class FXMLController implements Initializable {
     private Button connectButton;
     @FXML
     private Button muteButton;
+    @FXML
+    private Label loadingLabel;
+    @FXML
+    private AnchorPane loadingPane;
+    @FXML
+    private ImageView loadingImage;
 
 
     @FXML
@@ -385,6 +392,12 @@ public class FXMLController implements Initializable {
 
     public messageThread getMessageThread() {
         return mMessageThread;
+    }
+
+    public void finishedLoading() {
+        loadingImage.setVisible(false);
+        loadingLabel.setVisible(false);
+        loadingPane.setVisible(false);
     }
 
 }
