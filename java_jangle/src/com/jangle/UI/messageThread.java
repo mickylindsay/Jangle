@@ -23,6 +23,7 @@ public class messageThread implements Runnable {
     private Thread t;
     private long lastMessageTime;
     private boolean loadingOn;
+    private boolean done;
 
 
     public messageThread(Client client, FXMLController ui){
@@ -34,6 +35,7 @@ public class messageThread implements Runnable {
         this.mUsers = new ArrayList<>();
         this.loadingOn = true;
         this.lastMessageTime = System.currentTimeMillis();
+        this.done = false;
         this.t = new Thread(this);
         t.start();
     }
@@ -46,7 +48,7 @@ public class messageThread implements Runnable {
         int uSize = 0;
 
 
-        while(true) {
+        while(!done) {
 
             if (mSize == mClient.getMessages(mClient.getCurrentServerID(),mClient.getCurrentChannelID()).size()){
                 try {
@@ -139,6 +141,7 @@ public class messageThread implements Runnable {
     }
 
     public void stopThread() {
-        t.interrupt();
+        done = true;
+        //t.interrupt();
     }
 }

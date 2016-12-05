@@ -28,6 +28,8 @@ public class Client_Communicator implements Runnable {
 	 */
 	Client_ParseData Parser;
 
+    private boolean done;
+
 	/**
 	 * 
 	 * @param gParser
@@ -44,6 +46,7 @@ public class Client_Communicator implements Runnable {
 
 		Java_Socket = new Socket(Host, port);
 		Parser = gParser;
+        this.done = false;
 
 		// Initialize PrintWriter to write to the output stream
 
@@ -114,10 +117,14 @@ public class Client_Communicator implements Runnable {
 
 	}
 
+    public void endThread() {
+        this.done = true;
+    }
+
 	@Override
 	public void run() {
 
-		while (true) {
+		while (!done) {
 			
 			try {
 				
