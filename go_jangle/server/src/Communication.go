@@ -32,8 +32,8 @@ func Listen_To_Clients(user *User, e *list.Element) {
 			user.roomid = uint(0)
 			m := Create_Message(recieve_status, Int_Converter(user.id), byte(user.status), byte(user.muted), byte(user.voice))
 			Send_Broadcast_Server(user.serverid, m)
-			m = Create_Message(recieve_location, Int_Converter(request.serverid), Int_Converter(request.roomid), Int_Converter(request.id))
-			send_Broadcast_Server(user.serverid, m)
+			m = Create_Message(recieve_location, Int_Converter(user.serverid), Int_Converter(user.roomid), Int_Converter(user.id))
+			Send_Broadcast_Server(user.serverid, m)
 			break
 		}
 		//If data is recieved by the server with a length of less than 4 bytes, ignore them
