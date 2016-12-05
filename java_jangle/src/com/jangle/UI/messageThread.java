@@ -55,7 +55,7 @@ public class messageThread implements Runnable {
                     Thread.sleep(200);
 
                     //Removes loading screen if active and thread is silent for 1 second.
-                    if (loadingOn && System.currentTimeMillis() - lastMessageTime > 1000){
+                    if (loadingOn && System.currentTimeMillis() - lastMessageTime > 500){
                         ui.finishedLoading();
                         loadingOn = false;
                     }
