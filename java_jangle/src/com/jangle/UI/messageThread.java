@@ -100,10 +100,12 @@ public class messageThread implements Runnable {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        ui.updateUsers(FXCollections.observableArrayList(mClient.getUsers()));
+                        mUserList = FXCollections.observableArrayList(mClient.getUsers());
+                        ui.updateUsers(mUserList);
+                        mClient.setLocationChanged(false);
                     }
                 });
-                mClient.setLocationChanged(false);
+
             }
 
             if (mClient.isStatusChanged()) {

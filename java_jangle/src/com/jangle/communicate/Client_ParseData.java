@@ -69,6 +69,9 @@ public class Client_ParseData implements IPARSER {
 	 */
 	public void parseData(byte[] data) {
 
+        if (mClient.getUserID() == 0 && !(data[0] == CommUtil.LOGIN_SUCCESS || data[0] == CommUtil.LOGIN_FAIL || data[0] == CommUtil.CREATE_USER_FAIL))
+            return;
+
 		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
 			Message newMess = new Message(data);
 			//System.out.println("Server id: " + newMess.getServerID() + " channelid: " + newMess.getChannelID());
@@ -206,6 +209,9 @@ public class Client_ParseData implements IPARSER {
 
 			int userID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
 
+            if(userID == 0)
+                return;
+
 			User user = mClient.findUser(userID);
 			if (user == null) {
                 User newUser = new User("" + userID, userID);
@@ -220,9 +226,13 @@ public class Client_ParseData implements IPARSER {
 
 			if (data[5] == (byte) 0) {
 				user.setStatus(CommUtil.UserStatus.OFFLINE);
+                user.setChannelID(0);
+                mClient.setLocationChanged(true);
+                mClient.setStatusChanged(true);
 			}
 			else if (data[5] == (byte) 1) {
 				user.setStatus(CommUtil.UserStatus.ONLINE);
+                mClient.setStatusChanged(true);
 			}
 			else {
 				user.setStatus(CommUtil.UserStatus.AWAY);
@@ -263,6 +273,23 @@ public class Client_ParseData implements IPARSER {
         }
 
 	}
+
+    private void requestUserLocation(User user) {
+        byte[] toSend = new byte[5];
+        toSend[0] = CommUtil.REQUEST_USER_LOCATION;
+
+        byte[] idInByte = CommUtil.intToByteArr(user.getId());
+
+        for (int i = 0; i < idInByte.length; i++) {
+            toSend[i + 1] = idInByte[i];
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void requestServerIcon(Server newServer) {
         byte[] toSend = new byte[5];
@@ -411,6 +438,7 @@ public class Client_ParseData implements IPARSER {
 
 		Comm.sendToServer(toServer);
 
+        requestUserLocation(user);
 	}
 
 	/**

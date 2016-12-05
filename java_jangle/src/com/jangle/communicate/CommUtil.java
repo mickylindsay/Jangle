@@ -30,6 +30,7 @@ public final class CommUtil {
 	public static final byte REQUEST_ALL_ROOM_ID = (byte) 37;
 	public static final byte REQUEST_ROOM_DISPALY_NAME = (byte) 38;
 	public static final byte REQUEST_USER_STATUS = (byte) 40;
+    public static final byte REQUEST_USER_LOCATION = (byte) 41;
 	public static final byte REQUEST_USER_IP = (byte) 43;
     public static final byte REQUEST_USER_ICON = (byte) 44;
     public static final byte REQUEST_SERVER_ICON = (byte) 45;
