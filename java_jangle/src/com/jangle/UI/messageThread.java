@@ -97,6 +97,7 @@ public class messageThread implements Runnable {
             }
 
             if (mClient.isLocationChanged()){
+                mClient.sortUsers();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -109,6 +110,7 @@ public class messageThread implements Runnable {
             }
 
             if (mClient.isStatusChanged()) {
+                mClient.sortUsers();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

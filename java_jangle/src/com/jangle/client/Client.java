@@ -328,7 +328,7 @@ public class Client {
         sortUsers();
     }
 
-    private void sortUsers(){
+    public void sortUsers(){
         Collections.sort(mUsers, new Comparator<User>() {
             @Override
             public int compare(User u1, User u2) {
