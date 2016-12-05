@@ -4,7 +4,10 @@ import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import com.jangle.communicate.CommUtil;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.scene.image.Image;
+import javafx.scene.web.WebView;
 //import com.jangle.communicate.CommUtil.*;
 
 /**
@@ -20,6 +23,7 @@ public class Message {
 	private int channelID;
     private boolean hasImg;
     private Image mImage;
+    private WebView mWebView;
 
 	public Message(int userID, String messageContent, long timeStamp, int serverID, int channelID, int messageID) {
 		this.channelID = channelID;
@@ -33,6 +37,13 @@ public class Message {
             hasImg = true;
             mImage = new Image(messageContent, 500, 250, true, true);
         }
+
+        if (isYoutube()) {
+            WebView webView = new WebView();
+            String[] urls = messageContent.split(" ");
+            webView.getEngine().load(urls[0] + "&autoplay=0");
+            webView.setPrefSize(512, 288);
+        }
 	}
 
 	public Message(int userID, String messageContent, int serverID, int channelID) {
@@ -45,6 +56,12 @@ public class Message {
         if (isImg()){
             hasImg = true;
             mImage = new Image(messageContent, 500, 250, true, true);
+        }
+        if (isYoutube()) {
+            WebView webView = new WebView();
+            String[] urls = messageContent.split(" ");
+            webView.getEngine().load(urls[0] + "&autoplay=0");
+            webView.setPrefSize(512, 288);
         }
 	}
 
@@ -87,6 +104,18 @@ public class Message {
             hasImg = true;
             mImage = new Image(messageContent, 500, 250, true, true);
         }
+        if (isYoutube()) {
+            String[] urls = messageContent.split(" ");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    mWebView = new WebView();
+                    mWebView.getEngine().load(urls[0] + "&autoplay=0");
+                    mWebView.setPrefSize(512, 288);
+                }
+            });
+        }
+
 	}
 
 	public Message() {
@@ -204,4 +233,11 @@ public class Message {
         return messageContent.contains("http://") && (messageContent.contains(".png") || messageContent.contains(".jpg") || messageContent.contains(".gif") || messageContent.contains("jpeg") || messageContent.contains(".bmp"));
     }
 
+    public boolean isYoutube() {
+        return messageContent.startsWith("https://www.youtube.com/watch") || messageContent.startsWith("https://youtu.be");
+    }
+
+    public WebView getWebView() {
+        return mWebView;
+    }
 }
