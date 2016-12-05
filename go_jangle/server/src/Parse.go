@@ -239,7 +239,7 @@ func Status_Message(user *User, data []byte) Message {
 func Location_Message(user *User, data []byte) Message {
 	m := Create_Message(request_location, data[1:5])
 	request := Get_User_From_Userid(Byte_Converter(data[1:5]));
-	m = Create_Message(recieve_location, byte(request.serverid), byte(request.roomid), byte(request.id))
+	m = Create_Message(recieve_location, Int_Converter(request.serverid), Int_Converter(request.roomid), Int_Converter(request.id))
 	Send_Message(user, m)
 	return m
 }
