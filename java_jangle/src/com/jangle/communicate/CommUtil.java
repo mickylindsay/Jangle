@@ -48,6 +48,7 @@ public final class CommUtil {
     public static final byte RECIEVE_USER_ICON = (byte) 58;
 
 	public static final byte SEND_NEW_DISPLAY_NAME = (byte) 64;
+    public static final byte SEND_NEW_ROOM_DISPLAY_NAME = (byte) 66;
     public static final byte SEND_NEW_USER_ICON = (byte) 68;
 
 	public static final byte SEND_STAUTS_CHANGE = (byte) 80;

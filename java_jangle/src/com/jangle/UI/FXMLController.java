@@ -26,12 +26,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -308,6 +310,9 @@ public class FXMLController implements Initializable {
             @Override
             public void handle(MouseEvent event) {
                 if (userList.getSelectionModel().getSelectedItem().isChannel()){
+                    if(event.getButton() == MouseButton.SECONDARY){
+                        changeChannelNameAlert(userList.getSelectionModel().getSelectedItem());
+                    }
                     mClient.changeChannel(userList.getSelectionModel().getSelectedItem().getId()-1000);
                     mClientParseData.changeLocation();
                     if (mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID()).size() == 0) {
@@ -325,6 +330,8 @@ public class FXMLController implements Initializable {
         });
 
     }
+
+
 
     private Parent createSettingsDialog() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("res/fxml/settings.fxml"));
@@ -354,7 +361,6 @@ public class FXMLController implements Initializable {
 
     @FXML
     public void handleMute(ActionEvent actionEvent) {
-        //TODO: Toggles the mute on voice in but not out from the client
     	if (!mClient.isConnectedToVoice()){
     		return;
     	}
@@ -372,7 +378,6 @@ public class FXMLController implements Initializable {
 
     @FXML
     public void handleVoipConnection(ActionEvent actionEvent) {
-        //TODO: Initialize voice client... NEED Conroy
     	
     	if (mClient.isConnectedToVoice()){
     		mVoice.disconnectFromVoice();
@@ -402,6 +407,23 @@ public class FXMLController implements Initializable {
         alert.setHeaderText("You chose an filetype that is not yet supported.");
         alert.setContentText("Error: The only currently supported filetpyes are: png, jpeg, jpg, bmp and gif");
         alert.showAndWait();
+    }
+
+    private void changeChannelNameAlert(User user) {
+        String newName = JOptionPane.showInputDialog("Please enter a new name for the channel:");
+        if (newName == null)
+            return;
+        else if (newName.length() > 20){
+            openTooLongAlert();
+        }
+
+        mClientParseData.sendNewChannelName(user.getChannelID(), newName);
+    }
+
+    private void openTooLongAlert() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("That name is too long!");
+        alert.setContentText("Yo dawg yo name is more than 20 characters. Make dat shorter");
     }
 
     public boolean isImg(String s) {
