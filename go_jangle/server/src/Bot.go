@@ -124,14 +124,14 @@ type Kick struct {
 
 //Sets the user's severid and roomid to the default value and removes the user from
 //the user list
-func (c Kick) Execute() {
+func (c *Kick) Execute() {
 	c.user.serverid = Byte_Converter(default_id)
 	c.user.roomid = Byte_Converter(default_id)
 	Remove_User_From_Userlist(c.user.id)
 }
 
 //Builds a message code type 97, broadcast server
-func (c Kick) Send() {
+func (c *Kick) Send() {
 	m := Create_Message(recieve_location, Int_Converter(c.user.serverid), Int_Converter(c.user.roomid), Int_Converter(c.user.id))
 	Send_Broadcast_Server(c.old_server, m)
 }
@@ -142,12 +142,12 @@ type Mute struct {
 }
 
 //Changes the user's muted to status to muted
-func (c Mute) Execute() {
+func (c *Mute) Execute() {
 	c.user.muted = uint(user_muted)
 }
 
 //Builds a message code type 96, broadcast status
-func (c Mute) Send() {
+func (c *Mute) Send() {
 	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
 	Send_Broadcast_Server(c.user.serverid, m)
 	Send_Broadcast_Friends(c.user.id, m)
@@ -159,12 +159,12 @@ type Unmute struct {
 }
 
 //Changes the user's muted status to unmuted
-func (c Unmute) Execute() {
+func (c *Unmute) Execute() {
 	c.user.muted = uint(user_unmuted)
 }
 
 //Builds a message code type 96, broadcast status
-func (c Unmute) Send() {
+func (c *Unmute) Send() {
 	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
 	Send_Broadcast_Server(c.user.serverid, m)
 	Send_Broadcast_Friends(c.user.id, m)
@@ -177,12 +177,12 @@ type Move struct {
 }
 
 //Sets the user's roomid to the new roomid
-func (c Move) Execute() {
+func (c *Move) Execute() {
 	c.user.roomid = c.roomid
 }
 
 //Builds a message code type 98, broadcast room
-func (c Move) Send() {
+func (c *Move) Send() {
 	m := Create_Message(recieve_location, Int_Converter(c.user.roomid), Int_Converter(c.user.roomid), Int_Converter(c.user.id))
 	Send_Broadcast_Server(c.user.serverid, m)
 }
