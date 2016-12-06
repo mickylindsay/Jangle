@@ -72,7 +72,7 @@ func Kick_User(args []string) {
 	u[0] -= 'a'
 	c := Kick{
 		user:       Get_User_From_Userid(Byte_Converter(u)),
-		old_server: Get_User_From_Userid(Byte_Converter(u).serverid}
+		old_server: Get_User_From_Userid(Byte_Converter(u)).serverid}
 	c.Execute()
 	c.Send()
 }
