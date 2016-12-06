@@ -173,7 +173,7 @@ func (c Mute) Execute() {
 
 //Builds a message code type 96, broadcast status
 func (c Mute) Send() {
-	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
+	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted), byte(c.user.voice))
 	Send_Broadcast_Server(c.user.serverid, m)
 }
 
@@ -189,7 +189,7 @@ func (c Unmute) Execute() {
 
 //Builds a message code type 96, broadcast status
 func (c Unmute) Send() {
-	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
+	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted), byte(c.user.voice))
 	Send_Broadcast_Server(c.user.serverid, m)
 }
 
