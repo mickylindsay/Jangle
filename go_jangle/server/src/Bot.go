@@ -68,13 +68,16 @@ func Switcher(s string) byte {
 
 //Kicks the user from the server
 func Kick_User(args []string) {
-	u := []byte(args[1]))
-	u[0] -= 'a'
-	c := Kick{
-		user:       Get_User_From_Userid(Byte_Converter(u),
-		old_server: Get_User_From_Userid(Byte_Converter(u).serverid}
-	c.Execute()
-	c.Send()
+	userid := []byte(args[1])
+	userid[0] -= 48
+	u := Get_User_From_Userid(Byte_Converter(userid))
+	if u != nil {
+		c := Kick{
+		user:       u,
+		old_server: u.serverid}
+		c.Execute()
+		c.Send()
+	}
 }
 
 //Mutes the user
@@ -132,9 +135,9 @@ type Kick struct {
 //Sets the user's severid and roomid to the default value and removes the user from
 //the user list
 func (c Kick) Execute() {
-	c.user.serverid = Byte_Converter(default_id)
-	c.user.roomid = Byte_Converter(default_id)
-	Remove_User_From_Userlist(c.user.id)
+	c.user.serverid = Byte_Converter(invalid_id)
+	c.user.roomid = Byte_Converter(invalid_id)
+	//Remove_User_From_Userlist(c.user.id)
 }
 
 //Builds a message code type 97, broadcast server

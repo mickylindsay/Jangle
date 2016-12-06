@@ -423,7 +423,7 @@ func Create_Room_Message(user *User, data []byte) Message {
 	m := Create_Message(create_room, data[1:])
 	roomid, err := Room_Create(user.serverid, user.id, m.room_display_name)
 	if err != nil {
-		m = Create_Message(error_check, "Failed to create new room: user may not have permission")
+		m = Create_Message(error_check, []byte("Failed to create new room: user may not have permission"))
 		Send_Message(user, m)
 	} else {
 		m = Create_Message(recieve_roomid, Int_Converter(user.serverid), Int_Converter(roomid))
