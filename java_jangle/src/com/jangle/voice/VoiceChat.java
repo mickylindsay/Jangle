@@ -43,6 +43,7 @@ public class VoiceChat implements Runnable {
 	private boolean isReceiving;
 	private int port;
 	private int userID;
+	public boolean pushToTalk;
 
 	public VoiceChat(int gport, boolean speak, Client gCl, Client_ParseData gParser) throws SocketException {
 		format = VoiceUtil.genFormat();
@@ -63,6 +64,7 @@ public class VoiceChat implements Runnable {
 		Parser = gParser;
 		Recieving = new DatagramSocket(gport);
 		Recieving.setReceiveBufferSize(1);
+		pushToTalk = false;
 
 		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser, Recieving);
 
