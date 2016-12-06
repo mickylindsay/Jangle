@@ -62,7 +62,7 @@ public class VoiceChat implements Runnable {
 		Users = Cl.getUsersArrayList();
 		Parser = gParser;
 		Recieving = new DatagramSocket(gport);
-		Recieving.setReceiveBufferSize(1);
+		Recieving.setReceiveBufferSize(3);
 		
 		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser, Recieving);
 
@@ -216,13 +216,7 @@ public class VoiceChat implements Runnable {
 			toSpeaker[i] = 0;
 		}
 		
-		try {
-			Recieving.setReceiveBufferSize(65536);
-		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+		Recieving.setReceiveBufferSize(1024);
 		
 		while (isReceiving) {
 

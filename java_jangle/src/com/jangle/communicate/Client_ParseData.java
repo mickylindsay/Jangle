@@ -712,4 +712,30 @@ public class Client_ParseData implements IPARSER {
     public Client_Communicator getComm() {
         return Comm;
     }
+
+    public void sendNewChannelName(int channelID, String newName) {
+        byte[] toSend = new byte[9 + newName.length()];
+        toSend[0] = CommUtil.SEND_NEW_ROOM_DISPLAY_NAME;
+        byte[] sId = CommUtil.intToByteArr(1);
+        byte[] chId = CommUtil.intToByteArr(channelID);
+
+        for (int i = 0; i < sId.length; i++){
+            toSend[1 + i] = sId[i];
+        }
+
+        for (int i = 0; i < chId.length; i++) {
+            toSend[5 + i] = chId[i];
+        }
+
+        for (int i = 0; i < newName.length(); i++) {
+            toSend[9+i] = (byte) newName.charAt(i);
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
