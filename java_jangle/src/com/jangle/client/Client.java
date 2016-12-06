@@ -29,6 +29,7 @@ public class Client {
     private boolean locationChanged;
     private boolean connectedToVoice;
     private boolean statusChanged;
+    private boolean pushToTalk;
 
 
 
@@ -45,6 +46,7 @@ public class Client {
         this.status = CommUtil.UserStatus.ONLINE;
         this.isBroadcasting = false;
         this.connectedToVoice = false;
+        this.pushToTalk = false;
     }
 
     public Client(ArrayList<User> users, ArrayList<Message> messages) {
@@ -58,6 +60,7 @@ public class Client {
         this.status = CommUtil.UserStatus.ONLINE;
         this.isBroadcasting = false;
         this.connectedToVoice = false;
+        this.pushToTalk = false;
     }
 
     public Client(int currentServerID, int currentChannelID) {
@@ -72,6 +75,7 @@ public class Client {
         this.status = CommUtil.UserStatus.ONLINE;
         this.isBroadcasting = false;
         this.connectedToVoice = false;
+        this.pushToTalk = false;
     }
 
     public Client() {
@@ -89,6 +93,7 @@ public class Client {
         this.locationChanged = false;
         this.connectedToVoice = false;
         this.statusChanged = false;
+        this.pushToTalk = false;
     }
 
     public void addMessage(Message message, int sId, int chId) {
@@ -362,6 +367,14 @@ public class Client {
     
     public void setConnectedToVocie(boolean value){
     	this.connectedToVoice = value;
+    }
+    
+    public boolean getPushToTalk(){
+    	return this.pushToTalk;
+    }
+    
+    public void setPushToTalk(boolean status){
+    	this.pushToTalk = status;
     }
     
     

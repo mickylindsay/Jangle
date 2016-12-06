@@ -26,6 +26,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -84,6 +86,9 @@ public class FXMLController implements Initializable {
     private void handleSendMessage(ActionEvent actionEvent) {
         //TODO: Carriage return algorithm
         String message = messageStage.getText();
+
+        if (message.length() == 0)
+            return;
         // Send the string to the server
         try {
             mClientParseData.sendMessage(new Message(mClient.getUserID(), message, mClient.getCurrentServerID(), mClient.getCurrentChannelID()));
@@ -141,6 +146,7 @@ public class FXMLController implements Initializable {
         Stage settingsStage = new Stage();
         settingsStage.setScene(new Scene(createSettingsDialog()));
         settingsStage.showAndWait();
+        refresh();
     }
 
 
@@ -159,7 +165,6 @@ public class FXMLController implements Initializable {
     }
 
     private void setServerListCellFactory() {
-        //TODO: make server list factory
         serverList.setCellFactory(listView -> new ListCell<Server>() {
             private ImageView imageview = new ImageView();
             @Override
@@ -245,11 +250,14 @@ public class FXMLController implements Initializable {
                         setAlignment(Pos.CENTER_LEFT);
                         //setTextAlignment(TextAlignment.LEFT);
                     }
-                    else if (message.isYoutube()){
-                        //TODO: add click to play
-                        if (message.getWebView() == null)
-                            System.out.println("Its null");
+                    else if (message.isYoutube() && message.isPlaying()){
                         setGraphic(message.getWebView());
+                        setContentDisplay(ContentDisplay.BOTTOM);
+                        setAlignment(Pos.CENTER_LEFT);
+                    }
+
+                    else if (message.isYoutube() && !message.isPlaying()){
+                        setGraphic(new ImageView(message.getImage()));
                         setContentDisplay(ContentDisplay.BOTTOM);
                         setAlignment(Pos.CENTER_LEFT);
                     }
@@ -295,7 +303,7 @@ public class FXMLController implements Initializable {
                         e.printStackTrace();
                     }
                 }
-                else if(messageArea.getSelectionModel().getSelectedItem().isYoutube() && Desktop.isDesktopSupported()){
+                else if(messageArea.getSelectionModel().getSelectedItem().isYoutube() && Desktop.isDesktopSupported() && messageArea.getSelectionModel().getSelectedItem().isPlaying()){
                     try {
                         Desktop.getDesktop().browse(new URI(messageArea.getSelectionModel().getSelectedItem().getMessageContent()));
                     } catch (IOException e) {
@@ -303,6 +311,10 @@ public class FXMLController implements Initializable {
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
                     }
+                }
+                else if (messageArea.getSelectionModel().getSelectedItem().isYoutube() && !messageArea.getSelectionModel().getSelectedItem().isPlaying()){
+                    messageArea.getSelectionModel().getSelectedItem().setPlaying(true);
+                    messageArea.refresh();
                 }
             }
         });
@@ -313,7 +325,12 @@ public class FXMLController implements Initializable {
                 if (userList.getSelectionModel().getSelectedItem().isChannel()){
                     if(event.getButton() == MouseButton.SECONDARY){
                         changeChannelNameAlert(userList.getSelectionModel().getSelectedItem());
+                        return;
                     }
+                    for (Message m: mClient.getMessages()) {
+                        m.setPlaying(false);
+                    }
+                    messageArea.refresh();
                     mClient.changeChannel(userList.getSelectionModel().getSelectedItem().getId()-1000);
                     mClientParseData.changeLocation();
                     if (mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID()).size() == 0) {
@@ -326,6 +343,25 @@ public class FXMLController implements Initializable {
                     //Change the messages to the ones in the current channel
                     updateMessages(FXCollections.observableArrayList(mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID())));
                     updateUsers(FXCollections.observableList(mClient.getUsers()));
+                }
+            }
+        });
+
+        userList.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.SPACE) {
+                    System.out.println("Key pressed");
+                    mClient.setPushToTalk(true);
+                }
+            }
+        });
+        userList.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.SPACE) {
+                    mClient.setPushToTalk(false);
+                    System.out.println("Key released");
                 }
             }
         });
@@ -438,9 +474,15 @@ public class FXMLController implements Initializable {
     }
 
     public void finishedLoading() {
+        messageArea.refresh();
+        userList.refresh();
         loadingImage.setVisible(false);
         loadingLabel.setVisible(false);
         loadingPane.setVisible(false);
     }
 
+    public void refresh() {
+        messageArea.refresh();
+        userList.refresh();
+    }
 }
