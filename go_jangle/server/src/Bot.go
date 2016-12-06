@@ -143,6 +143,7 @@ func (c Kick) Execute() {
 //Builds a message code type 97, broadcast server
 func (c Kick) Send() {
 	m := Create_Message(recieve_location, Int_Converter(c.user.serverid), Int_Converter(c.user.roomid), Int_Converter(c.user.id))
+	Send_Broadcast_Server(c.user.serverid, m)
 	Send_Broadcast_Server(c.old_server, m)
 }
 
