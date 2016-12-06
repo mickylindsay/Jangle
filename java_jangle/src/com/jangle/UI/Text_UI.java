@@ -14,6 +14,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -55,7 +58,15 @@ public class Text_UI extends Application {
 		try {
 			this.mClientParseData = new Client_ParseData(mClient, serverIP[0], new Integer(serverIP[1]));
 		}catch (Exception e) {
+            /*
 			e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Connection Lost");
+            alert.setContentText("Trying to reconnect please wait");
+            ImageView imageView = new ImageView(new Image("\\res\\img\\loading.gif"));
+            alert.setGraphic(imageView);
+            alert.showAndWait();
+            */
 		}
 
         this.mVoice = new VoiceChat(7800, false, mClient, mClientParseData);

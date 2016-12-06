@@ -738,4 +738,20 @@ public class Client_ParseData implements IPARSER {
         }
 
     }
+
+    public void createNewChannel(String newName) {
+        byte[] toSend = new byte[1 + newName.length()];
+        toSend[0] = CommUtil.CREATE_NEW_ROOM;
+
+        for (int i = 0; i < newName.length(); i++) {
+            toSend[i + 1] = (byte) newName.charAt(i);
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

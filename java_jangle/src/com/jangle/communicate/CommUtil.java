@@ -54,6 +54,8 @@ public final class CommUtil {
 	public static final byte SEND_STAUTS_CHANGE = (byte) 80;
 	public static final byte SEND_ROOM_LOCATION_CHANGE = (byte) 81;
 
+    public static final byte CREATE_NEW_ROOM = (byte) 97;
+
 	public static final byte RECIEVE_ERROR = (byte) 255;
 	
 	
