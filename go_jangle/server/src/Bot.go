@@ -2,7 +2,6 @@ package main
 
 import (
 	"strings"
-	"fmt"
 )
 
 //Initializes function array that contains all the functions necessary to handle all
@@ -28,9 +27,9 @@ func Check_Command(user *User, data []byte) bool {
 	var check bool
 	if string(data[0]) == "/" {
 		args := strings.Split(string(data), " ")
-		fmt.Print(args[0])
+		fmt.Print([]byte(args[1]))
 		fmt.Print("\n")
-		fmt.Print(args[1])
+		fmt.Print(Byte_Converter([]byte(args[1])))
 		fmt.Print("\n")
 		trigger := Switcher(args[0])
 		if trigger != 255 {
