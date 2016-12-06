@@ -351,7 +351,17 @@ public class FXMLController implements Initializable {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.SPACE) {
-                    
+                    System.out.println("Key pressed");
+                    mClient.setPushToTalk(true);
+                }
+            }
+        });
+        userList.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.SPACE) {
+                    mClient.setPushToTalk(false);
+                    System.out.println("Key released");
                 }
             }
         });
