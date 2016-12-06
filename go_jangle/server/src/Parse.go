@@ -72,7 +72,7 @@ func Login_Message(user *User, data []byte) Message {
 	m := Create_Message(login, data[1:21], data[21:])
 	var id uint;
 	id = 0;
-	id, err := User_Login(m.username, m.password)
+	id, _ = User_Login(m.username, m.password)
 	if id != 0 {
 		user.id = id
 		user.logged_in = true;
