@@ -70,8 +70,10 @@ func Create_User_Message(user *User, data []byte) Message {
 //writes the data to the user.
 func Login_Message(user *User, data []byte) Message {
 	m := Create_Message(login, data[1:21], data[21:])
+	var id uint;
+	id = 0;
 	id, err := User_Login(m.username, m.password)
-	if err == nil {
+	if id != 0 {
 		user.id = id
 		user.logged_in = true;
 		m = Create_Message(login_success, Int_Converter(id))
