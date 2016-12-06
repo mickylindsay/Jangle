@@ -68,7 +68,7 @@ func Switcher(s string) byte {
 
 //Kicks the user from the server
 func Kick_User(args []string) {
-	u := []byte(args[1]))
+	u := []byte(args[1])
 	u[0] -= 'a'
 	c := Kick{
 		user:       Get_User_From_Userid(Byte_Converter(u),
