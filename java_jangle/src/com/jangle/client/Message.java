@@ -27,8 +27,7 @@ public class Message {
     private boolean hasImg;
     private Image mImage;
     private WebView mWebView;
-
-    //TODO: Make Better timestamp
+    private boolean isPlaying;
 
 	public Message(int userID, String messageContent, long timeStamp, int serverID, int channelID, int messageID) {
 		this.channelID = channelID;
@@ -104,6 +103,7 @@ public class Message {
 		this.timeStamp = (long) CommUtil.byteToInt(time);
 		this.messageContent = new String(content);
         this.messageID = CommUtil.byteToInt(messageID);
+        this.isPlaying = false;
 
         if (isImg()){
             hasImg = true;
@@ -119,6 +119,8 @@ public class Message {
                     mWebView.setPrefSize(512, 288);
                 }
             });
+            String[] ids = urls[0].split("=");
+            mImage = new Image("https://img.youtube.com/vi/" + ids[1] +"/0.jpg");
         }
 
 	}
@@ -252,5 +254,13 @@ public class Message {
         Date date = new Date(timeStamp * 1000);
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
         return sdf.format(date);
+    }
+
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
     }
 }

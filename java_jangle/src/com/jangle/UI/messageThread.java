@@ -55,7 +55,7 @@ public class messageThread implements Runnable {
                     Thread.sleep(200);
 
                     //Removes loading screen if active and thread is silent for 1 second.
-                    if (loadingOn && System.currentTimeMillis() - lastMessageTime > 1000){
+                    if (loadingOn && System.currentTimeMillis() - lastMessageTime > 1500){
                         ui.finishedLoading();
                         loadingOn = false;
                     }
@@ -118,6 +118,7 @@ public class messageThread implements Runnable {
                         mUserList = FXCollections.observableArrayList(mClient.getUsers());
                         ui.updateUsers(mUserList);
                         mClient.setLocationChanged(false);
+                        ui.refresh();
                     }
                 });
                 if(loadingOn)
@@ -132,6 +133,7 @@ public class messageThread implements Runnable {
                         mUserList = FXCollections.observableArrayList(mClient.getUsers());
                         ui.updateUsers(mUserList);
                         mClient.setStatusChanged(false);
+                        ui.refresh();
                     }
                 });
                 if(loadingOn)
