@@ -13,7 +13,7 @@ public final class VoiceUtil {
 	
 	//Constants
 	
-	public static final int VOICE_DATA_SIZE = 1024;
+	public static final int VOICE_DATA_SIZE = 64;
 	public static final int SLEEP_MILLI_LENGTH = 50;
 	
 	//The audio format used in voice chat. It is passed from voice chat to the other classes.

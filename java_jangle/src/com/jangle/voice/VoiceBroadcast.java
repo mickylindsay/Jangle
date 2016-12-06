@@ -111,18 +111,6 @@ public class VoiceBroadcast implements Runnable {
 
 			amount = microphone.read(micData, 0, VoiceUtil.VOICE_DATA_SIZE);
 			
-			
-			
-			/*
-			 * This block is used if an external class/thread manages the
-			 * connections ArrayList
-			 * 
-			 * byte[] toBrodcast = new byte[VoiceUtil.VOICE_DATA_BUFFER_SIZE];
-			 * 
-			 * for (int i = 0; i < connections.size(); i++){
-			 * connections.get(i).sendVoice(micData); }
-			 */
-			
 			for (int i = 0; i < Users.size(); i++) {
 				if (!Users.get(i).isChannel()) {
 					if (Cl.getCurrentChannelID() == Users.get(i).getChannelID() && Users.get(i).getIsMuted() == false
@@ -142,35 +130,14 @@ public class VoiceBroadcast implements Runnable {
 							packet = new DatagramPacket(micData, micData.length, InetAddress.getByAddress(VoiceUtil.byteIP(Users.get(i).getIP())), port);
 							//packet = new DatagramPacket(micData, micData.length, InetAddress.getLocalHost(), port);
 						} catch (UnknownHostException e1) {
-							// TODO Auto-generated catch block
 							continue;
 						}
 						
 						try {
 							Send.send(packet);
 						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
 						}
 						
-						// old code that I am to attached to to delete
-						
-						/*
-						 * NOTE, this does not care if the user wants to receive
-						 * data, it will send it to users with the same channel
-						 * ID. If the recieving user does not have their
-						 * recieving enabled, the packet will get ignored on the
-						 * reciever's end
-						 */
-//						try {
-//							connections.add(new VoiceChatSocket(Users.get(i), port, Parser));
-//							connections.get(sum).sendVoice(micData, amount);
-//							sum += 1;
-//						} catch (IOException e) {
-//							System.out.println("failed");
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
 						
 					}
 
