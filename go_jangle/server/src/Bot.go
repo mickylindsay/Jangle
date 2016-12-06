@@ -2,6 +2,7 @@ package main
 
 import (
 	"strings"
+	"fmt"
 )
 
 //Initializes function array that contains all the functions necessary to handle all
