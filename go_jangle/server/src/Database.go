@@ -113,7 +113,7 @@ func Room_Create(serverid uint, userid uint, name []byte) (uint, error) {
 //The message is time stamped when the server handles the message, not when the messages is sent by the user
 func Message_Create(user *User, messagetext []byte) (uint, error) {
 	var i uint
-	if !jangle.no_database && messagetext[0] == '/'{
+	if !jangle.no_database && messagetext[0] != '/'{
 		i := Next_Messageid()
 		var err error
 		_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", user.id, Milli_Time(), i, string(messagetext), user.serverid, user.roomid)
