@@ -62,6 +62,7 @@ public class VoiceChat implements Runnable {
 		Users = Cl.getUsersArrayList();
 		Parser = gParser;
 		Recieving = new DatagramSocket(gport);
+		Recieving.setReceiveBufferSize(3);
 		
 		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser, Recieving);
 
@@ -103,9 +104,11 @@ public class VoiceChat implements Runnable {
 	 * the voice chat
 	 */
 	public void disconnectFromVoice() {
+		stopRecieve();
+		System.out.println("Stopped Recieveing");
 		connections.clear();
 		stopSpeakers();
-		stopRecieve();
+		
 		if (Cl.getBroadcastStatus()){
 			endBrodcast();
 		}
@@ -212,6 +215,8 @@ public class VoiceChat implements Runnable {
 		for (int i = 0; i < toSpeaker.length; i++) {
 			toSpeaker[i] = 0;
 		}
+		
+		
 		while (isReceiving) {
 
 			try {
