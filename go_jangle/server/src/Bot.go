@@ -1,9 +1,6 @@
 package main
 
-import (
-	"strings"
-	"fmt"
-)
+import "strings"
 
 //Initializes function array that contains all the functions necessary to handle all
 //the bot commands
@@ -28,10 +25,6 @@ func Check_Command(user *User, data []byte) bool {
 	var check bool
 	if string(data[0]) == "/" {
 		args := strings.Split(string(data), " ")
-		fmt.Print([]byte(args[1]))
-		fmt.Print("\n")
-		fmt.Print(Byte_Converter([]byte(args[1])))
-		fmt.Print("\n")
 		trigger := Switcher(args[0])
 		if trigger != 255 {
 			check = true
