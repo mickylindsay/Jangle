@@ -132,9 +132,9 @@ type Kick struct {
 //Sets the user's severid and roomid to the default value and removes the user from
 //the user list
 func (c Kick) Execute() {
-	c.user.serverid = Byte_Converter(default_id)
-	c.user.roomid = Byte_Converter(default_id)
-	Remove_User_From_Userlist(c.user.id)
+	c.user.serverid = Byte_Converter(invalid_id)
+	c.user.roomid = Byte_Converter(invalid_id)
+	//Remove_User_From_Userlist(c.user.id)
 }
 
 //Builds a message code type 97, broadcast server
