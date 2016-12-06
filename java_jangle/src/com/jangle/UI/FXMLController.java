@@ -246,6 +246,7 @@ public class FXMLController implements Initializable {
                         //setTextAlignment(TextAlignment.LEFT);
                     }
                     else if (message.isYoutube()){
+                        //TODO: add click to play
                         if (message.getWebView() == null)
                             System.out.println("Its null");
                         setGraphic(message.getWebView());
@@ -354,9 +355,9 @@ public class FXMLController implements Initializable {
         User sender = mClient.findUser(message.getUserID());
 
         if(sender == null)
-            return message.getUserID() + "\n" + message.getMessageContent() + "    " + message.getTimeStamp();
+            return message.getUserID() + "          " + message.getTime() +"\n" + message.getMessageContent();
 
-        return sender.getDisplayName() + "\n" + message.getMessageContent() + "    " + message.getTimeStamp();
+        return sender.getDisplayName() + "          " + message.getTime() + "\n" + message.getMessageContent();
     }
 
     @FXML
@@ -415,6 +416,7 @@ public class FXMLController implements Initializable {
             return;
         else if (newName.length() > 20){
             openTooLongAlert();
+            return;
         }
 
         mClientParseData.sendNewChannelName(user.getChannelID(), newName);
@@ -424,6 +426,7 @@ public class FXMLController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("That name is too long!");
         alert.setContentText("Yo dawg yo name is more than 20 characters. Make dat shorter");
+        alert.showAndWait();
     }
 
     public boolean isImg(String s) {

@@ -4,7 +4,6 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: #3f3f3f;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jangle.UI.settingsController">
@@ -20,5 +19,9 @@
       </Button>
       <Label layoutX="15.0" layoutY="82.0" prefHeight="17.0" prefWidth="246.0" text="Profile Icon (Change applies on Settings close)" textFill="WHITE" />
       <ImageView fx:id="userIcon" fitHeight="106.0" fitWidth="211.0" layoutX="14.0" layoutY="103.0" pickOnBounds="true" preserveRatio="true" />
+      <Label layoutX="23.0" layoutY="242.0" text="Create New channel" textFill="WHITE" />
+      <Button fx:id="createChannelButton" onAction="#handleCreateChannel" layoutX="232.0" layoutY="238.0" mnemonicParsing="false" text="Create" />
+      <Button fx:id="changeDisplayNameButton" onAction="#handleNameChange" layoutX="229.0" layoutY="290.0" mnemonicParsing="false" text="Change" />
+      <Label layoutX="23.0" layoutY="294.0" text="Change Display Name" textFill="WHITE" />
    </children>
 </AnchorPane>
