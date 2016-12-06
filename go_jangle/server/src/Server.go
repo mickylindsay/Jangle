@@ -86,12 +86,12 @@ func main() {
 			muted: 2,
 		}
 		if jangle.debug {
-			fmt.Println("From Address:", user.Get_Remote_Address())
+			fmt.Println("From Address:", user.Get_Local_Address())
 			user.roomid = 1
 			user.serverid = 1
 		}
 
-		Logln("User Connected from address:", user.Get_Remote_Address())
+		Logln("User Connected from address:", user.Get_Local_Address())
 		//Add new connection onto the end of connections list
 		elem := jangle.userlist.PushBack(user)
 		defer jangle.log_file.Close()
