@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 //Master function: takes parameters type User and byte array. The byte array is the data in from the client and
 //the type User represents the client connection that sent the byte array. Passes these parameters to a specific
 //function in the below array of funtions corresponding to the first byte (code value) of the byte arrray.
@@ -71,7 +73,9 @@ func Create_User_Message(user *User, data []byte) Message {
 func Login_Message(user *User, data []byte) Message {
 	m := Create_Message(login, data[1:21], data[21:])
 	id, err := User_Login(m.username, m.password)
-	if err != nil {
+	fmt.Println("connecting:", id)
+	if err == nil {
+		fmt.Println("success")
 		user.id = id
 		user.logged_in = true;
 		m = Create_Message(login_success, Int_Converter(id))
