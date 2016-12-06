@@ -37,8 +37,8 @@ public class VoiceBroadcast implements Runnable {
 	private int userID;
 	private int port;
 
-	public VoiceBroadcast(ArrayList<User> gUsers, AudioFormat gformat, Client gCl, int gport,
-			Client_ParseData gParser, DatagramSocket gSend) {
+	public VoiceBroadcast(ArrayList<User> gUsers, AudioFormat gformat, Client gCl, int gport, Client_ParseData gParser,
+			DatagramSocket gSend) {
 		Users = gUsers;
 		// connections = gConnections;
 		sendAll = false;
@@ -104,47 +104,51 @@ public class VoiceBroadcast implements Runnable {
 	public void run() {
 		int amount;
 		DatagramPacket packet;
-		
+
 		while (sendAll) {
-			int sum = 0;
-			connections = new ArrayList<VoiceChatSocket>();
+			if (Cl.getPushToTalk()) {
+				int sum = 0;
+				connections = new ArrayList<VoiceChatSocket>();
 
-			amount = microphone.read(micData, 0, VoiceUtil.VOICE_DATA_SIZE);
-			
-			for (int i = 0; i < Users.size(); i++) {
-				if (!Users.get(i).isChannel()) {
-					if (Cl.getCurrentChannelID() == Users.get(i).getChannelID() && Users.get(i).getIsMuted() == false
-							&& Users.get(i).getChannelID() != 0 && Users.get(i).getId() != Cl.getUserID()) {
-						
-						if (Users.get(i).getIP() == "" || Users.get(i).getIP() == "FAIL"){
-							try {
-								
-								Users.get(i).setIP(Parser.getUserIP(Users.get(i)));
+				amount = microphone.read(micData, 0, VoiceUtil.VOICE_DATA_SIZE);
 
-							} catch (IOException e) {
-								//Happens if a communication error occurs. 
+				for (int i = 0; i < Users.size(); i++) {
+					if (!Users.get(i).isChannel()) {
+						if (Cl.getCurrentChannelID() == Users.get(i).getChannelID()
+								&& Users.get(i).getIsMuted() == false && Users.get(i).getChannelID() != 0
+								&& Users.get(i).getId() != Cl.getUserID()) {
+
+							if (Users.get(i).getIP() == "" || Users.get(i).getIP() == "FAIL") {
+								try {
+
+									Users.get(i).setIP(Parser.getUserIP(Users.get(i)));
+
+								} catch (IOException e) {
+									// Happens if a communication error occurs.
+								}
 							}
-						}
-						
-						try {
-							packet = new DatagramPacket(micData, micData.length, InetAddress.getByAddress(VoiceUtil.byteIP(Users.get(i).getIP())), port);
-							//packet = new DatagramPacket(micData, micData.length, InetAddress.getLocalHost(), port);
-						} catch (UnknownHostException e1) {
-							continue;
-						}
-						
-						try {
-							Send.send(packet);
-						} catch (IOException e1) {
-						}
-						
-						
-					}
 
+							try {
+								packet = new DatagramPacket(micData, micData.length,
+										InetAddress.getByAddress(VoiceUtil.byteIP(Users.get(i).getIP())), port);
+								// packet = new DatagramPacket(micData,
+								// micData.length, InetAddress.getLocalHost(),
+								// port);
+							} catch (UnknownHostException e1) {
+								continue;
+							}
+
+							try {
+								Send.send(packet);
+							} catch (IOException e1) {
+							}
+
+						}
+
+					}
 				}
 			}
 
-			
 		}
 
 	}
