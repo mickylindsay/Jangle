@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 //Master function: takes parameters type User and byte array. The byte array is the data in from the client and
 //the type User represents the client connection that sent the byte array. Passes these parameters to a specific
 //function in the below array of funtions corresponding to the first byte (code value) of the byte arrray.
@@ -36,6 +38,8 @@ func Init_Parse() {
 	Parsers[send_new_server_icon] = New_Server_Icon_Message
 	Parsers[change_status] = Change_Status_Message
 	Parsers[change_location] = Change_Location_Message
+	Parsers[create_server] = Create_Server_Message
+	Parsers[create_room] = Create_Room_Message
 
 	jangle.Parsers = Parsers
 }
@@ -69,7 +73,9 @@ func Create_User_Message(user *User, data []byte) Message {
 func Login_Message(user *User, data []byte) Message {
 	m := Create_Message(login, data[1:21], data[21:])
 	id, err := User_Login(m.username, m.password)
+	fmt.Println("connecting:", id)
 	if err == nil {
+		fmt.Println("success")
 		user.id = id
 		user.logged_in = true;
 		m = Create_Message(login_success, Int_Converter(id))
@@ -401,6 +407,26 @@ func Change_Location_Message(user *User, data []byte) Message {
 	} else {
 		user.roomid = Byte_Converter(m.roomid)
 		m = Create_Message(recieve_location, m.serverid, m.roomid, Int_Converter(user.id))
+		Send_Broadcast_Server(user.serverid, m)
+	}
+	return m
+}
+
+//TODO
+func Create_Server_Message(user *User, data []byte) Message {
+	m := Create_Message(create_server, data[1:])
+	return m
+}
+
+//TOOD
+func Create_Room_Message(user *User, data []byte) Message {
+	m := Create_Message(create_room, data[1:])
+	roomid, err := Room_Create(user.serverid, user.id, m.room_display_name)
+	if err != nil {
+		m = Create_Message(error_check, "Failed to create new room: user may not have permission")
+		Send_Message(user, m)
+	} else {
+		m = Create_Message(recieve_roomid, Int_Converter(user.serverid), Int_Converter(roomid))
 		Send_Broadcast_Server(user.serverid, m)
 	}
 	return m

@@ -80,6 +80,10 @@ var send_new_server_icon byte = 70
 var change_status byte = 80
 var change_location byte = 81
 
+//Client create type codes
+var create_server byte = 96
+var create_room byte = 97
+
 //Error type codes
 var error_check byte = 255
 

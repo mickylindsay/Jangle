@@ -2,6 +2,7 @@ package main
 
 import (
 	"strings"
+	"fmt"
 )
 
 //Initializes function array that contains all the functions necessary to handle all
@@ -27,6 +28,10 @@ func Check_Command(user *User, data []byte) bool {
 	var check bool
 	if string(data[0]) == "/" {
 		args := strings.Split(string(data), " ")
+		fmt.Print([]byte(args[1]))
+		fmt.Print("\n")
+		fmt.Print(Byte_Converter([]byte(args[1])))
+		fmt.Print("\n")
 		trigger := Switcher(args[0])
 		if trigger != 255 {
 			check = true
@@ -63,9 +68,11 @@ func Switcher(s string) byte {
 
 //Kicks the user from the server
 func Kick_User(args []string) {
+	u := []byte(args[1]))
+	u[0] -= 'a'
 	c := Kick{
-		user:       Get_User_From_Userid(Byte_Converter([]byte(args[1]))),
-		old_server: Get_User_From_Userid(Byte_Converter([]byte(args[1]))).serverid}
+		user:       Get_User_From_Userid(Byte_Converter(u),
+		old_server: Get_User_From_Userid(Byte_Converter(u).serverid}
 	c.Execute()
 	c.Send()
 }
