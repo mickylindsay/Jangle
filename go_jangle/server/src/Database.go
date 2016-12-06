@@ -94,11 +94,17 @@ func User_Create(u []byte, p []byte) (uint, error) {
 }
 
 //Inserts a new user into the database
-func Room_Create(serverid uint, name []byte) (uint, error) {
+func Room_Create(serverid uint, userid uint, name []byte) (uint, error) {
 	if !jangle.no_database {
 		i := Next_Roomid()
-		_, err := jangle.db.Exec("INSERT INTO rooms (roomid, roomname, roomdescription, serverid) VALUES (?,?,?,?);", i, string(name[:Byte_Array_Length(name)]), "What a description", serverid)
-		return i, err
+		owner,e := Get_Server_Owner_Id(serverid)
+		if owner == userid {
+			_, err := jangle.db.Exec("INSERT INTO rooms (roomid, roomname, roomdescription, serverid) VALUES (?,?,?,?);", i, string(name[:Byte_Array_Length(name)]), "What a description", serverid)
+			return i, err
+		}else{
+			return 0, errors.New("user id != owner id")
+		}
+			
 	}
 	return 1, nil
 }
