@@ -63,7 +63,7 @@ public class VoiceChat implements Runnable {
 		Parser = gParser;
 		Recieving = new DatagramSocket(gport);
 		Recieving.setReceiveBufferSize(1);
-		
+
 		Madden = new VoiceBroadcast(Users, format, Cl, port, Parser, Recieving);
 
 		// If speak is true, the user wants to start speaking right away
@@ -105,11 +105,10 @@ public class VoiceChat implements Runnable {
 	 */
 	public void disconnectFromVoice() {
 		stopRecieve();
-		System.out.println("Stopped Recieveing");
 		connections.clear();
 		stopSpeakers();
-		
-		if (Cl.getBroadcastStatus()){
+
+		if (Cl.getBroadcastStatus()) {
 			endBrodcast();
 		}
 		Cl.setConnectedToVocie(false);
@@ -117,8 +116,6 @@ public class VoiceChat implements Runnable {
 		try {
 			Recieving.setReceiveBufferSize(1);
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -143,21 +140,6 @@ public class VoiceChat implements Runnable {
 		Cl.setBroadcastStatus(false);
 		Parser.sendUserStatusChange();
 	}
-
-	/*
-	 * IS NOT USED. DO NOT USE THIS /** Add a user. This adds a VoiceChatSocket.
-	 * for Testing, you can put in local host, and hear yourself
-	 * 
-	 * @param IP IP of the user.
-	 * 
-	 * @throws IOException
-	 * 
-	 * @throws UnknownHostException
-	 * 
-	 * private void addUserToChat(User gUser) throws UnknownHostException,
-	 * IOException { connections.add(new VoiceChatSocket(gUser, port, Parser));
-	 * }
-	 */
 
 	/**
 	 * Start the output of audio. Will play the sound to the default device of
@@ -221,57 +203,29 @@ public class VoiceChat implements Runnable {
 		for (int i = 0; i < toSpeaker.length; i++) {
 			toSpeaker[i] = 0;
 		}
-		
+
 		try {
 			Recieving.setReceiveBufferSize(1024);
 		} catch (SocketException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		while (isReceiving) {
 
 			try {
 				Recieving.receive(packet);
 				toSpeaker = packet.getData();
 			} catch (IOException e) {
-				//stuff
+				// stuff
 			}
-			/**
-			amb[0] = data[0];
-			amb[1] = data[1];
-			amb[2] = data[2];
-			amb[3] = data[3];
-			
-			amountRead += VoiceUtil.byteToInt(amb);
-			*/
+
 			numUsers = numUsersInSameChannel();
 			if (numUsers == 0) {
 				continue;
 			}
-			
+
 			speakers.write(toSpeaker, 0, toSpeaker.length);
-			
-			/*
-			if (loop % numUsers == 0) {
-				loop = 0;
-
-				for (int i = 0; i < toSpeaker.length; i++) {
-					//toSpeaker[i] = (byte) ((data[i + 4] + toSpeaker[i]) >> 1);
-					toSpeaker[i] = data[i];
-				} 
-
-				speakers.write(toSpeaker, 0, amountRead);
-				toSpeaker = new byte[VoiceUtil.VOICE_DATA_SIZE];
-				amountRead = 0;
-			}
-			else {
-				for (int i = 0; i < toSpeaker.length; i++) {
-					toSpeaker[i] = data[i + 4];
-				}
-			}
-			loop += 1;
-			*/
 
 		}
 	}
