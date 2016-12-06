@@ -216,6 +216,7 @@ public class VoiceChat implements Runnable {
 			toSpeaker[i] = 0;
 		}
 		
+		Recieving.setReceiveBufferSize(1024);
 		
 		while (isReceiving) {
 
