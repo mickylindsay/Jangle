@@ -22,11 +22,13 @@ import javafx.scene.control.*;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -68,6 +70,12 @@ public class FXMLController implements Initializable {
     private Button connectButton;
     @FXML
     private Button muteButton;
+    @FXML
+    private Label loadingLabel;
+    @FXML
+    private AnchorPane loadingPane;
+    @FXML
+    private ImageView loadingImage;
 
 
     @FXML
@@ -235,9 +243,17 @@ public class FXMLController implements Initializable {
                         setAlignment(Pos.CENTER_LEFT);
                         //setTextAlignment(TextAlignment.LEFT);
                     }
+                    else if (message.isYoutube()){
+                        if (message.getWebView() == null)
+                            System.out.println("Its null");
+                        setGraphic(message.getWebView());
+                        setContentDisplay(ContentDisplay.BOTTOM);
+                        setAlignment(Pos.CENTER_LEFT);
+                    }
                     else
                         setGraphic(null);
                     setText(formatMessage(message));
+
                 }
             }
         });
@@ -268,6 +284,15 @@ public class FXMLController implements Initializable {
             @Override
             public void handle(MouseEvent event) {
                 if (messageArea.getSelectionModel().getSelectedItem().isImg() && Desktop.isDesktopSupported()){
+                    try {
+                        Desktop.getDesktop().browse(new URI(messageArea.getSelectionModel().getSelectedItem().getMessageContent()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else if(messageArea.getSelectionModel().getSelectedItem().isYoutube() && Desktop.isDesktopSupported()){
                     try {
                         Desktop.getDesktop().browse(new URI(messageArea.getSelectionModel().getSelectedItem().getMessageContent()));
                     } catch (IOException e) {
@@ -385,6 +410,12 @@ public class FXMLController implements Initializable {
 
     public messageThread getMessageThread() {
         return mMessageThread;
+    }
+
+    public void finishedLoading() {
+        loadingImage.setVisible(false);
+        loadingLabel.setVisible(false);
+        loadingPane.setVisible(false);
     }
 
 }

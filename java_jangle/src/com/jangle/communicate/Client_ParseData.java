@@ -708,4 +708,8 @@ public class Client_ParseData implements IPARSER {
             e.printStackTrace();
         }
     }
+
+    public Client_Communicator getComm() {
+        return Comm;
+    }
 }

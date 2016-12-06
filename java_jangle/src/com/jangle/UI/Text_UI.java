@@ -9,6 +9,7 @@ import com.jangle.voice.VoiceChat;
 import com.jangle.communicate.CommUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -24,6 +26,7 @@ import java.io.IOException;
 public class Text_UI extends Application {
 
 	private Client_ParseData mClientParseData;
+    private FXMLController mMainController;
 	private Client mClient;
     private ConfigUtil mConfigUtil;
     private String[] serverIP;
@@ -37,7 +40,7 @@ public class Text_UI extends Application {
 		controller.setmClientParseData(mClientParseData);
         controller.setConfigUtil(mConfigUtil);
         controller.setVoiceChat(mVoice);
-
+        mMainController = controller;
 		return mainUI;
 	}
 
@@ -75,6 +78,7 @@ public class Text_UI extends Application {
 
 		Stage loginStage = new Stage();
 		loginStage.setScene(new Scene(createLoginDialog()));
+        setOnClose(loginStage);
 		loginStage.showAndWait();
 
         if(mClient.getUserID() != 0) {
@@ -87,12 +91,25 @@ public class Text_UI extends Application {
             mClientParseData.sendUserStatusChange();
             mClientParseData.requestAvatarURL(new User("", mClient.getUserID()));
 
-
+            setOnClose(primaryStage);
             primaryStage.setScene(new Scene(createContent()));
             primaryStage.setResizable(false);
             primaryStage.show();
 
         }
 	}
+
+    private void setOnClose(Stage primaryStage) {
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                mClientParseData.getComm().endThread();
+                if(mMainController != null)
+                    mMainController.getMessageThread().stopThread();
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+    }
 
 }
