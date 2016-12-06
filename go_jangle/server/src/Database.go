@@ -50,7 +50,7 @@ func User_Login(u []byte, p []byte) (uint, error) {
 		err := jangle.db.QueryRow("SELECT userid FROM users WHERE username = ? AND passwordhash = ?", string(u[:Byte_Array_Length(u)]), string(p)).Scan(&userid)
 		return userid, err
 	}
-	return 1, nil
+	return 0, nil
 }
 
 //Returns the next valid userid
