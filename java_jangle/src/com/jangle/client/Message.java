@@ -2,7 +2,10 @@ package com.jangle.client;
 
 import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+
 import com.jangle.communicate.CommUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -24,6 +27,8 @@ public class Message {
     private boolean hasImg;
     private Image mImage;
     private WebView mWebView;
+
+    //TODO: Make Better timestamp
 
 	public Message(int userID, String messageContent, long timeStamp, int serverID, int channelID, int messageID) {
 		this.channelID = channelID;
@@ -167,7 +172,9 @@ public class Message {
 	}
 
 	public String toString() {
-		return userID + "\n" + messageContent + "    " + timeStamp;
+        Date date = new Date(timeStamp * 1000);
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+		return userID + sdf.format(date) + "\n" + messageContent;
 	}
 
     public boolean isHasImg() {
@@ -239,5 +246,11 @@ public class Message {
 
     public WebView getWebView() {
         return mWebView;
+    }
+
+    public String getTime() {
+        Date date = new Date(timeStamp * 1000);
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+        return sdf.format(date);
     }
 }

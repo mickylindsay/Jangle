@@ -1,11 +1,14 @@
 .list-cell {
     -fx-background-color: transparent;
+
 }
 
 .list-cell:filled
 {
     -fx-background-color: rgba(30,30,30,0.3);
     -fx-text-fill: #f0f0f0;
+    -fx-padding-top: 5px;
+    -fx-padding-bottom: 5px;
 }
 
 .list-view {
