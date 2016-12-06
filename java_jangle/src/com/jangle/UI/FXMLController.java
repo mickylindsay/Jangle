@@ -26,6 +26,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -249,7 +251,6 @@ public class FXMLController implements Initializable {
                         //setTextAlignment(TextAlignment.LEFT);
                     }
                     else if (message.isYoutube() && message.isPlaying()){
-                        //TODO: add click to play
                         setGraphic(message.getWebView());
                         setContentDisplay(ContentDisplay.BOTTOM);
                         setAlignment(Pos.CENTER_LEFT);
@@ -342,6 +343,25 @@ public class FXMLController implements Initializable {
                     //Change the messages to the ones in the current channel
                     updateMessages(FXCollections.observableArrayList(mClient.getMessages(mClient.getCurrentServerID(), mClient.getCurrentChannelID())));
                     updateUsers(FXCollections.observableList(mClient.getUsers()));
+                }
+            }
+        });
+
+        userList.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.SPACE) {
+                    System.out.println("Key pressed");
+                    mClient.setPushToTalk(true);
+                }
+            }
+        });
+        userList.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.SPACE) {
+                    mClient.setPushToTalk(false);
+                    System.out.println("Key released");
                 }
             }
         });
