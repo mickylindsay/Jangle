@@ -97,7 +97,7 @@ func User_Create(u []byte, p []byte) (uint, error) {
 func Room_Create(serverid uint, userid uint, name []byte) (uint, error) {
 	if !jangle.no_database {
 		i := Next_Roomid()
-		owner,e := Get_Server_Owner_Id(serverid)
+		owner,_ := Get_Server_Owner_Id(serverid)
 		if owner == userid {
 			_, err := jangle.db.Exec("INSERT INTO rooms (roomid, roomname, roomdescription, serverid) VALUES (?,?,?,?);", i, string(name[:Byte_Array_Length(name)]), "What a description", serverid)
 			return i, err
