@@ -347,7 +347,7 @@ func Get_Server_Icon(serverid uint) (string, error) {
 	return temp, err
 }
 
-//Updates the user's icon to a new string. 
+//Updates the user's icon to a new string.
 func Set_New_User_Icon(userid uint, url string) error {
 	if len(url) > 256{
 		return errors.New("Cannot use URL longer than 256 characters");
@@ -359,7 +359,7 @@ func Set_New_User_Icon(userid uint, url string) error {
 	return nil
 }
 
-//Updates the server's icon to a new string. 
+//Updates the server's icon to a new string.
 func Set_New_Server_Icon(serverid uint, url string) error {
 	if len(url) > 256{
 		return errors.New("Cannot use URL longer than 256 characters");

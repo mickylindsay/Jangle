@@ -9,6 +9,7 @@
 *.class
 .project
 .classpath
+.settings
 bin/
 *.jar
 

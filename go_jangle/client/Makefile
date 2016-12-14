@@ -1,7 +1,7 @@
 GC = go build
 BIN = bin
 SRC = src
-CLIENTOBJ = 
+CLIENTOBJ =
 CLIENTOBJ := $(addprefix $(SRC)/, $(CLIENTOBJ))
 CLIENT = Client.go
 
