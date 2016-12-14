@@ -2,8 +2,15 @@ package com.jangle.client;
 
 import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+
 import com.jangle.communicate.CommUtil;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.scene.image.Image;
+import javafx.scene.web.WebView;
 //import com.jangle.communicate.CommUtil.*;
 
 /**
@@ -17,6 +24,10 @@ public class Message {
 	private long timeStamp;
 	private int serverID;
 	private int channelID;
+    private boolean hasImg;
+    private Image mImage;
+    private WebView mWebView;
+    private boolean isPlaying;
 
 	public Message(int userID, String messageContent, long timeStamp, int serverID, int channelID, int messageID) {
 		this.channelID = channelID;
@@ -25,6 +36,18 @@ public class Message {
 		this.timeStamp = timeStamp;
 		this.serverID = serverID;
         this.messageID = messageID;
+
+        if (isImg()){
+            hasImg = true;
+            mImage = new Image(messageContent, 500, 250, true, true);
+        }
+
+        if (isYoutube()) {
+            WebView webView = new WebView();
+            String[] urls = messageContent.split(" ");
+            webView.getEngine().load(urls[0] + "&autoplay=0");
+            webView.setPrefSize(512, 288);
+        }
 	}
 
 	public Message(int userID, String messageContent, int serverID, int channelID) {
@@ -33,6 +56,17 @@ public class Message {
 		this.serverID = serverID;
 		this.channelID = channelID;
 		this.timeStamp = 0;
+
+        if (isImg()){
+            hasImg = true;
+            mImage = new Image(messageContent, 500, 250, true, true);
+        }
+        if (isYoutube()) {
+            WebView webView = new WebView();
+            String[] urls = messageContent.split(" ");
+            webView.getEngine().load(urls[0] + "&autoplay=0");
+            webView.setPrefSize(512, 288);
+        }
 	}
 
 	/**
@@ -69,6 +103,26 @@ public class Message {
 		this.timeStamp = (long) CommUtil.byteToInt(time);
 		this.messageContent = new String(content);
         this.messageID = CommUtil.byteToInt(messageID);
+        this.isPlaying = false;
+
+        if (isImg()){
+            hasImg = true;
+            mImage = new Image(messageContent, 500, 250, true, true);
+        }
+        if (isYoutube()) {
+            String[] urls = messageContent.split(" ");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    mWebView = new WebView();
+                    mWebView.getEngine().load(urls[0] + "&autoplay=0");
+                    mWebView.setPrefSize(512, 288);
+                }
+            });
+            String[] ids = urls[0].split("=");
+            mImage = new Image("https://img.youtube.com/vi/" + ids[1] +"/0.jpg");
+        }
+
 	}
 
 	public Message() {
@@ -120,10 +174,24 @@ public class Message {
 	}
 
 	public String toString() {
-		return userID + "\n" + messageContent + "    " + timeStamp;
+        Date date = new Date(timeStamp * 1000);
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+		return userID + sdf.format(date) + "\n" + messageContent;
 	}
 
-	/**
+    public boolean isHasImg() {
+        return hasImg;
+    }
+
+    public Image getImage() {
+        return mImage;
+    }
+
+    public int getMessageID() {
+        return messageID;
+    }
+
+    /**
 	 * Creates a byte array of this message, in the format required to send the
 	 * message to the server.
 	 * 
@@ -174,4 +242,25 @@ public class Message {
         return messageContent.contains("http://") && (messageContent.contains(".png") || messageContent.contains(".jpg") || messageContent.contains(".gif") || messageContent.contains("jpeg") || messageContent.contains(".bmp"));
     }
 
+    public boolean isYoutube() {
+        return messageContent.startsWith("https://www.youtube.com/watch") || messageContent.startsWith("https://youtu.be");
+    }
+
+    public WebView getWebView() {
+        return mWebView;
+    }
+
+    public String getTime() {
+        Date date = new Date(timeStamp * 1000);
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+        return sdf.format(date);
+    }
+
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
+    }
 }

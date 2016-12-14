@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -126,5 +127,43 @@ public class settingsController implements Initializable {
         alert.showAndWait();
     }
 
+
+    public void handleCreateChannel(ActionEvent actionEvent) {
+        String newName = JOptionPane.showInputDialog("Please enter the new name for the Channel");
+        if(newName.length() > 20) {
+            showServerNameTooLongAlert();
+            return;
+        }
+        mClientParseData.createNewChannel(newName);
+    }
+
+    private void showServerNameTooLongAlert() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Name too long!!");
+        alert.setContentText("Channel name exceeded 20 Characters!");
+        alert.showAndWait();
+    }
+
+    public void handleNameChange(ActionEvent actionEvent) {
+        String newName = JOptionPane.showInputDialog("Please enter the new name for yourself");
+        if (newName.length() > 20) {
+            showDisplayNameTooLongAlert();
+            return;
+        }
+
+        try {
+            mClientParseData.setNewDisplayNameOnServer(newName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void showDisplayNameTooLongAlert() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Name too long!!");
+        alert.setContentText("Display name exceeded 20 Characters!");
+        alert.showAndWait();
+    }
 
 }

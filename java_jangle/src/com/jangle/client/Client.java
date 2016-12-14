@@ -23,12 +23,13 @@ public class Client {
     private int userID;
     private String displayName;
     private String IP;
-    private boolean voice;
+    private boolean isBroadcasting;
     private CommUtil.UserStatus status;
     private boolean isMuted;
     private boolean locationChanged;
     private boolean connectedToVoice;
     private boolean statusChanged;
+    private boolean pushToTalk;
 
 
 
@@ -43,8 +44,9 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
-        this.voice = false;
+        this.isBroadcasting = false;
         this.connectedToVoice = false;
+        this.pushToTalk = false;
     }
 
     public Client(ArrayList<User> users, ArrayList<Message> messages) {
@@ -56,8 +58,9 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
-        this.voice = false;
+        this.isBroadcasting = false;
         this.connectedToVoice = false;
+        this.pushToTalk = false;
     }
 
     public Client(int currentServerID, int currentChannelID) {
@@ -70,8 +73,9 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
-        this.voice = false;
+        this.isBroadcasting = false;
         this.connectedToVoice = false;
+        this.pushToTalk = false;
     }
 
     public Client() {
@@ -85,10 +89,11 @@ public class Client {
         this.IP = "";
         this.mServers = new HashMap<>();
         this.status = CommUtil.UserStatus.ONLINE;
-        this.voice = false;
+        this.isBroadcasting = false;
         this.locationChanged = false;
         this.connectedToVoice = false;
         this.statusChanged = false;
+        this.pushToTalk = false;
     }
 
     public void addMessage(Message message, int sId, int chId) {
@@ -277,7 +282,6 @@ public class Client {
     }
 
     public void addServer(Server server) {
-        //TODO: Add server if server not already added
         if (mServers.get(server.getId()) != null) {
             return;
         }
@@ -296,12 +300,12 @@ public class Client {
     	return this.isMuted;
     }
     
-    public void setVoiceStatus(boolean status){
-    	this.voice = status;
+    public void setBroadcastStatus(boolean status){
+    	this.isBroadcasting = status;
     }
     
-    public boolean getVoiceStatus(){
-    	return this.voice;
+    public boolean getBroadcastStatus(){
+    	return this.isBroadcasting;
     }
     
     public CommUtil.UserStatus getStatus() {
@@ -321,7 +325,6 @@ public class Client {
         }
         else{
             currentChannelID = id;
-            //TODO: Looking into making mMessages dynamic for messages that SHOULD be displayed at the time
         }
     }
 
@@ -330,26 +333,28 @@ public class Client {
         sortUsers();
     }
 
-    private void sortUsers(){
+    public void sortUsers(){
         Collections.sort(mUsers, new Comparator<User>() {
             @Override
             public int compare(User u1, User u2) {
                 //System.out.println("here boi");
-                if (u1.isChannel() && u1.getChannelID() <= u2.getChannelID())
+                if (u1.isChannel() && u1.getChannelID() < u2.getChannelID())
                     return -1;
 
                 else if (u1.isChannel() && u1.getChannelID() > u2.getChannelID())
                     return 1;
 
-                else if (u2.isChannel() && u2.getChannelID() <= u1.getChannelID())
+                else if (u2.isChannel() && u2.getChannelID() < u1.getChannelID())
                     return 1;
 
                 else if (u2.isChannel() && u2.getChannelID() > u1.getChannelID())
                     return -1;
 
-                else if (u1.getChannelID() <= u2.getChannelID())
+                else if (u1.getChannelID() < u2.getChannelID())
                     return -1;
 
+                else if (u1.getChannelID() == u2.getChannelID())
+                    return u1.getDisplayName().compareTo(u2.getDisplayName());
                 else
                     return 1;
             }
@@ -362,6 +367,14 @@ public class Client {
     
     public void setConnectedToVocie(boolean value){
     	this.connectedToVoice = value;
+    }
+    
+    public boolean getPushToTalk(){
+    	return this.pushToTalk;
+    }
+    
+    public void setPushToTalk(boolean status){
+    	this.pushToTalk = status;
     }
     
     

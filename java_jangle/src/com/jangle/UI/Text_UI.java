@@ -9,13 +9,18 @@ import com.jangle.voice.VoiceChat;
 import com.jangle.communicate.CommUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -24,6 +29,7 @@ import java.io.IOException;
 public class Text_UI extends Application {
 
 	private Client_ParseData mClientParseData;
+    private FXMLController mMainController;
 	private Client mClient;
     private ConfigUtil mConfigUtil;
     private String[] serverIP;
@@ -37,7 +43,7 @@ public class Text_UI extends Application {
 		controller.setmClientParseData(mClientParseData);
         controller.setConfigUtil(mConfigUtil);
         controller.setVoiceChat(mVoice);
-
+        mMainController = controller;
 		return mainUI;
 	}
 
@@ -52,7 +58,15 @@ public class Text_UI extends Application {
 		try {
 			this.mClientParseData = new Client_ParseData(mClient, serverIP[0], new Integer(serverIP[1]));
 		}catch (Exception e) {
+            /*
 			e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Connection Lost");
+            alert.setContentText("Trying to reconnect please wait");
+            ImageView imageView = new ImageView(new Image("\\res\\img\\loading.gif"));
+            alert.setGraphic(imageView);
+            alert.showAndWait();
+            */
 		}
 
         this.mVoice = new VoiceChat(7800, false, mClient, mClientParseData);
@@ -75,21 +89,38 @@ public class Text_UI extends Application {
 
 		Stage loginStage = new Stage();
 		loginStage.setScene(new Scene(createLoginDialog()));
+        setOnClose(loginStage);
 		loginStage.showAndWait();
 
-        mClientParseData.request50MessagesWithOffset(0);
-        mClientParseData.requestAllUsersTiedToServer();
-        //TODO: Fix requesting servers
-        mClientParseData.requestAllServers(new User("", mClient.getUserID()));
-        mClient.changeChannel(1);
-        mClientParseData.changeLocation();
-        mClient.setStatus(CommUtil.UserStatus.ONLINE);
-        mClientParseData.sendUserStatusChange();
+        if(mClient.getUserID() != 0) {
+            mClientParseData.request50MessagesWithOffset(0);
+            mClientParseData.requestAllUsersTiedToServer();
+            mClientParseData.requestAllServers(new User("", mClient.getUserID()));
+            mClient.changeChannel(1);
+            mClientParseData.changeLocation();
+            mClient.setStatus(CommUtil.UserStatus.ONLINE);
+            mClientParseData.sendUserStatusChange();
+            mClientParseData.requestAvatarURL(new User("", mClient.getUserID()));
 
+            setOnClose(primaryStage);
+            primaryStage.setScene(new Scene(createContent()));
+            primaryStage.setResizable(false);
+            primaryStage.show();
 
-        primaryStage.setScene(new Scene(createContent()));
-        primaryStage.show();
-
+        }
 	}
+
+    private void setOnClose(Stage primaryStage) {
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                mClientParseData.getComm().endThread();
+                if(mMainController != null)
+                    mMainController.getMessageThread().stopThread();
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+    }
 
 }

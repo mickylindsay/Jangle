@@ -30,6 +30,7 @@ public final class CommUtil {
 	public static final byte REQUEST_ALL_ROOM_ID = (byte) 37;
 	public static final byte REQUEST_ROOM_DISPALY_NAME = (byte) 38;
 	public static final byte REQUEST_USER_STATUS = (byte) 40;
+    public static final byte REQUEST_USER_LOCATION = (byte) 41;
 	public static final byte REQUEST_USER_IP = (byte) 43;
     public static final byte REQUEST_USER_ICON = (byte) 44;
     public static final byte REQUEST_SERVER_ICON = (byte) 45;
@@ -47,10 +48,13 @@ public final class CommUtil {
     public static final byte RECIEVE_USER_ICON = (byte) 58;
 
 	public static final byte SEND_NEW_DISPLAY_NAME = (byte) 64;
+    public static final byte SEND_NEW_ROOM_DISPLAY_NAME = (byte) 66;
     public static final byte SEND_NEW_USER_ICON = (byte) 68;
 
 	public static final byte SEND_STAUTS_CHANGE = (byte) 80;
 	public static final byte SEND_ROOM_LOCATION_CHANGE = (byte) 81;
+
+    public static final byte CREATE_NEW_ROOM = (byte) 97;
 
 	public static final byte RECIEVE_ERROR = (byte) 255;
 	

@@ -115,9 +115,9 @@ func Init_Message() {
 	Messages[recieve_userid] = Userid
 	Messages[recieve_display_name] = Userid_Display_Name
 	Messages[recieve_serverid] = Serverid_Userid
-	Messages[recieve_server_display_name] = Server_Display_Name
+	Messages[recieve_server_display_name] = Serverid_Server_Display_Name
 	Messages[recieve_roomid] = Serverid_Roomid
-	Messages[recieve_room_display_name] = Room_Display_Name
+	Messages[recieve_room_display_name] = Serverid_Room_Display_Name
 	Messages[recieve_master_display_name] = Userid_Master_Display_Name
 	Messages[recieve_status] = Userid_Status
 	Messages[recieve_location] = Serverid_Roomid_Userid
@@ -125,13 +125,15 @@ func Init_Message() {
 	Messages[recieve_user_icon] = Userid_Url
 	Messages[recieve_server_icon] = Serverid_Url
 	Messages[send_new_display_name] = Display_Name
-	Messages[send_new_server_display_name] = Server_Display_Name
-	Messages[send_new_room_display_name] = Room_Display_Name
+	Messages[send_new_server_display_name] = Serverid_Server_Display_Name
+	Messages[send_new_room_display_name] = Serverid_Room_Display_Name
 	Messages[send_new_master_display_name] = Master_Display_Name
 	Messages[send_new_user_icon] = Url
 	Messages[send_new_server_icon] = Serverid_Url
 	Messages[change_status] = Status
 	Messages[change_location] = Serverid_Roomid
+	Messages[create_server] = Server_Display_Name
+	Messages[create_room] = Room_Display_Name
 	Messages[error_check] = Text
 
 	jangle.Messages = Messages
@@ -233,6 +235,14 @@ func Roomid_Userid(args ...interface{}) Message {
 
 //TODO
 func Server_Display_Name(args ...interface{}) Message {
+	m := Message {
+		code: args[0].(byte),
+		server_display_name: args[1].([]byte)}
+	return m
+}
+
+//TODO
+func Serverid_Server_Display_Name(args ...interface{}) Message {
 	m := Message{
 		code:                args[0].(byte),
 		serverid:            args[1].([]byte),
@@ -242,6 +252,14 @@ func Server_Display_Name(args ...interface{}) Message {
 
 //TODO
 func Room_Display_Name(args ...interface{}) Message {
+	m := Message {
+		code: args[0].(byte),
+		room_display_name: args[1].([]byte)}
+	return m
+}
+
+//TODO
+func Serverid_Room_Display_Name(args ...interface{}) Message {
 	m := Message{
 		code:              args[0].(byte),
 		serverid:          args[1].([]byte),

@@ -15,7 +15,7 @@
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
                   <ListView fx:id="serverList" layoutX="-2.0" layoutY="-8.0" orientation="HORIZONTAL" prefHeight="84.0" prefWidth="900.0" stylesheets="@../css/serverList.css" />
-                  <Label prefHeight="17.0" prefWidth="97.0" text="Jangle V0.1" textFill="WHITE">
+                  <Label prefHeight="17.0" prefWidth="97.0" text="Jangle" textFill="WHITE">
                      <font>
                         <Font name="Comic Sans MS" size="14.0" />
                      </font>
@@ -44,8 +44,8 @@
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                                        <children>
                                           <ListView fx:id="userList" prefHeight="474.0" prefWidth="164.0" stylesheets="@../css/userList.css" />
-                                          <Button  fx:id="connectButton" onAction="#handleVoipConnection" layoutY="474.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="83.0" text="Connect" />
-                                          <Button fx:id="muteButton" onAction="#handleMute" layoutX="81.0" layoutY="474.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="83.0" text="Mute" />
+                                          <Button fx:id="connectButton" layoutY="474.0" mnemonicParsing="false" onAction="#handleVoipConnection" prefHeight="44.0" prefWidth="83.0" text="Connect" />
+                                          <Button fx:id="muteButton" layoutX="81.0" layoutY="474.0" mnemonicParsing="false" onAction="#handleMute" prefHeight="44.0" prefWidth="83.0" text="Start Voice" />
                                        </children>
                                     </AnchorPane>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -85,6 +85,19 @@
                         </AnchorPane>
                     </items>
                   </SplitPane>
+                  <AnchorPane fx:id="loadingPane" prefHeight="520.0" prefWidth="898.0" style="-fx-background-color: #18191b;">
+                     <children>
+                        <ImageView fx:id="loadingImage" fitHeight="520.0" fitWidth="900.0" layoutX="103.0" layoutY="-42.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/loading.gif" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="loadingLabel" layoutX="378.0" layoutY="321.0" text="Loading" textFill="WHITE">
+                           <font>
+                              <Font size="40.0" />
+                           </font>
+                        </Label>
+                     </children></AnchorPane>
                </children>
             </AnchorPane>
         </items>

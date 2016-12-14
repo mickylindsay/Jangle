@@ -1,8 +1,6 @@
 package main
 
-import (
-	"strings"
-)
+import "strings"
 
 //Initializes function array that contains all the functions necessary to handle all
 //the bot commands
@@ -63,36 +61,58 @@ func Switcher(s string) byte {
 
 //Kicks the user from the server
 func Kick_User(args []string) {
-	c := Kick{
-		user:       Get_User_From_Userid(Byte_Converter([]byte(args[1]))),
-		old_server: Get_User_From_Userid(Byte_Converter([]byte(args[1]))).serverid}
-	c.Execute()
-	c.Send()
+	userid := []byte(args[1])
+	userid[0] -= 48
+	u := Get_User_From_Userid(Byte_Converter(userid))
+	if u != nil {
+		c := Kick{
+			user: u}
+		c.Execute()
+		c.Send()
+	}
 }
 
 //Mutes the user
 func Mute_User(args []string) {
-	c := Mute{
-		user: Get_User_From_Userid(Byte_Converter([]byte(args[1])))}
-	c.Execute()
-	c.Send()
+	userid := []byte(args[1])
+	userid[0] -= 48
+	u := Get_User_From_Userid(Byte_Converter(userid))
+	if u != nil {
+		c := Mute{
+			user: u}
+		c.Execute()
+		c.Send()
+	}
 }
 
 //Unmutes the user
 func Unmute_User(args []string) {
-	c := Unmute{
-		user: Get_User_From_Userid(Byte_Converter([]byte(args[1])))}
-	c.Execute()
-	c.Send()
+	userid := []byte(args[1])
+	userid[0] -= 48
+	u := Get_User_From_Userid(Byte_Converter(userid))
+	if u != nil {
+		c := Unmute{
+			user: u}
+		c.Execute()
+		c.Send()
+	}
 }
 
 //Moves the user to a different room
 func Move_User(args []string) {
-	c := Move{
-		user:   Get_User_From_Userid(Byte_Converter([]byte(args[1]))),
-		roomid: Byte_Converter([]byte(args[2]))}
-	c.Execute()
-	c.Send()
+	userid := []byte(args[1])
+	userid[0] -= 48
+	u := Get_User_From_Userid(Byte_Converter(userid))
+	roomid := []byte(args[2])
+	roomid[0] -= 48
+	r := Byte_Converter(roomid)
+	if u != nil {
+		c := Move{
+			user:   u,
+			roomid: r}
+		c.Execute()
+		c.Send()
+	}
 }
 
 //TODO
@@ -118,22 +138,20 @@ type Command interface {
 
 //Creates Kick struct with param User type
 type Kick struct {
-	user       *User
-	old_server uint
+	user *User
 }
 
 //Sets the user's severid and roomid to the default value and removes the user from
 //the user list
 func (c Kick) Execute() {
 	c.user.serverid = Byte_Converter(default_id)
-	c.user.roomid = Byte_Converter(default_id)
-	Remove_User_From_Userlist(c.user.id)
+	c.user.roomid = Byte_Converter(invalid_id)
 }
 
 //Builds a message code type 97, broadcast server
 func (c Kick) Send() {
 	m := Create_Message(recieve_location, Int_Converter(c.user.serverid), Int_Converter(c.user.roomid), Int_Converter(c.user.id))
-	Send_Broadcast_Server(c.old_server, m)
+	Send_Broadcast_Server(c.user.serverid, m)
 }
 
 //Creates Mute struct with param User type
@@ -148,9 +166,8 @@ func (c Mute) Execute() {
 
 //Builds a message code type 96, broadcast status
 func (c Mute) Send() {
-	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
+	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted), byte(c.user.voice))
 	Send_Broadcast_Server(c.user.serverid, m)
-	Send_Broadcast_Friends(c.user.id, m)
 }
 
 //Creates Unmute struct with param User type
@@ -165,9 +182,8 @@ func (c Unmute) Execute() {
 
 //Builds a message code type 96, broadcast status
 func (c Unmute) Send() {
-	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted))
+	m := Create_Message(recieve_status, Int_Converter(c.user.id), byte(c.user.status), byte(c.user.muted), byte(c.user.voice))
 	Send_Broadcast_Server(c.user.serverid, m)
-	Send_Broadcast_Friends(c.user.id, m)
 }
 
 //Creates Move struct with param User type and roomid as an uint

@@ -22,6 +22,7 @@ public class Client_ParseData implements IPARSER {
 	private String RoomDisplayName;
 	private String IP;
 
+
 	/**
 	 * Create a parser object with no Client_Commmunicator attached to it.
 	 * 
@@ -66,6 +67,9 @@ public class Client_ParseData implements IPARSER {
 	 */
 	public void parseData(byte[] data) {
 
+        if (mClient.getUserID() == 0 && !(data[0] == CommUtil.LOGIN_SUCCESS || data[0] == CommUtil.LOGIN_FAIL || data[0] == CommUtil.CREATE_USER_FAIL))
+            return;
+
 		if (data[0] == CommUtil.MESSAGE_FROM_SERVER) {
 			Message newMess = new Message(data);
 			//System.out.println("Server id: " + newMess.getServerID() + " channelid: " + newMess.getChannelID());
@@ -101,7 +105,6 @@ public class Client_ParseData implements IPARSER {
 		}
 
 		else if (data[0] == CommUtil.RECIEVE_DISPLAY_NAME) {
-			// TODO: Changing
 			int id = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
 			String newDiplay = new String(Arrays.copyOfRange(data, 5, data.length));
 			for (int i = 0; i < mClient.getUsers().size(); i++) {
@@ -203,6 +206,9 @@ public class Client_ParseData implements IPARSER {
 
 			int userID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
 
+            if(userID == 0)
+                return;
+
 			User user = mClient.findUser(userID);
 			if (user == null) {
                 User newUser = new User("" + userID, userID);
@@ -217,9 +223,13 @@ public class Client_ParseData implements IPARSER {
 
 			if (data[5] == (byte) 0) {
 				user.setStatus(CommUtil.UserStatus.OFFLINE);
+                user.setChannelID(0);
+                mClient.setLocationChanged(true);
+                mClient.setStatusChanged(true);
 			}
 			else if (data[5] == (byte) 1) {
 				user.setStatus(CommUtil.UserStatus.ONLINE);
+                mClient.setStatusChanged(true);
 			}
 			else {
 				user.setStatus(CommUtil.UserStatus.AWAY);
@@ -251,7 +261,7 @@ public class Client_ParseData implements IPARSER {
             int userID = CommUtil.byteToInt(Arrays.copyOfRange(data, 1, 5));
             String img = new String(Arrays.copyOfRange(data, 5, data.length));
 
-            mClient.findUser(userID).setAvatar(img);
+            mClient.findUser(userID).setImage(img);
         }
 
         else if(data[0] == CommUtil.RECIEVE_ERROR) {
@@ -260,6 +270,23 @@ public class Client_ParseData implements IPARSER {
         }
 
 	}
+
+    private void requestUserLocation(User user) {
+        byte[] toSend = new byte[5];
+        toSend[0] = CommUtil.REQUEST_USER_LOCATION;
+
+        byte[] idInByte = CommUtil.intToByteArr(user.getId());
+
+        for (int i = 0; i < idInByte.length; i++) {
+            toSend[i + 1] = idInByte[i];
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void requestServerIcon(Server newServer) {
         byte[] toSend = new byte[5];
@@ -408,6 +435,7 @@ public class Client_ParseData implements IPARSER {
 
 		Comm.sendToServer(toServer);
 
+        requestUserLocation(user);
 	}
 
 	/**
@@ -441,7 +469,6 @@ public class Client_ParseData implements IPARSER {
 		Comm.sendToServer(toServer);
 	}
 
-	// TODO need to test this
 	/**
 	 * get a list of all of the room IDs in the room
 	 * 
@@ -460,7 +487,7 @@ public class Client_ParseData implements IPARSER {
 		Comm.sendToServer(toServer);
 	}
 
-	// TODO test this
+
 	/**
 	 * Request
 	 * 
@@ -634,7 +661,6 @@ public class Client_ParseData implements IPARSER {
 		try {
 			Comm.sendToServer(toServer);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -677,4 +703,50 @@ public class Client_ParseData implements IPARSER {
             e.printStackTrace();
         }
     }
+
+    public Client_Communicator getComm() {
+        return Comm;
+    }
+
+    public void sendNewChannelName(int channelID, String newName) {
+        byte[] toSend = new byte[9 + newName.length()];
+        toSend[0] = CommUtil.SEND_NEW_ROOM_DISPLAY_NAME;
+        byte[] sId = CommUtil.intToByteArr(1);
+        byte[] chId = CommUtil.intToByteArr(channelID);
+
+        for (int i = 0; i < sId.length; i++){
+            toSend[1 + i] = sId[i];
+        }
+
+        for (int i = 0; i < chId.length; i++) {
+            toSend[5 + i] = chId[i];
+        }
+
+        for (int i = 0; i < newName.length(); i++) {
+            toSend[9+i] = (byte) newName.charAt(i);
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void createNewChannel(String newName) {
+        byte[] toSend = new byte[1 + newName.length()];
+        toSend[0] = CommUtil.CREATE_NEW_ROOM;
+
+        for (int i = 0; i < newName.length(); i++) {
+            toSend[i + 1] = (byte) newName.charAt(i);
+        }
+
+        try {
+            Comm.sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

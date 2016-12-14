@@ -29,8 +29,8 @@ public class testSelfVoice {
 		
 		Cl.getUsersArrayList();
 		
-		User Nate = TestUtil.newNathan();
-		Nate.setIP("localhost");
+		User Nate = TestUtil.newTom();
+		Nate.setIP("10.1.40.163");
 		Cl.addUser(Nate);
 		Nate.setChannelID(1);
 		Cl.setCurrentChannelID(1);

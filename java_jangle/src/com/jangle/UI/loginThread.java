@@ -13,11 +13,12 @@ public class loginThread implements Runnable {
 
     private Client mClient;
     private loginController mLoginController;
+    private Thread t;
 
     public loginThread(loginController controller, Client client) {
         this.mLoginController = controller;
         this.mClient = client;
-        Thread t = new Thread(this);
+        this.t = new Thread(this);
         t.start();
     }
 
@@ -71,5 +72,9 @@ public class loginThread implements Runnable {
                 mLoginController.successfulLogin();
             }
         });
+    }
+
+    public void stopThread() {
+        t.interrupt();
     }
 }

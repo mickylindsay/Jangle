@@ -63,6 +63,16 @@ func Next_Userid() uint {
 	return 1
 }
 
+//Returns the next valid userid
+func Next_Roomid() uint {
+	if !jangle.no_database {
+		var temp uint
+		_ = jangle.db.QueryRow("SELECT MAX(userid) AS userid FROM users").Scan(&temp)
+		return temp + 1
+	}
+	return 1
+}
+
 //Returns the next valid messageid
 func Next_Messageid() uint {
 	if !jangle.no_database {
@@ -74,7 +84,6 @@ func Next_Messageid() uint {
 }
 
 //Inserts a new user into the database
-//TODO implement Image Path and Password hashing
 func User_Create(u []byte, p []byte) (uint, error) {
 	if !jangle.no_database {
 		i := Next_Userid()
@@ -84,11 +93,27 @@ func User_Create(u []byte, p []byte) (uint, error) {
 	return 1, nil
 }
 
+//Inserts a new user into the database
+func Room_Create(serverid uint, userid uint, name []byte) (uint, error) {
+	if !jangle.no_database {
+		i := Next_Roomid()
+		owner,_ := Get_Server_Owner_Id(serverid)
+		if owner == userid {
+			_, err := jangle.db.Exec("INSERT INTO rooms (roomid, roomname, roomdescription, serverid) VALUES (?,?,?,?);", i, string(name[:Byte_Array_Length(name)]), "What a description", serverid)
+			return i, err
+		}else{
+			return 0, errors.New("user id != owner id")
+		}
+			
+	}
+	return 1, nil
+}
+
 //Inserts a new Message from the current user in the users room and server into the database
 //The message is time stamped when the server handles the message, not when the messages is sent by the user
 func Message_Create(user *User, messagetext []byte) (uint, error) {
 	var i uint
-	if !jangle.no_database {
+	if !jangle.no_database && messagetext[0] != '/'{
 		i := Next_Messageid()
 		var err error
 		_, err = jangle.db.Exec("INSERT INTO messages (userid, time, messageid, messagetext, serverid, roomid) VALUES (?,?,?,?,?,?);", user.id, Milli_Time(), i, string(messagetext), user.serverid, user.roomid)
@@ -263,11 +288,11 @@ func Get_Display_Name(serverid uint, userid uint) ([]byte, error) {
 	if !jangle.no_database {
 		var temp string
 		//Attempts to find the server specific display name
-		fmt.Println("Attempting Server Unique Display Name.")
+		//fmt.Println("Attempting Server Unique Display Name.")
 		err := jangle.db.QueryRow("SELECT displayname FROM display WHERE serverid = ? and userid = ?", serverid, userid).Scan(&temp)
 		//If server specific display name does not exist, request the master display name.
 		if err != nil {
-			fmt.Println("Attempting Master Unique Display Name.")
+			//fmt.Println("Attempting Master Unique Display Name.")
 			return Get_Master_Display_Name(userid)
 		}
 		return []byte(temp), err
